@@ -1,0 +1,171 @@
+---
+en:
+  activemodel:
+    attributes:
+      proposal:
+        body: Runko
+        category_id: Kategoria
+        scope_id: Konteksti
+        title: Otsikko
+        user_group_id: Luo ehdotus käyttäjänä
+      proposal_answer:
+        answer: Vastaa
+      proposal_report:
+        details: Muut kommentit
+  decidim:
+    features:
+      proposals:
+        actions:
+          create: Luo ehdotuksia
+          vote: Äänestä
+        name: Ehdotukset
+        settings:
+          global:
+            comments_enabled: Kommentointi sallittu
+            official_proposals_enabled: Viralliset ehdotukset sallittu
+            proposal_answering_enabled: Ehdotuksiin vastaaminen sallittu
+            vote_limit: Äänestysrajoite
+          step:
+            comments_blocked: Kommentointi estetty
+            creation_enabled: Ehdotusten luonti sallittu
+            proposal_answering_enabled: Ehdotuksiin vastaaminen sallittu
+            votes_blocked: Äänestys estetty
+            votes_enabled: Äänestys sallittu
+    proposals:
+      actions:
+        all_proposals: Kaikki ehdotukset
+        answer: Vastaa
+        hidden_proposals: Piilotetut ehdotukset
+        hide: Piilota
+        new: Uusi ehdotus
+        reported_proposals: Raportoidut ehdotukset
+        title: Toiminnot
+        unreport: Poista ilmoitus
+      admin:
+        models:
+          proposal:
+            name: Ehdotus
+        proposal_answers:
+          edit:
+            accepted: Hyväksytty
+            answer_proposal: Vastaa ehdotukseen
+            rejected: Hylätty
+            title: "Vastaa ehdotukseen: %{title}"
+        proposals:
+          answer:
+            invalid: Ehdotukseen vastaamisessa esiintyi virhe
+            success: Ehdotukseen vastattu onnistuneesti
+          create:
+            invalid: Ehdotuksen luonnissa tapahtui virhe
+            success: Ehdotus luotu onnistuneesti
+          form:
+            select_a_category: Valitse kategoria
+          hide:
+            invalid: Ehdotuksen piilotuksessa tapahtui virhe
+            success: Ehdotus onnistuneesti piilotettu
+          index:
+            title: Ehdotukset
+          new:
+            create: Luo ehdotus
+            title: Uusi ehdotus
+          unreport:
+            invalid: Ehdotuksen ilmoituksen poistamisessa tapahtui virhe
+            success: Ehdotuksen ilmoitus poistettu onnistuneesti
+      answers:
+        accepted: Hyväksytty
+        not_answered: Vastaamaton
+        rejected: Hylätty
+      create:
+        error: Ehdotuksen tallennuksessa tapahtui virhe.
+        success: Ehdotus luotu onnistuneesti.
+      models:
+        proposal:
+          fields:
+            category: Kategoria
+            official_proposal: Virallinen ehdotus
+            reports: Ilmoitukset
+            scope: Konteksti
+            state: Tila
+            title: Otsikko
+      proposal_reported_mailer:
+        hide:
+          hello: Hei %{name},
+          report_html: Ehdotus %{proposal_link} on piilotettu automaattisesti.
+          subject: Ehdotus on piilotettu automaattisesti
+        report:
+          hello: Hei %{name},
+          report_html: Ehdotus %{proposal_link} on ilmoitettu.
+          subject: Ehdotus on ilmoitettu
+      proposal_reports:
+        create:
+          error: Ehdotuksen ilmoittamisessa tapahtui virhe. Yritä uudestaan.
+          success: Ehdotus on onnistuneesti ilmoitettu ja ylläpito tarkastaa
+            sen.
+      proposals:
+        count:
+          proposals_count:
+            one: 1 ehdotus
+            other: "%{count} ehdotusta"
+        filters:
+          accepted: Hyväksytty
+          activity: Aktiivisuus
+          all: Kaikki
+          category: Kategoria
+          citizenship: Kansalaisuus
+          official: Virallinen
+          origin: Alkuperä
+          rejected: Hylätty
+          related_to: Liittyy aiheeseen
+          scopes: Kontekstit
+          search: Haku
+          state: Tila
+          voted: Äänestetty
+        filters_small_view:
+          close_modal: Sulje ikkuna
+          filter: Suodata
+          filter_for: Suodata
+          unfold: Avaa
+        index:
+          new_proposal: Uusi ehdotus
+        linked_proposals:
+          proposal_votes:
+            one: <span class="card--list__data__number">1</span>ääni
+            other: <span class="card--list__data__number">%{count}</span>ääntä
+        new:
+          back: Takaisin
+          select_a_category: Valitse kategoria
+          send: Lähetä
+          title: Uusi ehdotus
+        orders:
+          label: 'Järjestä ehdotukset:'
+          most_voted: Eniten ääniä saaneet
+          random: Satunnainen
+          recent: Viimeisimmät
+        proposal:
+          view_proposal: Näytä ehdotus
+        show:
+          proposal_accepted_reason: 'Tämä ehdotus on hyväksytty, koska:'
+          proposal_rejected_reason: 'Tämä ehdotus on hylätty, koska:'
+          report: Ilmoita
+        vote_button:
+          already_voted: Jo äänestetty
+          no_votes_remaining: Ei ääniä jäljellä
+          vote: Äänestä
+          votes_blocked: Äänestys estetty
+        votes_count:
+          count:
+            one: ÄÄNT
+            other: ÄÄNTÄ
+        votes_limit:
+          vote_limit:
+            description: Voit maksimissaan äänestää %{limit} ehdotusta sen
+              sijaan, että voisit äänestää kuinka montaa haluat.
+            left: Jäljellä
+            title: Sinulla on %{limit} ääntä käytettävänäsi
+            votes: Äänet
+    resource_links:
+      included_proposals:
+        proposal_projects: 'Ehdotus esiintyy näissä projekteissa:'
+        proposal_results: 'Ehdotus esiintyy näissä tuloksissa:'
+      proposals_from_meeting:
+        proposal_meetings: Liittyvät tapaamiset
