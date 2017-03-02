@@ -262,10 +262,10 @@ fi:
             one: "%{count} prosessi"
             other: "%{count} prosessia"
         participatory_process:
-          active_step: 'Nykyinen vaihe:'
+          active_step: 'Aktiivinen vaihe:'
           take_part: Osallistu
         promoted_process:
-          active_step: 'Nykyinen vaihe:'
+          active_step: 'Aktiivinen vaihe:'
           more_info: Lisätietoja
           take_part: Osallistu
       process_header:
