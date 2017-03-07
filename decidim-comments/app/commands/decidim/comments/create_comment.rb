@@ -22,7 +22,7 @@ module Decidim
         return broadcast(:invalid) if form.invalid?
 
         create_comment
-        send_notification_to_author unless @author == @commentable.author
+        send_notification_to_author if has_author? && !same_author?
 
         broadcast(:ok, @comment)
       end
@@ -47,6 +47,14 @@ module Decidim
             CommentNotificationMailer.comment_created(@author, @comment, @commentable).deliver_later
           end
         end
+      end
+
+      def has_author?
+        @commentable.respond_to?(:author) && @commentable.author.present?
+      end
+
+      def same_author?
+        @author == @commentable.author
       end
     end
   end
