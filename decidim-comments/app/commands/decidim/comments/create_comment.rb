@@ -40,10 +40,12 @@ module Decidim
       end
 
       def send_notification_to_author
-        if @comment.depth > 0 && @commentable.author.replies_notifications?
-          CommentNotificationMailer.reply_created(@author, @comment, @commentable, @comment.root_commentable).deliver_later
-        elsif @comment.depth == 0 && @commentable.author.comments_notifications?
-          CommentNotificationMailer.comment_created(@author, @comment, @commentable).deliver_later
+        if @commentable.author
+          if @comment.depth > 0 && @commentable.author.replies_notifications?
+            CommentNotificationMailer.reply_created(@author, @comment, @commentable, @comment.root_commentable).deliver_later
+          elsif @comment.depth == 0 && @commentable.author.comments_notifications?
+            CommentNotificationMailer.comment_created(@author, @comment, @commentable).deliver_later
+          end
         end
       end
     end
