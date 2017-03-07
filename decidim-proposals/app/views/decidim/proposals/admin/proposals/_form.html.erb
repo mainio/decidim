@@ -6,6 +6,12 @@
   <%= form.text_area :body, rows: 10 %>
 </div>
 
+<% if feature_settings.geocoding_enabled? %>
+  <div class="field">
+    <%= form.text_field :address %>
+  </div>
+<% end %>
+
 <% if @form.categories&.any? %>
   <div class="field">
     <%= form.categories_select :decidim_category_id, @form.categories, include_blank: t(".select_a_category") %>

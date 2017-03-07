@@ -20,6 +20,7 @@ Decidim.register_feature(:proposals) do |feature|
     settings.attribute :proposal_answering_enabled, type: :boolean, default: true
     settings.attribute :official_proposals_enabled, type: :boolean, default: true
     settings.attribute :comments_enabled, type: :boolean, default: true
+    settings.attribute :geocoding_enabled, type: :boolean, default: false
   end
 
   feature.settings(:step) do |settings|
@@ -52,7 +53,8 @@ Decidim.register_feature(:proposals) do |feature|
         }
       )
       categories = feature.participatory_process.categories
-      scopes = feature.organization.scopes
+      # So that we have some with global scope
+      scopes = feature.organization.scopes + [nil]
 
       20.times do |n|
         proposal = Decidim::Proposals::Proposal.create!(
@@ -76,7 +78,7 @@ Decidim.register_feature(:proposals) do |feature|
         end
 
         rand(3).times do |m|
-          email = "vote-author-#{process.id}-#{n}-#{m}@decidim.org"
+          email = "vote-author-#{process.id}-#{n}-#{m}@example.org"
           name = "#{Faker::Name.name} #{process.id} #{n} #{m}"
 
           author = Decidim::User.create!(email: email,

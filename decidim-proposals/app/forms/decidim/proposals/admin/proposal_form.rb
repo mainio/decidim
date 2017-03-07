@@ -8,10 +8,14 @@ module Decidim
 
         attribute :title, String
         attribute :body, String
+        attribute :address, String
+        attribute :latitude, Float
+        attribute :longitude, Float
         attribute :decidim_category_id, Integer
         attribute :decidim_scope_id, Integer
 
         validates :title, :body, presence: true
+        validates :address, geocoding: true, if: -> { current_feature.settings.geocoding_enabled? }
         validates :category, presence: true, if: ->(form) { form.decidim_category_id.present? }
         validates :scope, presence: true, if: ->(form) { form.decidim_scope_id.present? }
 
