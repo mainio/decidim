@@ -4,8 +4,8 @@ fi:
     attributes:
       proposal:
         body: Runko
-        category_id: Kategoria
-        scope_id: Konteksti
+        decidim_category_id: Kategoria
+        decidim_scope_id: Konteksti
         title: Otsikko
         user_group_id: Luo ehdotus käyttäjänä
       proposal_answer:
@@ -35,6 +35,7 @@ fi:
       actions:
         all_proposals: Kaikki ehdotukset
         answer: Vastaa
+        edit: Muokkaa
         hidden_proposals: Piilotetut ehdotukset
         hide: Piilota
         new: Uusi ehdotus
@@ -58,6 +59,9 @@ fi:
           create:
             invalid: Ehdotuksen luonnissa tapahtui virhe
             success: Ehdotus luotu onnistuneesti
+          update:
+            invalid: Ehdotuksen päivityksessä tapahtui virhe
+            success: Ehdotus onnistuneesti päivitetty
           form:
             select_a_category: Valitse kategoria
           hide:
@@ -68,6 +72,9 @@ fi:
           new:
             create: Luo ehdotus
             title: Uusi ehdotus
+          edit:
+            update: Päivitä ehdotusta
+            title: Päivitä ehdotusta
           unreport:
             invalid: Ehdotuksen ilmoituksen poistamisessa tapahtui virhe
             success: Ehdotuksen ilmoitus poistettu onnistuneesti

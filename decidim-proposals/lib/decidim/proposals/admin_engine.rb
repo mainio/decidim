@@ -8,7 +8,7 @@ module Decidim
       paths["db/migrate"] = nil
 
       routes do
-        resources :proposals, only: [:index, :new, :create] do
+        resources :proposals, only: [:index, :new, :create, :edit, :update] do
           resources :proposal_answers, only: [:edit, :update]
           member do
             put :unreport

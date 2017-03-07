@@ -4,8 +4,8 @@ en:
     attributes:
       proposal:
         body: Body
-        category_id: Category
-        scope_id: Scope
+        decidim_category_id: Category
+        decidim_scope_id: Scope
         title: Title
         user_group_id: Create proposal as
       proposal_answer:
@@ -35,6 +35,7 @@ en:
       actions:
         all_proposals: All proposals
         answer: Answer
+        edit: Edit
         hidden_proposals: Hidden proposals
         hide: Hide
         new: New proposal
@@ -58,6 +59,9 @@ en:
           create:
             invalid: There's been a problem creating this proposal
             success: Proposal successfully created
+          update:
+            invalid: There's been a problem updating this proposal
+            success: Proposal successfully updated
           form:
             select_a_category: Select a category
           hide:
@@ -68,6 +72,9 @@ en:
           new:
             create: Create proposal
             title: New proposal
+          edit:
+            update: Update proposal
+            title: Update proposal
           unreport:
             invalid: There's been a problem unreporting this proposal
             success: Proposal successfully unreported

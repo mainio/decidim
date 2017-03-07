@@ -3,8 +3,8 @@ es:
     attributes:
       proposal:
         body: Cuerpo
-        category_id: Categoría
-        scope_id: Ámbito
+        decidim_category_id: Categoría
+        decidim_scope_id: Ámbito
         title: Título
         user_group_id: Crear propuesta como
       proposal_report:
@@ -35,6 +35,7 @@ es:
       actions:
         all_proposals: Todas las propuestas
         answer: Respuesta
+        edit: Editar
         hidden_proposals: Propuestas ocultas
         hide: Esconder
         new: Nueva propuesta
@@ -58,6 +59,9 @@ es:
           create:
             invalid: Ha habido un problema al crear esta propuesta
             success: Propuesta creada correctamente
+          update:
+            invalid: Ha habido un problema al editar esta propuesta
+            success: Propuesta editada correctamente
           form:
             select_a_category: Seleccione una categoría
             select_a_scope: Seleccione un ámbito
@@ -69,6 +73,9 @@ es:
           new:
             create: Crear propuesta
             title: Nueva propuesta
+          edit:
+            update: Editar propuesta
+            title: Editar propuesta
           unreport:
             invalid: Ha habido un problema deshaciendo la denuncia de esta propuesta
             success: Denuncia deshecha correctamente

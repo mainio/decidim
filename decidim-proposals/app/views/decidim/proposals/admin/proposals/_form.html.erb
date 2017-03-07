@@ -8,12 +8,12 @@
 
 <% if @form.categories&.any? %>
   <div class="field">
-    <%= form.categories_select :category_id, @form.categories, prompt: t(".select_a_category") %>
+    <%= form.categories_select :decidim_category_id, @form.categories, include_blank: t(".select_a_category") %>
   </div>
 <% end %>
 
 <% if !@form.process_scope %>
   <div class="field">
-    <%= form.collection_select :scope_id, organization_scopes, :id, :name %>
+    <%= form.collection_select :decidim_scope_id, organization_scopes, :id, :name %>
   </div>
 <% end %>

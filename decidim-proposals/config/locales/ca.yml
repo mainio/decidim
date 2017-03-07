@@ -3,8 +3,8 @@ ca:
     attributes:
       proposal:
         body: Cos
-        category_id: Categoria
-        scope_id: Àmbit
+        decidim_category_id: Categoria
+        decidim_scope_id: Àmbit
         title: Títol
         user_group_id: Crear proposta
       proposal_report:
@@ -35,6 +35,7 @@ ca:
       actions:
         all_proposals: totes les propostes
         answer: Respondre
+        edit: Editar
         hidden_proposals: Propostes amagades
         hide: Amagar
         new: Nova proposta
@@ -58,6 +59,9 @@ ca:
           create:
             invalid: Hi ha hagut un problema en crear aquesta proposta
             success: Proposta creada correctament
+          update:
+            invalid: Hi ha hagut un problema en editar aquesta proposta
+            success: Proposta editada correctament
           form:
             select_a_category: Selecciona una categoria
             select_a_scope: Seleccioneu un àmbit
@@ -69,6 +73,9 @@ ca:
           new:
             create: Crear proposta
             title: Nova proposta
+          edit:
+            update: Editar proposta
+            title: Editar proposta
           unreport:
             invalid: Hi ha hagut un problema desfent la denúncia d'aquesta proposta
             success: S'ha desfet la denúncia correctament

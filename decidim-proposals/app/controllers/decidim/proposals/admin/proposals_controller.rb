@@ -29,6 +29,28 @@ module Decidim
           end
         end
 
+        def edit
+          authorize! :update, Proposal
+          @form = form(Admin::ProposalForm).from_model(proposal)
+        end
+
+        def update
+          authorize! :update, Proposal
+          @form = form(Admin::ProposalForm).from_params(params)
+
+          Admin::UpdateProposal.call(proposal, @form) do
+            on(:ok) do
+              flash[:notice] = I18n.t("proposals.update.success", scope: "decidim.proposals.admin")
+              redirect_to proposals_path
+            end
+
+            on(:invalid) do
+              flash.now[:alert] = I18n.t("proposals.update.invalid", scope: "decidim.proposals.admin")
+              render action: "edit"
+            end
+          end
+        end
+
         def unreport
           authorize! :unreport, proposal
 

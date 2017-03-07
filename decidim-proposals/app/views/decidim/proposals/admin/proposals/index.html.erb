@@ -68,6 +68,7 @@
         </td>
         <td class="actions">
           <%= link_to t("actions.answer", scope: "decidim.proposals"), edit_proposal_proposal_answer_path(proposal_id: proposal.id, id: proposal.id) if can? :update, proposal %>
+          <%= link_to t("actions.edit", scope: "decidim.proposals"), edit_proposal_path(proposal) if can? :update, proposal %>
           <% if params[:reported] || params[:hidden] %>
             <% if can? :unreport, proposal %>
               | <%= link_to t("actions.unreport", scope: "decidim.proposals"), unreport_proposal_path(proposal), method: :put, class: "button" %>
