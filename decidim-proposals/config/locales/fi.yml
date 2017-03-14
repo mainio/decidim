@@ -22,6 +22,7 @@ fi:
         settings:
           global:
             comments_enabled: Kommentointi sallittu
+            geocoding_enabled: Geokoodaus päällä
             official_proposals_enabled: Viralliset ehdotukset sallittu
             proposal_answering_enabled: Ehdotuksiin vastaaminen sallittu
             vote_limit: Äänestysrajoite
@@ -50,7 +51,7 @@ fi:
             accepted: Hyväksytty
             answer_proposal: Vastaa ehdotukseen
             rejected: Hylätty
-            title: "Vastaa ehdotukseen: %{title}"
+            title: 'Vastaa ehdotukseen: %{title}'
         proposals:
           answer:
             invalid: Ehdotukseen vastaamisessa esiintyi virhe
@@ -99,8 +100,7 @@ fi:
       proposal_reports:
         create:
           error: Ehdotuksen ilmoittamisessa tapahtui virhe. Yritä uudestaan.
-          success: Ehdotus on onnistuneesti ilmoitettu ja ylläpito tarkastaa
-            sen.
+          success: Ehdotus on onnistuneesti ilmoitettu ja ylläpito tarkastaa sen.
       proposals:
         count:
           proposals_count:
@@ -127,6 +127,7 @@ fi:
           unfold: Avaa
         index:
           new_proposal: Uusi ehdotus
+          view_proposal: Näytä ehdotus
         linked_proposals:
           proposal_votes:
             one: <span class="card--list__data__number">1</span>ääni
@@ -158,8 +159,8 @@ fi:
             other: ÄÄNTÄ
         votes_limit:
           vote_limit:
-            description: Voit maksimissaan äänestää %{limit} ehdotusta sen
-              sijaan, että voisit äänestää kuinka montaa haluat.
+            description: Voit maksimissaan äänestää %{limit} ehdotusta sen sijaan,
+              että voisit äänestää kuinka montaa haluat.
             left: Jäljellä
             title: Sinulla on %{limit} ääntä käytettävänäsi
             votes: Äänet
