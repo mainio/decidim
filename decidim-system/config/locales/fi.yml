@@ -55,9 +55,12 @@ fi:
         create:
           error: Uuden organisaation luonnissa tapahtui virhe.
           success: Organisaatio luotu onnistuneesti.
+        edit:
+          secondary_hosts_hint: Syötä jokainen niistä omalle rivilleen
         index:
           title: Organisaatiot
         new:
+          secondary_hosts_hint: Syötä jokainen niistä omalle rivilleen
           title: Uusi organisaatio
         update:
           error: Organisaation päivityksessä tapahtui virhe.

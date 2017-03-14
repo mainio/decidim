@@ -23,8 +23,8 @@ fi:
         user_group_name: Organisaation nimi
         user_group_phone: Organisaation puhelinnumero
   booleans:
-    'false': 'Ei'
-    'true': 'Kyllä'
+    'false': Ei
+    'true': Kyllä
   carrierwave:
     errors:
       image_too_big: Kuva on liian suuri
@@ -151,6 +151,10 @@ fi:
     pages:
       index:
         title: Lisätietoa
+    participatory_process_groups:
+      show:
+        group_participatory_processes: Prosessit ryhmälle %{group}
+        title: Otsikko
     participatory_process_steps:
       index:
         process_steps: Prosessin vaiheet
@@ -158,6 +162,8 @@ fi:
     participatory_processes:
       index:
         title: Osallistumisprosessit
+      participatory_process_groups:
+        none: Ei ryhmää
       scopes:
         global: Yleinen konteksti
       show:
@@ -197,7 +203,7 @@ fi:
         please_sign_in: Kirjaudu sisään
         sign_up: Rekisteröidy
       reference:
-        reference: "Viite: %{reference}"
+        reference: 'Viite: %{reference}'
       share_modal:
         close_window: Sulje ikkuna
         share: Jaa
@@ -252,6 +258,9 @@ fi:
         navigation: Navigaatio
         sign_in: Kirjaudu sisään
         sign_up: Rekisteröidy
+      participatory_process_groups:
+        participatory_process_group:
+          browse: Selaa
       participatory_processes:
         index:
           promoted_processes: Korostetut prosessit
