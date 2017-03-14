@@ -13,6 +13,7 @@ module Decidim
     delegate :user_groups, to: :current_user, prefix: false
 
     included do
+      helper Decidim::UserProfileHelper
       layout "layouts/decidim/user_profile"
 
       helper_method :available_authorization_handlers,
@@ -25,7 +26,7 @@ module Decidim
     # Public: Available authorization handlers in order to conditionally
     # show the menu element.
     def available_authorization_handlers
-      Decidim.authorization_handlers
+      current_organization.available_authorizations.map(&:constantize)
     end
   end
 end
