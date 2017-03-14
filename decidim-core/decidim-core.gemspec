@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rectify", "~> 0.8.0"
   s.add_dependency "sassc-rails", "~> 1.3.0"
   s.add_dependency "foundation-rails", "~> 6.3.0.0"
+  s.add_dependency "autoprefixer-rails", ["~> 6.7", ">= 6.7.4"]
   s.add_dependency "jquery-rails", "~> 4.2.2"
   s.add_dependency "carrierwave", "~> 1.0.0"
   s.add_dependency "foundation_rails_helper", "~> 3.0.0.rc"
@@ -37,13 +38,14 @@ Gem::Specification.new do |s|
   s.add_dependency "truncato", "~> 0.7.9"
   s.add_dependency "mini_magick", "~> 4.6.1"
   s.add_dependency "file_validators", "~> 2.1.0"
-  s.add_dependency "omniauth", "~> 1.5.0"
+  s.add_dependency "omniauth", "~> 1.6.1"
   s.add_dependency "omniauth-facebook", "~> 4.0.0"
   s.add_dependency "omniauth-twitter", "~> 1.4.0"
   s.add_dependency "omniauth-google-oauth2", "~> 0.4.1"
   s.add_dependency "wisper", "~> 1.6.1"
   s.add_dependency "premailer-rails", "~> 1.9.5"
   s.add_dependency "nokogiri", "~> 1.7.0.1"
+  s.add_dependency "geocoder", "~> 1.4.2"
 
   s.add_dependency "decidim-api", Decidim.version
 

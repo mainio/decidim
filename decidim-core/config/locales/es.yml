@@ -150,6 +150,10 @@ es:
     pages:
       index:
         title: Más información
+    participatory_process_groups:
+      show:
+        group_participatory_processes: Procesos para %{group}
+        title: Grupo de procesos participativos
     participatory_process_steps:
       index:
         process_steps: Las fases de proceso
@@ -157,6 +161,10 @@ es:
     participatory_processes:
       index:
         title: Procesos participativos
+      participatory_process_groups:
+        none: Ninguno
+      scopes:
+        global: Ámbito global
       show:
         developer_group: Grupo promotor
         end_date: Fecha de finalización
@@ -193,6 +201,8 @@ es:
       login_modal:
         please_sign_in: Por favor, regístrate
         sign_up: Regístrate
+      reference:
+        reference: 'Referencia: %{reference}'
       share_modal:
         close_window: Cerrar ventana
         share: Compartir
@@ -214,6 +224,8 @@ es:
         someone_invited_you: Alguien te ha invitado a %{application}, puedes aceptar la invitación con el enlace a continuación.
       invite_admin:
         subject: Has sido invitado para gestionar %{organization}
+      invite_collaborator:
+        subject: Has sido invitado a colaborar en %{organization}
       organization_admin_invitation_instructions:
         subject: Has sido invitado para gestionar %{organization}
       password_change:
@@ -247,6 +259,9 @@ es:
         navigation: Navegación
         sign_in: Entra
         sign_up: Regístrate
+      participatory_process_groups:
+        participatory_process_group:
+          browse: Explorar
       participatory_processes:
         index:
           promoted_processes: Procesos destacados

@@ -11,6 +11,15 @@ module Decidim
 
         expect(helper.translated_attribute(attribute)).to eq("你好")
       end
+
+      context "when therte is no translation for the given locale" do
+        it "returns an empty string" do
+          attribute = { "ca" => "Hola" }
+          I18n.locale = :'zh-CN'
+
+          expect(helper.translated_attribute(attribute)).to eq("")
+        end
+      end
     end
 
     describe "#multi_translation" do
@@ -24,6 +33,7 @@ module Decidim
 
       context "when given only a key" do
         it "returns a hash scoped to the available list of locales" do
+          allow(I18n).to receive(:available_locales).and_return [:en, :ca, :es]
           result = TranslationsHelper.multi_translation("booleans.true")
           expect(result.keys.length).to eq(3)
           expect(result).to include(en: "Yes", ca: "Sí", es: "Sí")

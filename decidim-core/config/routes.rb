@@ -21,6 +21,7 @@ Decidim::Core::Engine.routes.draw do
 
   resource :locale, only: [:create]
 
+  resources :participatory_process_groups, only: :show, path: "processes_groups"
   resources :participatory_processes, only: [:index, :show], path: "processes" do
     resources :participatory_process_steps, only: [:index], path: "steps"
   end
@@ -50,6 +51,7 @@ Decidim::Core::Engine.routes.draw do
 
   resources :pages, only: [:index, :show], format: false
 
+  get "/static_map", to: "static_map#show", as: :static_map
   get "/cookies/accept", to: "cookie_policy#accept", as: :accept_cookies
 
   match "/404", to: "pages#show", id: "404", via: :all

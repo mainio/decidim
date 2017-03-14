@@ -150,6 +150,10 @@ ca:
     pages:
       index:
         title: Més informació
+    participatory_process_groups:
+      show:
+        group_participatory_processes: Processos per a %{group}
+        title: Grup de processos participatius
     participatory_process_steps:
       index:
         process_steps: Fases del procés
@@ -157,6 +161,10 @@ ca:
     participatory_processes:
       index:
         title: Processos participatius
+      participatory_process_groups:
+        none: cap
+      scopes:
+        global: Àmbit global
       show:
         developer_group: Grup promotor
         end_date: Data de finalització
@@ -193,6 +201,8 @@ ca:
       login_modal:
         please_sign_in: Si us plau, inicia sessió
         sign_up: Donar-se d'alta
+      reference:
+        reference: 'Referència: %{reference}'
       share_modal:
         close_window: Tanca la finestra
         share: Compartir
@@ -214,6 +224,8 @@ ca:
         someone_invited_you: Algú t'ha convidat a %{application}, pots acceptar la invitació amb l'enllaç a continuació.
       invite_admin:
         subject: Has estat convidat a gestionar %{organization}
+      invite_collaborator:
+        subject: Has estat convidat a col·laborar a %{organization}
       organization_admin_invitation_instructions:
         subject: Has estat convidat a gestionar %{organization}
       password_change:
@@ -247,6 +259,9 @@ ca:
         navigation: Navegació
         sign_in: Entra
         sign_up: Registra't
+      participatory_process_groups:
+        participatory_process_group:
+          browse: Explorar
       participatory_processes:
         index:
           promoted_processes: Processos destacats

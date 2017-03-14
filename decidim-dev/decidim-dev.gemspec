@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rspec-rails", "~> 3.5"
   s.add_dependency "rspec-repeat", "~> 1.0.2"
   s.add_dependency "byebug"
-  s.add_dependency "wisper-rspec"
+  s.add_dependency "wisper-rspec", "~> 0.0.3"
   s.add_dependency "listen", "~> 3.1.0"
   s.add_dependency "launchy"
   s.add_dependency "i18n-tasks", "0.9.12"
@@ -35,4 +35,5 @@ Gem::Specification.new do |s|
   s.add_dependency "db-query-matchers", "~> 0.7.0"
   s.add_dependency "letter_opener_web", "~> 1.3.0"
   s.add_dependency "rspec-html-matchers", "~> 0.9.1"
+  s.add_dependency "webmock", "~> 2.3.2"
 end
