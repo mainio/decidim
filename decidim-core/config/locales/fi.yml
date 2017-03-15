@@ -2,6 +2,8 @@
 fi:
   activemodel:
     attributes:
+      report:
+        details: Lisätiedot
       user:
         email: Sähköpostiosoitteesi
         name: Nimesi
@@ -174,6 +176,19 @@ fi:
         participatory_structure: Osallistumisrakenne
         scope: Konteksti
         target: Kohde
+    reported_mailer:
+      hide:
+        hello: Hei %{name},
+        report_html: "<p>Seuraava sisältö:<p>%{content}<p>on lisätty automaattisesti.</p>"
+        subject: Resurssi on piilotettu automaattisesti
+      report:
+        hello: Hei %{name},
+        report_html: "<p>Seuraava sisältö:<p>%{content}<p>on raportoitu.</p>"
+        subject: Resurssi on raportoitu
+    reports:
+      create:
+        error: Raportin luonnissa tapahtui virhe. Yritä uudestaan.
+        success: Raportti on luotu onnistuneesti ja hallintakäyttäjä tarkastaa sen.
     shared:
       action_authorization_modal:
         incomplete:

@@ -123,6 +123,7 @@ fi:
         filters_small_view:
           close_modal: Sulje ikkuna
           filter: Suodata
+          filter_by: Suodata
           filter_for: Suodata
           unfold: Avaa
         index:
