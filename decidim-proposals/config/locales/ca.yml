@@ -9,8 +9,6 @@ ca:
         user_group_id: Crear proposta
       proposal_answer:
         answer: Resposta
-      proposal_report:
-        details: Comentaris addicionals
   decidim:
     features:
       proposals:
@@ -122,7 +120,7 @@ ca:
         filters_small_view:
           close_modal: Tancar finestra
           filter: Filtra
-          filter_for: Filtrar per
+          filter_by: Filtrar per
           unfold: Desplegar
         index:
           new_proposal: Nova proposta
