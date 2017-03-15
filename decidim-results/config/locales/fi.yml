@@ -63,6 +63,11 @@ fi:
           category: Kategoria
           scopes: Konteksti
           search: Haku
+        filters_small_view:
+          close_modal: Sulje ikkuna
+          filter: Suodata
+          filter_by: Suodata
+          unfold: Avaa
         show:
           stats:
             attendees: Osallistujat

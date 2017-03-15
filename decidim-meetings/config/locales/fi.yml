@@ -70,15 +70,16 @@ fi:
         filters_small_view:
           close_modal: Sulje ikkuna
           filter: Suodata
+          filter_by: Suodata
           filter_for: Suodata
           unfold: Avaa
         index:
           view_meeting: Näytä tapaaminen
         meetings:
-          no_meetings_warning: Yksikään tapaaminen ei vastaa hakukriteerejäsi
-            tai yhtään tapaamista ei ole määritelty
-          upcoming_meetings_warning: Tällä hetkellä tapaamisia ei ole
-            määritelty, mutta täältä löydät kaikki aikaisemmat tapaamiset.
+          no_meetings_warning: Yksikään tapaaminen ei vastaa hakukriteerejäsi tai
+            yhtään tapaamista ei ole määritelty
+          upcoming_meetings_warning: Tällä hetkellä tapaamisia ei ole määritelty,
+            mutta täältä löydät kaikki aikaisemmat tapaamiset.
         show:
           attendees: Osallistujamäärä
           contributions: Kontribuutioiden määrä
