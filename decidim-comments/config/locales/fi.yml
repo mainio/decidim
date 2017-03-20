@@ -1,4 +1,3 @@
----
 fi:
   activerecord:
     errors:
@@ -10,7 +9,7 @@ fi:
         comment_created:
           new_comment_html: Uusi kommentti henkilöltä <b>%{commenter}</b> osoitteessa <b>%{commentable_link}</b>
         hello: Hei %{name},
-        manage_email_subscriptions_html: "Voit lopettaa näiden viestien vastaanottamisen vaihtamalla asetuksiasi osoitteessa: %{link}."
+        manage_email_subscriptions_html: 'Voit lopettaa näiden viestien vastaanottamisen vaihtamalla asetuksiasi osoitteessa: %{link}.'
         notifications_settings_link: ilmoitusten asetussivu
         reply_created:
           new_reply_html: Henkilö <b>%{commenter}</b> on vastannut kommenttiisi osoitteessa <b>%{commentable_link}</b>
@@ -22,8 +21,7 @@ fi:
             subject: Kommenttiisi on vastattu
     components:
       add_comment_form:
-        account_message: "<a href=\"%{sign_in_url}\">Kirjaudu sisään käyttäjätililläsi</a> tai <a href=\"%{sign_up_url}\">luo käyttäjätili</a> kommentoidaksesi.
-"
+        account_message: "<a href=\"%{sign_in_url}\">Kirjaudu sisään käyttäjätililläsi</a> tai <a href=\"%{sign_up_url}\">luo käyttäjätili</a> kommentoidaksesi.\n"
         form:
           body:
             label: Kommentti

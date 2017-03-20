@@ -31,15 +31,9 @@ es:
             votes_enabled: Votos habilitados
     proposals:
       actions:
-        all_proposals: Todas las propuestas
         answer: Respuesta
-        edit: Editar
-        hidden_proposals: Propuestas ocultas
-        hide: Esconder
         new: Nueva propuesta
-        reported_proposals: Propuestas denunciadas
         title: Acciones
-        unreport: Deshacer denuncia
       admin:
         models:
           proposal:
@@ -62,20 +56,11 @@ es:
             success: Propuesta editada correctamente
           form:
             select_a_category: Seleccione una categoría
-          hide:
-            invalid: Ha habido un error al esconder esta propuesta
-            success: Propuesta escondida correctamente
           index:
             title: Propuestas
           new:
             create: Crear propuesta
             title: Nueva propuesta
-          edit:
-            update: Editar propuesta
-            title: Editar propuesta
-          unreport:
-            invalid: Ha habido un problema deshaciendo la denuncia de esta propuesta
-            success: Denuncia deshecha correctamente
       answers:
         accepted: Aceptadas
         not_answered: No contestada
@@ -88,23 +73,9 @@ es:
           fields:
             category: Categoría
             official_proposal: Propuesta oficial
-            reports: Informes
             scope: Ámbito
             state: Estado
             title: Título
-      proposal_reported_mailer:
-        hide:
-          hello: Hola %{name},
-          report_html: La propuesta %{proposal_link} se ha escondido de forma automática.
-          subject: Una propuesta se ha escondido de forma automática
-        report:
-          hello: Hola %{name},
-          report_html: La propuesta %{proposal_link} ha sido denunciada.
-          subject: Una propuesta ha sido denunciada
-      proposal_reports:
-        create:
-          error: Ocurrió un error al denunciar la propuesta. Por favor, inténtalo de nuevo.
-          success: La propuesta ha sido denunciada correctamente y será revisada por un administrador.
       proposals:
         count:
           proposals_count:

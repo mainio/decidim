@@ -1,4 +1,3 @@
----
 fi:
   activemodel:
     attributes:
@@ -25,8 +24,8 @@ fi:
         user_group_name: Organisaation nimi
         user_group_phone: Organisaation puhelinnumero
   booleans:
-    'false': Ei
-    'true': Kyllä
+    'false': 'Ei'
+    'true': 'Kyllä'
   carrierwave:
     errors:
       image_too_big: Kuva on liian suuri
@@ -267,7 +266,7 @@ fi:
         link_label: täältä
         ok: Hyväksyn
       footer:
-        made_with_open_source: Sivusto rakennettu <a target="_blank" href="https://github.com/AjuntamentdeBarcelona/decidim">avoimen lähdekoodin ohjelmistolla</a>.
+        made_with_open_source: 'Sivusto rakennettu <a target="_blank" href="https://github.com/AjuntamentdeBarcelona/decidim">avoimen lähdekoodin ohjelmistolla</a>.'
       header:
         close_menu: Sulje valikko
         navigation: Navigaatio

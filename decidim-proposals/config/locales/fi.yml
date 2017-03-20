@@ -1,4 +1,3 @@
----
 fi:
   activemodel:
     attributes:
@@ -10,8 +9,6 @@ fi:
         user_group_id: Luo ehdotus käyttäjänä
       proposal_answer:
         answer: Vastaa
-      proposal_report:
-        details: Muut kommentit
   decidim:
     features:
       proposals:
@@ -34,15 +31,9 @@ fi:
             votes_enabled: Äänestys sallittu
     proposals:
       actions:
-        all_proposals: Kaikki ehdotukset
         answer: Vastaa
-        edit: Muokkaa
-        hidden_proposals: Piilotetut ehdotukset
-        hide: Piilota
         new: Uusi ehdotus
-        reported_proposals: Raportoidut ehdotukset
         title: Toiminnot
-        unreport: Poista ilmoitus
       admin:
         models:
           proposal:
@@ -60,25 +51,13 @@ fi:
           create:
             invalid: Ehdotuksen luonnissa tapahtui virhe
             success: Ehdotus luotu onnistuneesti
-          update:
-            invalid: Ehdotuksen päivityksessä tapahtui virhe
-            success: Ehdotus onnistuneesti päivitetty
           form:
             select_a_category: Valitse kategoria
-          hide:
-            invalid: Ehdotuksen piilotuksessa tapahtui virhe
-            success: Ehdotus onnistuneesti piilotettu
           index:
             title: Ehdotukset
           new:
             create: Luo ehdotus
             title: Uusi ehdotus
-          edit:
-            update: Päivitä ehdotusta
-            title: Päivitä ehdotusta
-          unreport:
-            invalid: Ehdotuksen ilmoituksen poistamisessa tapahtui virhe
-            success: Ehdotuksen ilmoitus poistettu onnistuneesti
       answers:
         accepted: Hyväksytty
         not_answered: Vastaamaton
@@ -91,23 +70,9 @@ fi:
           fields:
             category: Kategoria
             official_proposal: Virallinen ehdotus
-            reports: Ilmoitukset
             scope: Konteksti
             state: Tila
             title: Otsikko
-      proposal_reported_mailer:
-        hide:
-          hello: Hei %{name},
-          report_html: Ehdotus %{proposal_link} on piilotettu automaattisesti.
-          subject: Ehdotus on piilotettu automaattisesti
-        report:
-          hello: Hei %{name},
-          report_html: Ehdotus %{proposal_link} on ilmoitettu.
-          subject: Ehdotus on ilmoitettu
-      proposal_reports:
-        create:
-          error: Ehdotuksen ilmoittamisessa tapahtui virhe. Yritä uudestaan.
-          success: Ehdotus on onnistuneesti ilmoitettu ja ylläpito tarkastaa sen.
       proposals:
         count:
           proposals_count:
@@ -131,7 +96,6 @@ fi:
           close_modal: Sulje ikkuna
           filter: Suodata
           filter_by: Suodata
-          filter_for: Suodata
           unfold: Avaa
         index:
           new_proposal: Uusi ehdotus
@@ -167,8 +131,7 @@ fi:
             other: ÄÄNTÄ
         votes_limit:
           vote_limit:
-            description: Voit maksimissaan äänestää %{limit} ehdotusta sen sijaan,
-              että voisit äänestää kuinka montaa haluat.
+            description: Voit maksimissaan äänestää %{limit} ehdotusta sen sijaan, että voisit äänestää kuinka montaa haluat.
             left: Jäljellä
             title: Sinulla on %{limit} ääntä käytettävänäsi
             votes: Äänet
