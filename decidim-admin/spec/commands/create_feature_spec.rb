@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -5,7 +7,8 @@ module Decidim
     describe CreateFeature do
       let(:manifest) { Decidim.find_feature_manifest(:dummy) }
       let(:form) do
-        instance_double(FeatureForm,
+        instance_double(
+          FeatureForm,
           name: {
             en: "My feature",
             ca: "La meva funcionalitat",
@@ -16,6 +19,12 @@ module Decidim
           settings: {
             dummy_global_attribute_1: true,
             dummy_global_attribute_2: false
+          },
+          default_step_settings: {
+            step.id.to_s => {
+              dummy_step_attribute_1: true,
+              dummy_step_attribute_2: false
+            }
           },
           step_settings: {
             step.id.to_s => {
@@ -33,9 +42,9 @@ module Decidim
         let(:valid) { true }
 
         it "broadcasts :ok and creates the feature" do
-          expect {
+          expect do
             CreateFeature.call(manifest, form, participatory_process)
-          }.to broadcast(:ok)
+          end.to broadcast(:ok)
 
           expect(participatory_process.features).not_to be_empty
 
@@ -67,9 +76,9 @@ module Decidim
         let(:valid) { false }
 
         it "creates the feature" do
-          expect {
+          expect do
             CreateFeature.call(manifest, form, participatory_process)
-          }.to broadcast(:invalid)
+          end.to broadcast(:invalid)
 
           expect(participatory_process.features).to be_empty
         end

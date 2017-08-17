@@ -3,9 +3,10 @@
 require "spec_helper"
 
 describe "Participatory process admin manages participatory processes", type: :feature do
-  include_context "participatory process admin"
-  let(:user) { process_admin }
+  include_context "participatory process administration by process admin"
+
   it_behaves_like "manage processes examples"
+  it_behaves_like "manage processes announcements"
 
   before do
     switch_to_host(organization.host)
@@ -14,7 +15,7 @@ describe "Participatory process admin manages participatory processes", type: :f
   end
 
   it "cannot create a new participatory_process" do
-    expect(page).not_to have_selector(".actions .new")
+    expect(page).to have_no_selector(".actions .new")
   end
 
   context "deleting a participatory process" do
@@ -27,7 +28,7 @@ describe "Participatory process admin manages participatory processes", type: :f
 
     it "cannot delete a participatory_process" do
       within find("tr", text: translated(participatory_process2.title)) do
-        expect(page).not_to have_content("Destroy")
+        expect(page).to have_no_content("Destroy")
       end
     end
   end

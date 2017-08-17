@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
-RSpec.shared_examples "create a proposal" do |with_author|
+
+shared_examples "create a proposal" do |with_author|
   let(:feature) { create(:proposal_feature) }
   let(:organization) { feature.organization }
   let(:form) do
@@ -13,16 +13,20 @@ RSpec.shared_examples "create a proposal" do |with_author|
   end
   let(:author) { create(:user, organization: organization) } if with_author
 
+  let(:has_address) { false }
   let(:address) { nil }
   let(:latitude) { 40.1234 }
   let(:longitude) { 2.1234 }
+  let(:attachment_params) { nil }
 
   describe "call" do
     let(:form_params) do
       {
         title: "A reasonable proposal title",
         body: "A reasonable proposal body",
-        address: address
+        address: address,
+        has_address: has_address,
+        attachment: attachment_params
       }
     end
 
@@ -73,21 +77,57 @@ RSpec.shared_examples "create a proposal" do |with_author|
       context "when geocoding is enabled" do
         let(:feature) { create(:proposal_feature, :with_geocoding_enabled) }
 
-        context "when the address is present" do
-          let(:address) { "Carrer Pare Llaurador 113, baixos, 08224 Terrassa" }
+        context "when the has address checkbox is checked" do
+          let(:has_address) { true }
 
-          before do
-            Geocoder::Lookup::Test.add_stub(address, [
-              { 'latitude' => latitude, 'longitude' => longitude }
-            ])
+          context "when the address is present" do
+            let(:address) { "Carrer Pare Llaurador 113, baixos, 08224 Terrassa" }
+
+            before do
+              Geocoder::Lookup::Test.add_stub(
+                address,
+                [{ "latitude" => latitude, "longitude" => longitude }]
+              )
+            end
+
+            it "sets the latitude and longitude" do
+              command.call
+              proposal = Decidim::Proposals::Proposal.last
+
+              expect(proposal.latitude).to eq(latitude)
+              expect(proposal.longitude).to eq(longitude)
+            end
+          end
+        end
+      end
+
+      context "when attachments are allowed", processing_uploads_for: Decidim::AttachmentUploader do
+        let(:feature) { create(:proposal_feature, :with_attachments_allowed) }
+        let(:attachment_params) do
+          {
+            title: "My attachment",
+            file: Decidim::Dev.test_file("city.jpeg", "image/jpeg")
+          }
+        end
+
+        it "creates an atachment for the proposal" do
+          expect do
+            command.call
+          end.to change { Decidim::Attachment.count }.by(1)
+          last_proposal = Decidim::Proposals::Proposal.last
+          last_attachment = Decidim::Attachment.last
+          expect(last_attachment.attached_to).to eq(last_proposal)
+        end
+
+        context "when attachment is left blank" do
+          let(:attachment_params) do
+            {
+              title: ""
+            }
           end
 
-          it "sets the latitude and longitude" do
-            command.call
-            proposal = Decidim::Proposals::Proposal.last
-
-            expect(proposal.latitude).to eq(latitude)
-            expect(proposal.longitude).to eq(longitude)
+          it "broadcasts ok" do
+            expect { command.call }.to broadcast(:ok)
           end
         end
       end

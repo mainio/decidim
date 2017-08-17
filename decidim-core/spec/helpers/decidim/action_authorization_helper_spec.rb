@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -12,14 +13,14 @@ module Decidim
         handler_name: handler_name,
         code: code,
         data: data,
-        :"ok?" => ok?
+        "ok?": ok?
       )
     end
 
     let(:ok?) { false }
     let(:code) { :missing }
     let(:handler_name) { "foo_authorization" }
-    let(:data) { { fields: ["foo", "bar"] } }
+    let(:data) { { fields: %w(foo bar) } }
 
     before do
       allow(helper).to receive(:current_user).and_return(user)

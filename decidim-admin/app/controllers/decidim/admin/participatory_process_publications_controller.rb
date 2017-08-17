@@ -1,17 +1,16 @@
 # frozen_string_literal: true
-require_dependency "decidim/admin/application_controller"
 
 module Decidim
   module Admin
     # Controller that allows managing participatory process publications.
     #
-    class ParticipatoryProcessPublicationsController < ApplicationController
+    class ParticipatoryProcessPublicationsController < Decidim::Admin::ApplicationController
       include Concerns::ParticipatoryProcessAdmin
 
       def create
-        authorize! :publish, participatory_process
+        authorize! :publish, current_participatory_process
 
-        PublishParticipatoryProcess.call(participatory_process) do
+        PublishParticipatoryProcess.call(current_participatory_process) do
           on(:ok) do
             flash[:notice] = I18n.t("participatory_process_publications.create.success", scope: "decidim.admin")
           end
@@ -25,9 +24,9 @@ module Decidim
       end
 
       def destroy
-        authorize! :publish, participatory_process
+        authorize! :publish, current_participatory_process
 
-        UnpublishParticipatoryProcess.call(participatory_process) do
+        UnpublishParticipatoryProcess.call(current_participatory_process) do
           on(:ok) do
             flash[:notice] = I18n.t("participatory_process_publications.destroy.success", scope: "decidim.admin")
           end

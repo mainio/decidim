@@ -1,14 +1,13 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Proposals
     describe ProposalsController, type: :controller do
-      let(:user) { create(:user, :confirmed, organization: feature.organization) }
+      routes { Decidim::Proposals::Engine.routes }
 
-      routes do
-        Decidim::Proposals::Engine.routes
-      end
+      let(:user) { create(:user, :confirmed, organization: feature.organization) }
 
       before do
         @request.env["decidim.current_organization"] = feature.organization

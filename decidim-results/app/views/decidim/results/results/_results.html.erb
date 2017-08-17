@@ -1,3 +1,5 @@
+<%= render partial: "decidim/shared/results_per_page" %>
+
 <div class="row small-up-1 medium-up-2 card-grid">
   <% results.each do |result| %>
     <div class="column">
@@ -7,7 +9,7 @@
             <h5 class="card__title"><%= translated_attribute result.title %></h5>
           <% end %>
           <%== translated_attribute result.description %>
-          <%= render partial: "tags", locals: { result: result } %>
+          <%= render partial: "decidim/shared/tags", locals: { resource: result, tags_class_extra: "tags--result" } %>
         </div>
       </article>
     </div>

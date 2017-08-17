@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   describe UpdateAccount, perform_enqueued: true do
     let(:command) { described_class.new(user, form) }
-    let(:user) { create(:user) }
+    let(:user) { create(:user, :confirmed) }
     let(:valid) { true }
     let(:data) do
       {
@@ -100,6 +102,19 @@ module Decidim
         it "broadcasts invalid" do
           expect { command.call }.to broadcast(:ok)
           expect(user.reload.valid_password?("test123")).to eq(true)
+        end
+      end
+
+      describe "when the avatar dimensions are too big" do
+        let(:message) { "Avatar is too big." }
+        before do
+          expect(user).to receive(:valid?).and_return(false)
+          expect(user).to receive(:errors).and_return(avatar: message).at_least(:once)
+          allow(form).to receive_message_chain(:errors, :add).with(:avatar, message)
+        end
+
+        it "broadcasts invalid" do
+          expect { command.call }.to broadcast(:invalid)
         end
       end
     end

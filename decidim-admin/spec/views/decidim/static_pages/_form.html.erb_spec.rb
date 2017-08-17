@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -13,7 +15,7 @@ module Decidim
       )
     end
     let(:ability) do
-      Decidim::Admin::Abilities::AdminUser.new(build(:user, :admin), {})
+      Decidim::Admin::Abilities::AdminAbility.new(build(:user, :admin), {})
     end
 
     before do

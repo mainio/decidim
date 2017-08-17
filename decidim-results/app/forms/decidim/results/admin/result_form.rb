@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Results
     module Admin
@@ -21,6 +22,10 @@ module Decidim
 
         def map_model(model)
           self.proposal_ids = model.linked_resources(:proposals, "included_proposals").pluck(:id)
+
+          return unless model.categorization
+
+          self.decidim_category_id = model.categorization.decidim_category_id
         end
 
         def proposals
@@ -36,7 +41,7 @@ module Decidim
         end
 
         def scope
-          @scope ||= process_scope || organization_scopes.where(id: decidim_scope_id).first
+          @scope ||= organization_scopes.where(id: decidim_scope_id).first || process_scope
         end
 
         def category

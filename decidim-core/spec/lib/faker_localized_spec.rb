@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 require "decidim/faker/localized"
 
@@ -22,7 +24,7 @@ module Decidim
       let(:available_locales) { [:en, :ca] }
 
       before do
-        I18n.available_locales = available_locales
+        allow(Decidim).to receive(:available_locales).and_return available_locales
       end
 
       it_behaves_like "a localized Faker method", :name

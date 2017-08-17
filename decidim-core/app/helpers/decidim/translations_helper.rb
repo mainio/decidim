@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   # Helper that provides convenient methods to deal with translated attributes.
   module TranslationsHelper
@@ -21,7 +22,7 @@ module Decidim
     #           available locales by default.
     #
     # Returns a Hash with the locales as keys and the translations as values.
-    def multi_translation(key, locales = I18n.available_locales)
+    def multi_translation(key, locales = Decidim.available_locales)
       locales.each_with_object({}) do |locale, result|
         I18n.with_locale(locale) do
           result[locale.to_sym] = I18n.t(key)

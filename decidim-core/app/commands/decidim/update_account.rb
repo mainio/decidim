@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   # This command updates the user's account.
   class UpdateAccount < Rectify::Command
@@ -17,10 +18,16 @@ module Decidim
       update_personal_data
       update_avatar
       update_password
-      @user.save!
 
-      @form.remove_avatar = false
-      broadcast(:ok, @user.unconfirmed_email.present?)
+      if @user.valid?
+        @user.save!
+        broadcast(:ok, @user.unconfirmed_email.present?)
+      else
+        if @user.errors.has_key? :avatar
+          @form.errors.add :avatar, @user.errors[:avatar]
+        end
+        broadcast(:invalid)
+      end
     end
 
     private
@@ -31,11 +38,8 @@ module Decidim
     end
 
     def update_avatar
-      if @form.avatar
-        @user.avatar = @form.avatar
-      elsif @form.remove_avatar
-        @user.remove_avatar = true
-      end
+      @user.avatar = @form.avatar
+      @user.remove_avatar = @form.remove_avatar
     end
 
     def update_password

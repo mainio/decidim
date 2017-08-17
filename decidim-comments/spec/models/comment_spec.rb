@@ -1,12 +1,15 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Comments
     describe Comment do
       let!(:commentable) { create(:dummy_resource) }
-      let!(:comment) { create(:comment, commentable: commentable) }
-      let!(:replies) { 3.times.map { create(:comment, commentable: comment) } }
+      let!(:replies_notifications) { true }
+      let!(:author) { create(:user, organization: commentable.organization, replies_notifications: replies_notifications) }
+      let!(:comment) { create(:comment, commentable: commentable, author: author) }
+      let!(:replies) { create_list(:comment, 3, commentable: comment, root_commentable: commentable) }
       let!(:up_vote) { create(:comment_vote, :up_vote, comment: comment) }
       let!(:down_vote) { create(:comment_vote, :down_vote, comment: comment) }
 
@@ -21,6 +24,10 @@ module Decidim
 
       it "has an associated commentable" do
         expect(subject.commentable).to eq(commentable)
+      end
+
+      it "has an associated root commentable" do
+        expect(subject.root_commentable).to eq(commentable)
       end
 
       it "has a up_votes association returning comment votes with weight 1" do
@@ -84,11 +91,31 @@ module Decidim
         end
       end
 
-      describe "#root_commentable" do
-        let(:reply) { create(:comment, commentable: subject) }
+      describe "#notifiable?" do
+        let(:context_author) { create(:user, organization: subject.author.organization) }
 
-        it "returns the commentable object from the parent comment" do
-          expect(reply.root_commentable).to eq(subject.commentable)
+        context "when the context author is the same as the comment's author" do
+          let(:context_author) { subject.author }
+
+          it "is not notifiable" do
+            expect(subject.notifiable?(author: context_author)).to be_falsy
+          end
+        end
+
+        context "when the context author is not the same as the comment's author" do
+          context "when the comment's author has not replies notifications enabled" do
+            let(:replies_notifications) { false }
+
+            it "is not notifiable" do
+              expect(subject.notifiable?(author: context_author)).to be_falsy
+            end
+          end
+
+          context "when the comment's author has replies notifications enabled" do
+            it "is not notifiable" do
+              expect(subject.notifiable?(author: context_author)).to be_truthy
+            end
+          end
         end
       end
     end

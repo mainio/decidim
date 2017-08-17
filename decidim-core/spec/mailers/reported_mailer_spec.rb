@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -16,7 +17,7 @@ module Decidim
       let(:subject) { "Un contingut ha estat denunciat" }
       let(:default_subject) { "A resource has been reported" }
 
-      let(:body) { "ha estat denunciat" }
+      let(:body) { "ha estat reportat" }
       let(:default_body) { "has been reported" }
 
       include_examples "localised email"
@@ -28,7 +29,7 @@ module Decidim
       let(:subject) { "Un contingut ha estat amagat automàticament" }
       let(:default_subject) { "A resource has been hidden automatically" }
 
-      let(:body) { "ha estat amagat" }
+      let(:body) { "ocultat automàticament" }
       let(:default_body) { "has been hidden" }
 
       include_examples "localised email"

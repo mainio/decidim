@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Admin
-    describe DestroyCategory, :db do
+    describe DestroyCategory do
       describe "call" do
         let(:organization) { create(:organization) }
         let(:participatory_process) { create :participatory_process, organization: organization }

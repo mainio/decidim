@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Results
     module Admin
@@ -57,7 +58,7 @@ module Decidim
         private
 
         def results
-          @results ||= Result.where(feature: current_feature)
+          @results ||= Result.where(feature: current_feature).page(params[:page]).per(15)
         end
 
         def result

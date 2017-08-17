@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails/generators"
 require "rails/generators/rails/app/app_generator"
 require "decidim/core/version"
@@ -15,11 +16,11 @@ module Decidim
     class AppGenerator < Rails::Generators::AppGenerator
       hide!
 
-      source_root File.expand_path("../templates", __FILE__)
+      source_root File.expand_path("templates", __dir__)
 
       def source_paths
         [
-          File.expand_path("../templates", __FILE__),
+          File.expand_path("templates", __dir__),
           File.expand_path(File.join(Gem::Specification
                                                   .find_by_name("railties").gem_dir,
                                      "lib", "rails", "generators", "rails",
@@ -43,8 +44,8 @@ module Decidim
       class_option :recreate_db, type: :boolean, default: false,
                                  desc: "Recreate test database"
 
-      class_option :migrate, type: :boolean, default: false,
-                             desc: "Run migrations after installing decidim"
+      class_option :app_const_base, type: :string,
+                                    desc: "The application constant name"
 
       def database_yml
         template "database.yml.erb", "config/database.yml", force: true
@@ -72,16 +73,15 @@ module Decidim
         SecureRandom.hex(64)
       end
 
-      def app_json
-        template "app.json.erb", "app.json"
-      end
-
       def install
         Decidim::Generators::InstallGenerator.start [
           "--recreate_db=#{options[:recreate_db]}",
-          "--migrate=#{options[:migrate]}",
           "--app_name=#{app_name}"
         ]
+      end
+
+      def app_const_base
+        options["app_const_base"] || super
       end
 
       def add_ignore_uploads
@@ -101,6 +101,7 @@ module Decidim
 
       private
 
+      # rubocop:disable Style/AccessorMethodName
       def get_builder_class
         AppBuilder
       end

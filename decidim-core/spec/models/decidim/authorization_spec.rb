@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
-  describe Authorization, :db do
+  describe Authorization do
     let(:authorization) { build(:authorization) }
 
     it "is valid" do

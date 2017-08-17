@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 require "decidim/api/test/type_context"
 
@@ -14,9 +15,9 @@ module Decidim
       let(:alignment) { 1 }
 
       describe "addComment" do
-        let(:query) {
+        let(:query) do
           "{ addComment(body: \"#{body}\", alignment: #{alignment}) { body } }"
-        }
+        end
 
         it "calls CreateComment command" do
           params = { "comment" => { "body" => body, "alignment" => alignment, "user_group_id" => nil } }

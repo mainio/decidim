@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -16,9 +17,9 @@ module Decidim
       end
 
       it "increments the delivery count" do
-        expect {
+        expect do
           NewsletterDeliveryJob.perform_now(user, newsletter)
-        }.to change { newsletter.reload.total_deliveries }.by(1)
+        end.to change { newsletter.reload.total_deliveries }.by(1)
       end
     end
   end

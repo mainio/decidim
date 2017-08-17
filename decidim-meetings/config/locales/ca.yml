@@ -8,7 +8,7 @@ ca:
         contributions_count: Nombre de contribucions
         proposal_ids: Propostes creades en una trobada
       meeting:
-        adress: Adreça
+        address: Adreça
         decidim_category_id: Categoria
         decidim_scope_id: Àmbit
         description: Descripció
@@ -25,10 +25,11 @@ ca:
       actions:
         attachments: Adjunts
         close: Tancar
-        confirm_destroy: Esteu segur de que voleu suprimir aquesta trobada?
+        confirm_destroy: Segur que vols suprimir aquesta trobada?
         destroy: Esborra
         edit: Edita
-        new: Nou/va %{name}
+        new: Nova
+        preview: Previsualitzar
         title: Accions
       admin:
         meeting_closes:
@@ -45,13 +46,12 @@ ca:
           destroy:
             success: La trobada s'ha eliminat correctament
           edit:
-            title: Edita trobada
-            update: Actualitzar trobada
+            update: Actualitzar
           index:
             title: Trobades
           new:
-            create: Crear trobada
-            title: Nova trobada
+            create: Crear
+            title: Crear trobada
           update:
             invalid: Hi ha hagut un problema en actualitzar aquesta trobada
             success: Trobada actualitzada correctament
@@ -61,8 +61,10 @@ ca:
       meetings:
         filters:
           category: Categoria
+          category_prompt: Selecciona una categoria
           date: Data
           past: Passades
+          scope_prompt: Seleccioneu un àmbit
           scopes: Àmbits
           search: Cerca
           upcoming: Properes
@@ -89,6 +91,7 @@ ca:
             map: Mapa
             start_time: Data d'inici
             title: Títol
+      read_more: "(Llegeix més)"
     resource_links:
       meetings_through_proposals:
         meeting_results: 'Resultats relacionats:'

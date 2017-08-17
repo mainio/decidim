@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # frozen_literal_string: true
 
 require "spec_helper"
@@ -27,7 +29,7 @@ describe Decidim::Results::Admin::ResultForm do
       decidim_scope_id: scope_id,
       decidim_category_id: category_id,
       title_en: title[:en],
-      description_en: description[:en],
+      description_en: description[:en]
     }
   end
 
@@ -57,6 +59,12 @@ describe Decidim::Results::Admin::ResultForm do
     let(:category_id) { category.id + 10 }
 
     it { is_expected.not_to be_valid }
+  end
+
+  it "properly maps category id from model" do
+    result = create(:result, feature: current_feature, category: category)
+
+    expect(described_class.from_model(result).decidim_category_id).to eq(category_id)
   end
 
   context "with proposals" do

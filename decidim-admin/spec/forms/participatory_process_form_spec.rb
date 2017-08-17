@@ -1,5 +1,5 @@
-# coding: utf-8
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -35,7 +35,8 @@ module Decidim
         }
       end
       let(:slug) { "slug" }
-      let(:attachement) { test_file("city.jpeg", "image/jpeg") }
+      let(:attachment) { Decidim::Dev.test_file("city.jpeg", "image/jpeg") }
+      let(:show_statistics) { true }
       let(:attributes) do
         {
           "participatory_process" => {
@@ -51,14 +52,12 @@ module Decidim
             "short_description_en" => short_description[:en],
             "short_description_es" => short_description[:es],
             "short_description_ca" => short_description[:ca],
-            "hero_image" => attachement,
-            "banner_image" => attachement,
-            "slug" => slug
+            "hero_image" => attachment,
+            "banner_image" => attachment,
+            "slug" => slug,
+            "show_statistics" => show_statistics
           }
         }
-      end
-      before do
-        Decidim::AttachmentUploader.enable_processing = true
       end
 
       subject { described_class.from_params(attributes).with_context(current_organization: organization) }
@@ -86,7 +85,7 @@ module Decidim
       end
 
       context "when images are not the expected type" do
-        let(:attachement) { test_file("Exampledocument.pdf", "application/pdf") }
+        let(:attachment) { Decidim::Dev.test_file("Exampledocument.pdf", "application/pdf") }
 
         it { is_expected.not_to be_valid }
       end

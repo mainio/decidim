@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require "decidim/faker/localized"
 require "decidim/dev"
 
 FactoryGirl.define do
-  sequence :name do |n|
+  sequence(:name) do |n|
     "#{Faker::Name.name} #{n}"
   end
 
@@ -15,6 +16,14 @@ FactoryGirl.define do
     "#{Faker::Internet.slug(nil, "-")}-#{n}"
   end
 
+  sequence(:scope_name) do |n|
+    "#{Faker::Lorem.sentence(1, true, 3)} #{n}"
+  end
+
+  sequence(:scope_code) do |n|
+    "#{Faker::Lorem.characters(4).upcase}-#{n}"
+  end
+
   factory :category, class: Decidim::Category do
     name { Decidim::Faker::Localized.sentence(3) }
     description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(2) } }
@@ -23,10 +32,6 @@ FactoryGirl.define do
 
   factory :subcategory, parent: :category do
     parent { build(:category) }
-
-    before(:create) do |object|
-      object.parent.save unless object.parent.persisted?
-    end
   end
 
   factory :organization, class: Decidim::Organization do
@@ -40,12 +45,12 @@ FactoryGirl.define do
     sequence(:host) { |n| "#{n}.lvh.me" }
     description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(2) } }
     welcome_text { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(2) } }
-    homepage_image { test_file("city.jpeg", "image/jpeg") }
-    favicon { test_file("icon.png", "image/png") }
-    default_locale { I18n.default_locale }
+    homepage_image { Decidim::Dev.test_file("city.jpeg", "image/jpeg") }
+    favicon { Decidim::Dev.test_file("icon.png", "image/png") }
+    default_locale { Decidim.default_locale }
     available_locales { Decidim.available_locales }
-    official_img_header { test_file("avatar.jpg", "image/jpeg") }
-    official_img_footer { test_file("avatar.jpg", "image/jpeg") }
+    official_img_header { Decidim::Dev.test_file("avatar.jpg", "image/jpeg") }
+    official_img_footer { Decidim::Dev.test_file("avatar.jpg", "image/jpeg") }
     official_url { Faker::Internet.url }
   end
 
@@ -55,8 +60,8 @@ FactoryGirl.define do
     subtitle { Decidim::Faker::Localized.sentence(1) }
     short_description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(2) } }
     description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(4) } }
-    hero_image { test_file("city.jpeg", "image/jpeg") }
-    banner_image { test_file("city2.jpeg", "image/jpeg") }
+    hero_image { Decidim::Dev.test_file("city.jpeg", "image/jpeg") }
+    banner_image { Decidim::Dev.test_file("city2.jpeg", "image/jpeg") }
     published_at { Time.current }
     organization
     meta_scope { Decidim::Faker::Localized.word }
@@ -66,6 +71,8 @@ FactoryGirl.define do
     participatory_scope { Decidim::Faker::Localized.sentence(1) }
     participatory_structure { Decidim::Faker::Localized.sentence(2) }
     end_date 2.month.from_now.at_midnight
+    show_statistics true
+
     trait :promoted do
       promoted true
     end
@@ -78,17 +85,13 @@ FactoryGirl.define do
       published_at { Time.current }
     end
 
-    trait :with_scope do
-      after(:create) do |participatory_process, _evaluator|
-        create(:scope,
-               organization: participatory_process.organization)
-      end
-    end
-
     trait :with_steps do
-      after(:create) do |participatory_process, _evaluator|
+      transient { current_step_ends 1.month.from_now }
+
+      after(:create) do |participatory_process, evaluator|
         create(:participatory_process_step,
                active: true,
+               end_date: evaluator.current_step_ends,
                participatory_process: participatory_process)
         participatory_process.reload
         participatory_process.steps.reload
@@ -99,7 +102,7 @@ FactoryGirl.define do
   factory :participatory_process_group, class: Decidim::ParticipatoryProcessGroup do
     name { Decidim::Faker::Localized.sentence(3) }
     description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(4) } }
-    hero_image { test_file("city.jpeg", "image/jpeg") }
+    hero_image { Decidim::Dev.test_file("city.jpeg", "image/jpeg") }
     organization
   end
 
@@ -122,14 +125,14 @@ FactoryGirl.define do
   end
 
   factory :user, class: Decidim::User do
-    email                 { generate(:email) }
-    password              "password1234"
+    email { generate(:email) }
+    password "password1234"
     password_confirmation "password1234"
-    name                  { generate(:name) }
+    name { generate(:name) }
     organization
-    locale                { organization.default_locale }
-    tos_agreement         "1"
-    avatar                { test_file("avatar.jpg", "image/jpeg") }
+    locale { organization.default_locale }
+    tos_agreement "1"
+    avatar { Decidim::Dev.test_file("avatar.jpg", "image/jpeg") }
     comments_notifications true
     replies_notifications true
 
@@ -137,28 +140,84 @@ FactoryGirl.define do
       confirmed_at { Time.current }
     end
 
+    trait :deleted do
+      email ""
+      deleted_at { Time.current }
+    end
+
     trait :admin do
-      roles ["admin"]
+      admin { true }
     end
 
-    trait :moderator do
-      roles ["moderator"]
+    trait :user_manager do
+      roles { ["user_manager"] }
     end
 
-    trait :official do
-      roles ["official"]
+    trait :process_admin do
+      transient do
+        participatory_process { create(:participatory_process) }
+      end
+
+      organization { participatory_process.organization }
+
+      after(:create) do |user, evaluator|
+        create :participatory_process_user_role,
+               user: user,
+               participatory_process: evaluator.participatory_process,
+               role: :admin
+      end
     end
 
-    trait :collaborator do
-      roles ["collaborator"]
+    trait :process_collaborator do
+      transient do
+        participatory_process { create(:participatory_process) }
+      end
+
+      organization { participatory_process.organization }
+
+      after(:create) do |user, evaluator|
+        create :participatory_process_user_role,
+               user: user,
+               participatory_process: evaluator.participatory_process,
+               role: :collaborator
+      end
     end
+
+    trait :process_moderator do
+      transient do
+        participatory_process { create(:participatory_process) }
+      end
+
+      organization { participatory_process.organization }
+
+      after(:create) do |user, evaluator|
+        create :participatory_process_user_role,
+               user: user,
+               participatory_process: evaluator.participatory_process,
+               role: :moderator
+      end
+    end
+
+    trait :managed do
+      email { "" }
+      password { "" }
+      password_confirmation { "" }
+      managed { true }
+    end
+  end
+
+  factory :participatory_process_user_role, class: Decidim::ParticipatoryProcessUserRole do
+    user
+    participatory_process { create :participatory_process, organization: user.organization }
+    role "admin"
   end
 
   factory :user_group, class: Decidim::UserGroup do
     name { Faker::Educator.course }
     document_number { Faker::Number.number(8) + "X" }
     phone { Faker::PhoneNumber.phone_number }
-    avatar { test_file("avatar.jpg", "image/jpeg") }
+    avatar { Decidim::Dev.test_file("avatar.jpg", "image/jpeg") }
+    organization
 
     transient do
       users []
@@ -166,6 +225,10 @@ FactoryGirl.define do
 
     trait :verified do
       verified_at { Time.current }
+    end
+
+    trait :rejected do
+      rejected_at { Time.current }
     end
 
     after(:create) do |user_group, evaluator|
@@ -187,6 +250,7 @@ FactoryGirl.define do
     provider "facebook"
     sequence(:uid)
     user
+    organization { user.organization }
   end
 
   factory :authorization, class: Decidim::Authorization do
@@ -209,23 +273,15 @@ FactoryGirl.define do
   factory :attachment, class: Decidim::Attachment do
     title { Decidim::Faker::Localized.sentence(3) }
     description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(4) } }
-    file { test_file("city.jpeg", "image/jpeg") }
+    file { Decidim::Dev.test_file("city.jpeg", "image/jpeg") }
     attached_to { build(:participatory_process) }
 
     trait :with_image do
-      file { test_file("city.jpeg", "image/jpeg") }
+      file { Decidim::Dev.test_file("city.jpeg", "image/jpeg") }
     end
 
     trait :with_pdf do
-      file { test_file("Exampledocument.pdf", "application/pdf") }
-    end
-
-    trait :with_doc do
-      file { test_file("Exampledocument.doc", "application/msword") }
-    end
-
-    trait :with_odt do
-      file { test_file("Exampledocument.odt", "application/vnd.oasis.opendocument") }
+      file { Decidim::Dev.test_file("Exampledocument.pdf", "application/pdf") }
     end
   end
 
@@ -234,10 +290,6 @@ FactoryGirl.define do
     participatory_process
     manifest_name "dummy"
     published_at { Time.now }
-
-    after(:create) do |feature, _evaluator|
-      feature.participatory_process.steps.reload
-    end
 
     trait :unpublished do
       published_at { nil }
@@ -248,9 +300,25 @@ FactoryGirl.define do
     end
   end
 
-  factory :scope, class: Decidim::Scope do
-    name { generate(:name) }
+  factory :scope_type, class: Decidim::ScopeType do
+    name { Decidim::Faker::Localized.word }
+    plural { Decidim::Faker::Localized.literal(name.values.first.pluralize) }
     organization
+  end
+
+  factory :scope, class: Decidim::Scope do
+    name { Decidim::Faker::Localized.literal(generate(:scope_name)) }
+    code { generate(:scope_code) }
+    scope_type
+    organization { parent ? parent.organization : build(:organization) }
+  end
+
+  factory :subscope, parent: :scope do
+    parent { build(:scope) }
+
+    before(:create) do |object|
+      object.parent.save unless object.parent.persisted?
+    end
   end
 
   factory :dummy_resource, class: Decidim::DummyResource do
@@ -283,9 +351,10 @@ FactoryGirl.define do
     user { build(:user, organization: moderation.reportable.organization) }
     reason "spam"
   end
-end
 
-def test_file(filename, content_type)
-  asset = Decidim::Dev.asset(filename)
-  Rack::Test::UploadedFile.new(asset, content_type)
+  factory :impersonation_log, class: Decidim::ImpersonationLog do
+    admin { build(:user, :admin) }
+    user { build(:user, :managed, organization: admin.organization) }
+    started_at Time.current
+  end
 end

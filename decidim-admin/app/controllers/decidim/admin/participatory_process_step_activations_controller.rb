@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-require_dependency "decidim/admin/application_controller"
 
 module Decidim
   module Admin
     # Controller that allows managing participatory process step activations.
     #
-    class ParticipatoryProcessStepActivationsController < ApplicationController
+    class ParticipatoryProcessStepActivationsController < Decidim::Admin::ApplicationController
       include Concerns::ParticipatoryProcessAdmin
 
       def create
@@ -20,7 +19,7 @@ module Decidim
             flash.now[:alert] = I18n.t("participatory_process_step_activations.create.error", scope: "decidim.admin")
           end
 
-          redirect_to participatory_process_steps_path(participatory_process)
+          redirect_to participatory_process_steps_path(current_participatory_process)
         end
       end
 
@@ -31,7 +30,7 @@ module Decidim
       end
 
       def collection
-        participatory_process.steps
+        current_participatory_process.steps
       end
     end
   end

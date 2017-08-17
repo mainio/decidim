@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 describe "Organization admins", type: :feature do
@@ -15,11 +16,14 @@ describe "Organization admins", type: :feature do
     before do
       login_as admin, scope: :user
       visit decidim_admin.root_path
-      click_link "Admin users"
+      click_link "Users"
+      click_link "Admins"
     end
 
     it "can invite new users" do
-      find(".actions .new").click
+      within ".card-title" do
+        find(".button--title").click
+      end
 
       within ".new_user" do
         fill_in :user_name, with: "New admin"
@@ -28,12 +32,35 @@ describe "Organization admins", type: :feature do
         find("*[type=submit]").click
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
       within "table" do
         expect(page).to have_content("New admin")
+      end
+    end
+
+    it "can invite a user with a specific role" do
+      within ".card-title" do
+        find(".button--title").click
+      end
+
+      within ".new_user" do
+        fill_in :user_name, with: "New user manager"
+        fill_in :user_email, with: "newusermanager@example.org"
+        select "User manager", from: :user_role
+
+        find("*[type=submit]").click
+      end
+
+      within ".callout-wrapper" do
+        expect(page).to have_content("successfully")
+      end
+
+      within "table" do
+        expect(page).to have_content("New user manager")
+        expect(page).to have_content("User manager")
       end
     end
 
@@ -51,7 +78,7 @@ describe "Organization admins", type: :feature do
 
       it "can resend the invitation" do
         within "tr[data-user-id=\"#{user.id}\"]" do
-          click_link "Resend invitation"
+          page.find(".action-icon.resend-invitation").click
         end
 
         expect(page).to have_content("Invitation email sent successfully")
@@ -61,10 +88,10 @@ describe "Organization admins", type: :feature do
         expect(page).to have_content(other_admin.name)
 
         within "tr[data-user-id=\"#{other_admin.id}\"]" do
-          click_link "Destroy"
+          page.find(".action-icon.action-icon--remove").click
         end
 
-        expect(page).not_to have_content(other_admin.name)
+        expect(page).to have_no_content(other_admin.name)
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Decidim::Admin::CreateParticipatoryProcess do
@@ -6,18 +8,25 @@ describe Decidim::Admin::CreateParticipatoryProcess do
   let(:scope) { create :scope, organization: organization }
   let(:errors) { double.as_null_object }
   let(:form) do
-    double(
-      :invalid? => invalid,
-      title: {en: "title"},
-      subtitle: {en: "subtitle"},
+    instance_double(
+      Decidim::Admin::ParticipatoryProcessForm,
+      invalid?: invalid,
+      title: { en: "title" },
+      subtitle: { en: "subtitle" },
       slug: "slug",
       hashtag: "hashtag",
       meta_scope: "meta scope",
       hero_image: nil,
       banner_image: nil,
       promoted: nil,
-      description: {en: "description"},
-      short_description: {en: "short_description"},
+      developer_group: "developer group",
+      local_area: "local",
+      target: "target",
+      participatory_scope: "participatory scope",
+      participatory_structure: "participatory structure",
+      end_date: nil,
+      description: { en: "description" },
+      short_description: { en: "short_description" },
       current_organization: organization,
       scope: scope,
       errors: errors,
@@ -73,10 +82,11 @@ describe Decidim::Admin::CreateParticipatoryProcess do
       expect { subject.call }.to broadcast(:ok)
     end
 
-    it "adds the default step" do
+    it "adds the default active step" do
       subject.call do
         on(:ok) do |process|
           expect(process.steps.count).to eq(1)
+          expect(process.steps.first).to be_active
         end
       end
     end

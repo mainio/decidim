@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 require "nokogiri"
 
@@ -24,6 +25,7 @@ module Decidim
         attribute :max_number, Integer
         attribute :min_number, Integer
         attribute :conditional_presence, String
+        attribute :image
 
         translatable_attribute :name, String
         translatable_attribute :short_description, String
@@ -42,6 +44,7 @@ module Decidim
 
     before do
       allow(Decidim).to receive(:available_locales).and_return available_locales
+      allow(I18n.config).to receive(:enforce_available_locales).and_return(false)
     end
 
     let(:builder) { FormBuilder.new(:resource, resource, helper, {}) }
@@ -172,9 +175,9 @@ module Decidim
       end
 
       it "sorts subcategories by name" do
-        subcategory_2 = create(:category, name: { "en" => "First subcategory" }, parent: category, participatory_process: feature.participatory_process)
+        subcategory2 = create(:category, name: { "en" => "First subcategory" }, parent: category, participatory_process: feature.participatory_process)
 
-        expect(subject.css("option")[2].text).to eq("- #{subcategory_2.name["en"]}")
+        expect(subject.css("option")[2].text).to eq("- #{subcategory2.name["en"]}")
         expect(subject.css("option")[3].text).to eq("- #{subcategory.name["en"]}")
       end
 
@@ -194,7 +197,11 @@ module Decidim
       end
 
       it "renders the checkbox before the label text" do
-        expect(output).to eq('<label for="resource_name"><input name="resource[name]" type="hidden" value="0" /><input type="checkbox" value="1" name="resource[name]" id="resource_name" />Name</label>')
+        expect(output).to eq(
+          '<label for="resource_name"><input name="resource[name]" type="hidden" value="0" />' \
+            '<input type="checkbox" value="1" name="resource[name]" id="resource_name" />Name' \
+          "</label>"
+        )
       end
     end
 
@@ -293,8 +300,8 @@ module Decidim
         end
 
         it "adds a pattern" do
-          expect(parsed.css("input[pattern='^(.){0,150}$']").first).to be
-          expect(output).not_to include("maxlength")
+          expect(parsed.css("input[pattern='^(.|[\n\r]){0,150}$']").first).to be
+          expect(parsed.css("input[maxlength='150']")).to be
         end
       end
 
@@ -304,7 +311,7 @@ module Decidim
         end
 
         it "adds a pattern" do
-          expect(parsed.css("input[pattern='^(.){150,}$']").first).to be
+          expect(parsed.css("input[pattern='^(.|[\n\r]){150,}$']").first).to be
           expect(output).not_to include("minlength")
         end
       end
@@ -344,7 +351,7 @@ module Decidim
           end
 
           it "injects the validations" do
-            expect(parsed.css("input[pattern='^(.){10,30}$']").first).to be
+            expect(parsed.css("input[pattern='^(.|[\n\r]){10,30}$']").first).to be
           end
 
           it "injects a span to show an error" do
@@ -358,7 +365,7 @@ module Decidim
           end
 
           it "injects the validations" do
-            expect(parsed.css("input[pattern='^(.){10,}$']").first).to be
+            expect(parsed.css("input[pattern='^(.|[\n\r]){10,}$']").first).to be
           end
         end
 
@@ -368,7 +375,102 @@ module Decidim
           end
 
           it "injects the validations" do
-            expect(parsed.css("input[pattern='^(.){0,50}$']").first).to be
+            expect(parsed.css("input[pattern='^(.|[\n\r]){0,50}$']").first).to be
+          end
+        end
+      end
+    end
+
+    describe "upload" do
+      let(:present?) { false }
+      let(:content_type) { nil }
+      let(:filename) { "my_image.jpg" }
+      let(:url) { "/some/file/path/#{filename}" }
+      let(:file) do
+        double(
+          url: url,
+          present?: present?,
+          content_type: content_type,
+          file: double(
+            filename: filename
+          )
+        )
+      end
+      let(:optional) { true }
+      let(:attributes) do
+        {
+          optional: optional
+        }
+      end
+      let(:output) do
+        builder.upload :image, attributes
+      end
+
+      before do
+        allow(resource).to receive(:image).and_return(file)
+      end
+
+      it "sets the form as multipart" do
+        output
+        expect(builder.multipart).to be_truthy
+      end
+
+      it "renders a file_field" do
+        expect(parsed.css('input[type="file"]').first).to be
+      end
+
+      context "when it is an image" do
+        context "and it is not present" do
+          it "renders the 'Default image' label" do
+            expect(output).to include("Default image")
+          end
+        end
+
+        context "and it is present" do
+          let(:present?) { true }
+
+          it "renders the 'Current image' label" do
+            expect(output).to include("Current image")
+          end
+
+          it "renders an image with the current file url" do
+            expect(parsed.css('img[src="' + url + '"]').first).to be
+          end
+        end
+      end
+
+      context "when it is not an image" do
+        let(:filename) { "my_file.pdf" }
+
+        context "and it is present" do
+          let(:present?) { true }
+
+          it "renders the 'Current file' label" do
+            expect(output).to include("Current file")
+          end
+
+          it "doesn't render an image tag" do
+            expect(parsed.css('img[src="' + url + '"]').first).not_to be
+          end
+
+          it "renders a link to the current file url" do
+            expect(parsed.css('a[href="' + url + '"]').first).to be
+          end
+        end
+      end
+
+      context "when the file is present" do
+        let(:present?) { true }
+
+        it "renders the delete checkbox" do
+          expect(parsed.css('input[type="checkbox"]').first).to be
+        end
+
+        context "when the optional argument is false" do
+          let(:optional) { false }
+
+          it "doesn't render the delete checkbox" do
+            expect(parsed.css('input[type="checkbox"]').first).not_to be
           end
         end
       end

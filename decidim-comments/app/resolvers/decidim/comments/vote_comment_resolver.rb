@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Comments
     # A GraphQL resolver to handle `upVote` and `downVote` mutations
@@ -12,6 +13,9 @@ module Decidim
         Decidim::Comments::VoteComment.call(obj, ctx[:current_user], weight: @weight) do
           on(:ok) do |comment|
             return comment
+          end
+          on(:invalid) do
+            return GraphQL::ExecutionError.new(I18n.t("votes.create.error", scope: "decidim.comments"))
           end
         end
       end

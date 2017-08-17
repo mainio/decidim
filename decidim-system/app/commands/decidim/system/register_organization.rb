@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module System
     # A command with all the business logic when creating a new organization in
@@ -51,10 +52,10 @@ module Decidim
       end
 
       def invite_user_form(organization)
-        Decidim::InviteAdminForm.from_params(
+        Decidim::InviteUserForm.from_params(
           name: form.organization_admin_name,
           email: form.organization_admin_email,
-          roles: %w(admin),
+          role: "admin",
           invitation_instructions: "organization_admin_invitation_instructions"
         ).with_context(
           current_user: form.current_user,

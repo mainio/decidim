@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   # This module's job is to extend the API with custom fields related to
   # decidim-core.
@@ -14,8 +15,8 @@ module Decidim
           type !types[ProcessType]
           description "Lists all processes."
 
-          resolve ->(_obj, _args, ctx) {
-            OrganizationParticipatoryProcesses.new(ctx[:current_organization])
+          resolve lambda { |_obj, _args, ctx|
+            OrganizationPublishedParticipatoryProcesses.new(ctx[:current_organization])
           }
         end
 
@@ -23,13 +24,13 @@ module Decidim
           type SessionType
           description "Return's information about the logged in user"
 
-          resolve ->(_obj, _args, ctx) {
+          resolve lambda { |_obj, _args, ctx|
             ctx[:current_user]
           }
         end
 
         field :decidim, DecidimType, "Decidim's framework properties." do
-          resolve ->(_obj, _args, ctx) { Decidim }
+          resolve ->(_obj, _args, _ctx) { Decidim }
         end
       end
     end

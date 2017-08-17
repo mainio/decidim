@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Pages
-    describe CreatePage, :db do
+    describe CreatePage do
       describe "call" do
         let(:feature) { create(:feature, manifest_name: "pages") }
         let(:command) { described_class.new(feature) }
@@ -30,9 +31,7 @@ module Decidim
           end
 
           it "creates a new page with the same name as the feature" do
-            expect(Page).to receive(:new).with({
-              feature: feature
-            }).and_call_original
+            expect(Page).to receive(:new).with(feature: feature).and_call_original
 
             expect do
               command.call

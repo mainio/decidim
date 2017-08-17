@@ -5,7 +5,7 @@ es:
         confirm_destroy: '¿Seguro que lo quieres eliminar?'
         destroy: Eliminar
         edit: Editar
-        new: Nuevo %{name}
+        new: Nuevo
         save: Guardar
         title: Acciones
       admins:
@@ -16,11 +16,11 @@ es:
           success: El administrador se ha eliminado correctamente.
         edit:
           title: Editar administrador
-          update: Actualizar administrador
+          update: Actualizar
         index:
           title: Administradores
         new:
-          create: Crear administrador
+          create: Crear
           title: Nuevo administrador
         update:
           error: Se ha producido un error al actualizar este administrador.
@@ -64,5 +64,9 @@ es:
         update:
           error: Se ha producido un error al actualizar esta organización.
           success: Organización actualizada correctamente.
+      shared:
+        notices:
+          no_organization_warning_html: Debes crear una organización para comenzar. Asegúrate de leer %{guide} antes de continuar.
+          our_getting_started_guide: nuestra guía de inicio
       titles:
         dashboard: Panel de control

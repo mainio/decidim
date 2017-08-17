@@ -1,9 +1,12 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Devise
     describe SessionsController, type: :controller do
+      routes { Decidim::Core::Engine.routes }
+
       describe "after_sign_in_path_for" do
         subject { controller.after_sign_in_path_for(user) }
 

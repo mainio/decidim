@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-require_dependency "decidim/application_controller"
 
 module Decidim
   # This controller allows users to create and destroy their authorizations. It
   # shouldn't be necessary to expand it to add new authorization schemes.
-  class AuthorizationsController < ApplicationController
+  class AuthorizationsController < Decidim::ApplicationController
     helper_method :handler, :handlers, :stored_location
     before_action :valid_handler, only: [:new, :create]
 
@@ -49,10 +48,6 @@ module Decidim
       @handler ||= AuthorizationHandler.handler_for(handler_name, handler_params)
     end
 
-    def handlers
-      @handlers ||= Decidim.authorization_handlers
-    end
-
     protected
 
     def stored_location
@@ -66,7 +61,7 @@ module Decidim
     end
 
     def handler_name
-      params[:handler] || params[:authorization_handler][:handler_name]
+      params[:handler] || params.dig(:authorization_handler, :handler_name)
     end
 
     def valid_handler
@@ -75,7 +70,7 @@ module Decidim
       logger.warn "Invalid authorization handler given: #{handler_name} doesn't"\
         "exist or you haven't added it to `Decidim.authorization_handlers`"
 
-      redirect_to(account_path) && (return false)
+      redirect_to(authorizations_path) && (return false)
     end
 
     def only_one_handler?

@@ -22,7 +22,7 @@ describe "Manage admins", type: :feature do
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".success.flash" do
       expect(page).to have_content("successfully")
     end
 
@@ -42,7 +42,7 @@ describe "Manage admins", type: :feature do
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".success.flash" do
       expect(page).to have_content("successfully")
     end
 
@@ -56,12 +56,12 @@ describe "Manage admins", type: :feature do
       click_link "Destroy"
     end
 
-    within ".flash" do
+    within ".success.flash" do
       expect(page).to have_content("successfully")
     end
 
     within "table" do
-      expect(page).not_to have_content(admin2.email)
+      expect(page).to have_no_content(admin2.email)
     end
   end
 end

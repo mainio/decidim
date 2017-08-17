@@ -1,5 +1,5 @@
-# coding: utf-8
 # frozen_string_literal: true
+
 # This validator takes care of ensuring the validated content is
 # an existing address and computes its coordinates.
 class GeocodingValidator < ActiveModel::EachValidator

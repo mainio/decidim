@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "active_support/concern"
 
 module Decidim
@@ -8,9 +9,9 @@ module Decidim
     extend ActiveSupport::Concern
 
     included do
-      before_save :store_reference
+      after_commit :store_reference
 
-      validates :reference, presence: true
+      validates :reference, presence: true, on: :update
 
       def reference
         self[:reference] || calculate_reference
@@ -18,25 +19,13 @@ module Decidim
 
       private
 
-      # Public: Calculates a unique reference for the model in
-      # the following format:
-      #
-      # "BCN-DPP-2017-02-6589" which in this example translates to:
-      #
-      # BCN: A setting configured at the organization to be prepended to each reference.
-      # PROP: Unique name identifier for a resource: Decidim::Proposals::Proposal (MEET for meetings or PROJ for projects).
-      # 2017-02: Year-Month of the resource creation date
-      # 6589: ID of the resource
+      # Public: Calculates a unique reference for the model using the function
+      # provided by configuration
       #
       # Returns a String.
       def calculate_reference
         return unless feature
-
-        ref = feature.participatory_process.organization.reference_prefix
-        class_identifier = self.class.name.demodulize[0..3].upcase
-        year_month = (created_at || Time.current).strftime("%Y-%m")
-
-        [ref, class_identifier, year_month, id].join("-")
+        Decidim.resource_reference_generator.call(self, feature)
       end
 
       # Internal: Sets the unique reference to the model.
@@ -44,6 +33,7 @@ module Decidim
       # Returns nothing.
       def store_reference
         self[:reference] ||= calculate_reference
+        save if changed?
       end
     end
   end

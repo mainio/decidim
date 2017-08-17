@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # A Rails routes constraint to only allow access to an Organization admin to
@@ -33,7 +34,7 @@ module Decidim
       end
 
       def ability
-        Decidim::Admin::Abilities::Base.new(user, current_organization: organization)
+        Decidim::Admin::Abilities::BaseAbility.new(user, current_organization: organization)
       end
     end
   end

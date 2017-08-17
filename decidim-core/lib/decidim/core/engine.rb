@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails"
 require "active_support/all"
 
@@ -35,6 +36,7 @@ require "geocoder"
 require "decidim/api"
 
 require "decidim/query_extensions"
+require "decidim/i18n_exceptions"
 
 module Decidim
   module Core
@@ -75,14 +77,18 @@ module Decidim
         app.config.exceptions_app = Decidim::Core::Engine.routes
       end
 
-      initializer "decidim_admin.inject_abilities_to_user" do |_app|
+      initializer "decidim.inject_abilities_to_user" do |_app|
         Decidim.configure do |config|
-          config.abilities << "Decidim::Abilities::Everyone"
+          config.abilities << "Decidim::Abilities::EveryoneAbility"
+          config.abilities << "Decidim::Abilities::AdminAbility"
+          config.abilities << "Decidim::Abilities::UserManagerAbility"
+          config.abilities << "Decidim::Abilities::ParticipatoryProcessAdminAbility"
+          config.abilities << "Decidim::Abilities::ParticipatoryProcessCollaboratorAbility"
+          config.abilities << "Decidim::Abilities::ParticipatoryProcessModeratorAbility"
         end
       end
 
       initializer "decidim.locales" do |app|
-        app.config.i18n.available_locales = Decidim.config.available_locales
         app.config.i18n.fallbacks = true
       end
 
@@ -116,6 +122,38 @@ module Decidim
             # :cache => Redis.new,
             # :cache_prefix => "..."
           )
+        end
+      end
+
+      initializer "decidim.stats" do
+        Decidim.stats.register :users_count, priority: StatsRegistry::HIGH_PRIORITY do |organization, start_at, end_at|
+          StatsUsersCount.for(organization, start_at, end_at)
+        end
+
+        Decidim.stats.register :processes_count, priority: StatsRegistry::HIGH_PRIORITY do |organization, start_at, end_at|
+          processes = OrganizationPrioritizedParticipatoryProcesses.new(organization)
+          processes = processes.where("created_at >= ?", start_at) if start_at.present?
+          processes = processes.where("created_at <= ?", end_at) if end_at.present?
+          processes.count
+        end
+      end
+
+      initializer "decidim.menu" do
+        Decidim.menu :menu do |menu|
+          menu.item I18n.t("menu.home", scope: "decidim"),
+                    decidim.root_path,
+                    position: 1,
+                    active: :exact
+
+          menu.item I18n.t("menu.processes", scope: "decidim"),
+                    decidim.participatory_processes_path,
+                    position: 2,
+                    active: :inclusive
+
+          menu.item I18n.t("menu.more_information", scope: "decidim"),
+                    decidim.pages_path,
+                    position: 3,
+                    active: :inclusive
         end
       end
     end

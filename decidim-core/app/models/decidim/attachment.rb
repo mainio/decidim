@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 module Decidim
   # Attachment can be any type of document or images related to a partcipatory
   # process.
   class Attachment < ApplicationRecord
     belongs_to :attached_to, polymorphic: true
 
-    validates :file, :attached_to, :content_type, presence: true
+    validates :file, :content_type, presence: true
     validates :file, file_size: { less_than_or_equal_to: ->(_attachment) { Decidim.maximum_attachment_size } }
     mount_uploader :file, Decidim::AttachmentUploader
 

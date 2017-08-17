@@ -1,14 +1,11 @@
-FROM ruby:2.4.0
+FROM ruby:2.4.1
 MAINTAINER david.morcillo@codegram.com
 
 ENV APP_HOME /decidim
 
-RUN curl https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-
 RUN apt-get update
-RUN curl -sL https://deb.nodesource.com/setup_4.x | bash && \
-    apt-get install -y nodejs yarn
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash && \
+    apt-get install -y nodejs
 
 ADD Gemfile /tmp/Gemfile
 ADD Gemfile.lock /tmp/Gemfile.lock
@@ -26,11 +23,12 @@ ADD decidim-meetings/decidim-meetings.gemspec /tmp/decidim-meetings/decidim-meet
 ADD decidim-proposals/decidim-proposals.gemspec /tmp/decidim-proposals/decidim-proposals.gemspec
 ADD decidim-results/decidim-results.gemspec /tmp/decidim-results/decidim-results.gemspec
 ADD decidim-budgets/decidim-budgets.gemspec /tmp/decidim-proposals/decidim-budgets.gemspec
+ADD decidim-surveys/decidim-surveys.gemspec /tmp/decidim-surveys/decidim-surveys.gemspec
 
 ADD package.json /tmp/package.json
-ADD yarn.lock /tmp/yarn.lock
+ADD package-lock.json /tmp/package-lock.json
 
-RUN cd /tmp && bundle install && yarn
+RUN cd /tmp && bundle install && npm i
 
 RUN mkdir -p $APP_HOME
 WORKDIR $APP_HOME

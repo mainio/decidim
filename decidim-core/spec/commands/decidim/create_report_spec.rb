@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -28,9 +29,7 @@ module Decidim
         end
 
         it "doesn't create the report" do
-          expect {
-            command.call
-          }.to_not change { Report.count }
+          expect { command.call }.to_not change { Report.count }
         end
       end
 
@@ -74,9 +73,7 @@ module Decidim
           end
 
           it "doesn't create an additional moderation" do
-            expect {
-              command.call
-            }.to_not change { Moderation.count }
+            expect { command.call }.to_not change { Moderation.count }
 
             last_moderation = Moderation.last
             expect(last_moderation.report_count).to eq(3)

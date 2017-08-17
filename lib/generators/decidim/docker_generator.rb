@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails/generators"
 require "generators/decidim/app_generator"
 
@@ -11,11 +12,11 @@ module Decidim
       class_option :path, type: :string,
                           desc: "The path to generate the docker app"
 
-      source_root File.expand_path("../templates", __FILE__)
+      source_root File.expand_path("templates", __dir__)
 
       def source_paths
         [
-          File.expand_path("../templates", __FILE__)
+          File.expand_path("templates", __dir__)
         ]
       end
 
@@ -37,7 +38,7 @@ module Decidim
 
           run "rails generate decidim:demo"
           run "docker-compose build"
-          run "docker-compose run --rm app rake db:drop db:create db:migrate db:setup"
+          run "docker-compose run --rm app rails db:drop db:create db:migrate db:setup"
         end
       end
 
@@ -48,10 +49,6 @@ module Decidim
       end
 
       private
-
-      def path_to_decidim
-        "/Users/oriol/Code/decidim"
-      end
 
       def remove_directory_if_exists
         remove_dir(path) if File.directory?(path)

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails/generators"
 require "rails/generators/rails/app/app_generator"
 require "decidim/core/version"
@@ -7,11 +8,11 @@ require_relative "install_generator"
 
 module Decidim
   module Generators
-    # Modifies an existing decidim app so it can be used as a demo of Dcidim.
+    # Modifies an existing decidim app so it can be used as a demo of Decidim.
     class DemoGenerator < Rails::Generators::Base
       def source_paths
         [
-          File.expand_path("../../../../decidim-dev/lib/decidim/dev", __FILE__)
+          File.expand_path("../../../decidim-dev/lib/decidim/dev", __dir__)
         ]
       end
 

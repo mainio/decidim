@@ -1,22 +1,25 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
-RSpec.shared_examples "manage proposals" do
+
+shared_examples "manage proposals" do
   let(:address) { "Carrer Pare Llaurador 113, baixos, 08224 Terrassa" }
   let(:latitude) { 40.1234 }
   let(:longitude) { 2.1234 }
 
   before do
-    Geocoder::Lookup::Test.add_stub(address, [
-      { 'latitude' => latitude, 'longitude' => longitude }
-    ])
+    Geocoder::Lookup::Test.add_stub(
+      address,
+      [{ "latitude" => latitude, "longitude" => longitude }]
+    )
   end
 
   context "previewing proposals" do
     it "allows the user to preview the proposal" do
-      new_window = window_opened_by { click_link proposal.title }
+      within find("tr", text: proposal.title) do
+        @new_window = window_opened_by { find("a.action-icon--preview").click }
+      end
 
-      within_window new_window do
-        expect(current_path).to eq decidim_proposals.proposal_path(id: proposal.id, participatory_process_id: participatory_process.id, feature_id: current_feature.id)
+      within_window @new_window do
+        expect(current_path).to eq resource_locator(proposal).path
         expect(page).to have_content(translated(proposal.title))
       end
     end
@@ -25,13 +28,12 @@ RSpec.shared_examples "manage proposals" do
   context "creation" do
     context "when official_proposals setting is enabled" do
       before do
-        current_feature.settings[:official_proposals_enabled] = true
-        current_feature.save
+        current_feature.update_attributes!(settings: { official_proposals_enabled: true })
       end
 
       context "when creation is enabled" do
         before do
-          current_feature.update_attributes(
+          current_feature.update_attributes!(
             step_settings: {
               current_feature.participatory_process.active_step.id => {
                 creation_enabled: true
@@ -42,30 +44,28 @@ RSpec.shared_examples "manage proposals" do
 
         context "when process is not related to any scope" do
           before do
-            participatory_process.update_attributes(scope: nil)
+            participatory_process.update_attributes!(scope: nil)
+
+            click_link "New"
           end
 
           it "can be related to a scope" do
-            find(".actions .new").click
-
             within "form" do
               expect(page).to have_content(/Scope/i)
             end
           end
 
           it "creates a new proposal" do
-            find(".actions .new").click
-
             within ".new_proposal" do
               fill_in :proposal_title, with: "Make decidim great again"
               fill_in :proposal_body, with: "Decidim is great but it can be better"
-              select category.name["en"], from: :proposal_category_id
-              select scope.name, from: :proposal_scope_id
+              select translated(category.name), from: :proposal_category_id
+              select2 translated(scope.name), xpath: '//select[@id="proposal_scope_id"]/..', search: true
 
               find("*[type=submit]").click
             end
 
-            within ".flash" do
+            within ".callout-wrapper" do
               expect(page).to have_content("successfully")
             end
 
@@ -82,19 +82,19 @@ RSpec.shared_examples "manage proposals" do
 
         context "when process is related to a scope" do
           before do
-            participatory_process.update_attributes(scope: scope)
+            participatory_process.update_attributes!(scope: scope)
           end
 
           it "cannot be related to a scope" do
-            find(".actions .new").click
+            find(".card-title a.button").click
 
             within "form" do
-              expect(page).not_to have_content(/Scope/i)
+              expect(page).to have_no_content(/Scope/i)
             end
           end
 
           it "creates a new proposal related to the process scope" do
-            find(".actions .new").click
+            find(".card-title a.button").click
 
             within ".new_proposal" do
               fill_in :proposal_title, with: "Make decidim great again"
@@ -103,7 +103,7 @@ RSpec.shared_examples "manage proposals" do
               find("*[type=submit]").click
             end
 
-            within ".flash" do
+            within ".callout-wrapper" do
               expect(page).to have_content("successfully")
             end
 
@@ -118,15 +118,12 @@ RSpec.shared_examples "manage proposals" do
           end
 
           context "when geocoding is enabled" do
-            let!(:current_feature) do
-              create(:proposal_feature,
-                    :with_geocoding_enabled,
-                    manifest: manifest,
-                    participatory_process: participatory_process)
+            before do
+              current_feature.update_attributes!(settings: { geocoding_enabled: true })
             end
 
             it "creates a new proposal related to the process scope" do
-              find(".actions .new").click
+              find(".card-title a.button").click
 
               within ".new_proposal" do
                 fill_in :proposal_title, with: "Make decidim great again"
@@ -136,7 +133,7 @@ RSpec.shared_examples "manage proposals" do
                 find("*[type=submit]").click
               end
 
-              within ".flash" do
+              within ".callout-wrapper" do
                 expect(page).to have_content("successfully")
               end
 
@@ -151,29 +148,61 @@ RSpec.shared_examples "manage proposals" do
             end
           end
         end
+
+        context "when attachments are allowed", processing_uploads_for: Decidim::AttachmentUploader do
+          before do
+            current_feature.update_attributes!(settings: { attachments_allowed: true })
+          end
+
+          it "creates a new proposal with attachments" do
+            click_link "New"
+
+            within ".new_proposal" do
+              fill_in :proposal_title, with: "Proposal with attachments"
+              fill_in :proposal_body, with: "This is my proposal and I want to upload attachments."
+              fill_in :proposal_attachment_title, with: "My attachment"
+              attach_file :proposal_attachment_file, Decidim::Dev.asset("city.jpeg")
+              find("*[type=submit]").click
+            end
+
+            within ".callout-wrapper" do
+              expect(page).to have_content("successfully")
+            end
+
+            within find("tr", text: "Proposal with attachments") do
+              @new_window = window_opened_by { find("a.action-icon--preview").click }
+            end
+
+            within_window @new_window do
+              within ".section.images" do
+                expect(page).to have_selector("img[src*=\"city.jpeg\"]", count: 1)
+              end
+            end
+          end
+        end
       end
     end
 
     context "when official_proposals setting is disabled" do
       before do
-        current_feature.update_attributes(settings: { official_proposals_enabled: false } )
+        current_feature.update_attributes!(settings: { official_proposals_enabled: false })
       end
 
       it "cannot create a new proposal" do
         visit_feature
-        expect(page).not_to have_selector(".actions .new")
+        expect(page).to have_no_content("New Proposal")
       end
     end
   end
 
   context "when the proposal_answering feature setting is enabled" do
     before do
-      current_feature.update_attributes(settings: { proposal_answering_enabled: true } )
+      current_feature.update_attributes!(settings: { proposal_answering_enabled: true })
     end
 
     context "when the proposal_answering step setting is enabled" do
       before do
-        current_feature.update_attributes(
+        current_feature.update_attributes!(
           step_settings: {
             current_feature.participatory_process.active_step.id => {
               proposal_answering_enabled: true
@@ -184,22 +213,22 @@ RSpec.shared_examples "manage proposals" do
 
       it "can reject a proposal" do
         within find("tr", text: proposal.title) do
-          click_link "Answer"
+          find("a.action-icon--edit-answer").click
         end
 
         within ".edit_proposal_answer" do
-          fill_in_i18n(
+          fill_in_i18n_editor(
             :proposal_answer_answer,
-            "#answer-tabs",
+            "#proposal_answer-answer-tabs",
             en: "The proposal doesn't make any sense",
             es: "La propuesta no tiene sentido",
             ca: "La proposta no te sentit"
           )
           choose "Rejected"
-          click_button "Answer proposal"
+          click_button "Answer"
         end
 
-        within ".flash" do
+        within ".callout-wrapper" do
           expect(page).to have_content("Proposal successfully answered")
         end
 
@@ -212,15 +241,70 @@ RSpec.shared_examples "manage proposals" do
 
       it "can accept a proposal" do
         within find("tr", text: proposal.title) do
-          click_link "Answer"
+          find("a.action-icon--edit-answer").click
         end
 
         within ".edit_proposal_answer" do
           choose "Accepted"
-          click_button "Answer proposal"
+          click_button "Answer"
         end
 
-        within ".flash" do
+        within ".callout-wrapper" do
+          expect(page).to have_content("Proposal successfully answered")
+        end
+
+        within find("tr", text: proposal.title) do
+          within find("td:nth-child(4)") do
+            expect(page).to have_content("Accepted")
+          end
+        end
+      end
+
+      it "can mark a proposal as evaluating" do
+        within find("tr", text: proposal.title) do
+          find("a.action-icon--edit-answer").click
+        end
+
+        within ".edit_proposal_answer" do
+          choose "Evaluating"
+          click_button "Answer"
+        end
+
+        within ".callout-wrapper" do
+          expect(page).to have_content("Proposal successfully answered")
+        end
+
+        within find("tr", text: proposal.title) do
+          within find("td:nth-child(4)") do
+            expect(page).to have_content("Evaluating")
+          end
+        end
+      end
+
+      it "can edit a proposal answer" do
+        proposal.update_attributes!(
+          state: "rejected",
+          answer: {
+            "en" => "I don't like it"
+          },
+          answered_at: Time.current
+        )
+
+        visit manage_feature_path(current_feature)
+
+        within find("tr", text: proposal.title) do
+          within find("td:nth-child(4)") do
+            expect(page).to have_content("Rejected")
+          end
+          find("a.action-icon--edit-answer").click
+        end
+
+        within ".edit_proposal_answer" do
+          choose "Accepted"
+          click_button "Answer"
+        end
+
+        within ".callout-wrapper" do
           expect(page).to have_content("Proposal successfully answered")
         end
 
@@ -234,7 +318,7 @@ RSpec.shared_examples "manage proposals" do
 
     context "when the proposal_answering step setting is disabled" do
       before do
-        current_feature.update_attributes(
+        current_feature.update_attributes!(
           step_settings: {
             current_feature.participatory_process.active_step.id => {
               proposal_answering_enabled: false
@@ -255,7 +339,7 @@ RSpec.shared_examples "manage proposals" do
 
   context "when the proposal_answering feature setting is disabled" do
     before do
-      current_feature.update_attributes(settings: { proposal_answering_enabled: false } )
+      current_feature.update_attributes!(settings: { proposal_answering_enabled: false })
     end
 
     it "cannot answer a proposal" do

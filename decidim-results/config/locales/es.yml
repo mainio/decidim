@@ -26,7 +26,8 @@ es:
         confirm_destroy: '¿Está seguro de que quiere eliminar este resultado?'
         destroy: Borrar
         edit: Editar
-        new: Nuevo/a %{name}
+        new: Nuevo
+        preview: Previsualizar
         title: Acciones
       admin:
         models:
@@ -40,11 +41,11 @@ es:
             success: El resultado se ha eliminado correctamente
           edit:
             title: Editar resultado
-            update: Actualizar resultado
+            update: Actualizar
           index:
             title: Resultados
           new:
-            create: Crear resultado
+            create: Crear
             title: Nuevo resultado
           update:
             invalid: Ha habido un problema al actualizar este resultado
@@ -60,6 +61,8 @@ es:
             other: "%{count} resultados"
         filters:
           category: Categoría
+          category_prompt: Selecciona una categoría
+          scope_prompt: Seleccione un ámbito
           scopes: Ámbitos
           search: Buscar
         filters_small_view:

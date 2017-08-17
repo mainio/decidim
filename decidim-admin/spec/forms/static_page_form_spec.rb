@@ -1,5 +1,5 @@
-# coding: utf-8
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -67,6 +67,18 @@ module Decidim
         let(:slug) { nil }
 
         it { is_expected.to be_invalid }
+      end
+
+      context "when slug is invalid" do
+        let(:slug) { "#Slug.Invalid!" }
+
+        it { is_expected.to be_invalid }
+      end
+
+      context "when slug is not downcase" do
+        let(:slug) { "SLUG" }
+
+        it { is_expected.to be_valid }
       end
 
       context "when slug is not unique" do

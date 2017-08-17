@@ -7,7 +7,7 @@ module Decidim
   # Helpers meant to be used only during capybara test runs.
   module CapybaraTestHelpers
     def switch_to_host(host = "lvh.me")
-      unless /lvh\.me$/ =~ host
+      unless /lvh\.me$/.match?(host)
         raise "Can't switch to a custom host unless it really exists. Use `whatever.lvh.me` as a workaround."
       end
 
@@ -23,18 +23,13 @@ end
 
 capybara_options = {
   extensions: [
-    File.expand_path(
-      File.join(File.dirname(__FILE__), "phantomjs_polyfills", "promise.js")
-    ),
-    File.expand_path(
-      File.join(File.dirname(__FILE__), "phantomjs_polyfills", "bind-polyfill.js")
-    ),
-    File.expand_path(
-      File.join(File.dirname(__FILE__), "phantomjs_polyfills", "object-assign-polyfill.js")
-    )
+    File.join(__dir__, "phantomjs_polyfills", "promise.js"),
+    File.join(__dir__, "phantomjs_polyfills", "phantomjs-shim.js"),
+    File.join(__dir__, "phantomjs_polyfills", "phantomjs-getOwnPropertyNames.js")
   ],
   js_errors: true,
-  url_whitelist: ["http://*.lvh.me", "localhost", "127.0.0.1"]
+  url_whitelist: ["http://*.lvh.me", "localhost", "127.0.0.1"],
+  timeout: 1.minute
 }
 
 Capybara.register_driver :poltergeist do |app|
@@ -51,7 +46,6 @@ Capybara::Screenshot::RSpec.add_link_to_screenshot_for_failed_examples = true
 Capybara.configure do |config|
   config.always_include_port = true
   config.default_driver = :poltergeist
-  config.always_include_port = true
 end
 
 RSpec.configure do |config|

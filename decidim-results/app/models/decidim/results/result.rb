@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Results
     # The data store for a Result in the Decidim::Results component. It stores a
@@ -31,6 +32,16 @@ module Decidim
       # Public: Overrides the `comments_have_votes?` Commentable concern method.
       def comments_have_votes?
         true
+      end
+
+      # Public: Overrides the `notifiable?` Notifiable concern method.
+      def notifiable?(_context)
+        true
+      end
+
+      # Public: Overrides the `users_to_notify` Notifiable concern method.
+      def users_to_notify
+        Decidim::Admin::ProcessAdmins.for(feature.participatory_process)
       end
     end
   end

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-require_dependency "decidim/admin/application_controller"
 
 module Decidim
   module Admin
     # Controller that allows managing feature permissions.
     #
-    class FeaturePermissionsController < ApplicationController
+    class FeaturePermissionsController < Decidim::Admin::ApplicationController
       include Concerns::ParticipatoryProcessAdmin
       helper_method :authorizations, :feature
 
@@ -23,7 +22,7 @@ module Decidim
         UpdateFeaturePermissions.call(@permissions_form, feature) do
           on(:ok) do
             flash[:notice] = t("feature_permissions.update.success", scope: "decidim.admin")
-            redirect_to participatory_process_features_path(participatory_process)
+            redirect_to features_path(current_participatory_process)
           end
 
           on(:invalid) do
@@ -52,7 +51,7 @@ module Decidim
       end
 
       def feature
-        @feature ||= participatory_process.features.find(params[:feature_id])
+        @feature ||= current_participatory_process.features.find(params[:feature_id])
       end
     end
   end

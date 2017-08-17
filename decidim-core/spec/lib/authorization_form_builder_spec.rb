@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 require "nokogiri"
 
@@ -25,7 +27,8 @@ module Decidim
       end
 
       it "includes the public handler attributes" do
-        expect(find("input#authorization_handler_birthday")["type"]).to eq("date")
+        expect(find("input#date_field_authorization_handler_birthday")["type"]).to eq("text")
+        expect(find("input#authorization_handler_birthday")["type"]).to eq("hidden")
         expect(find("input#authorization_handler_document_number")["type"]).to eq("text")
       end
 
@@ -37,14 +40,22 @@ module Decidim
 
     describe "input" do
       it "renders a single field for an attribute" do
-        html = builder.input(:birthday)
-        expect(html).to eq('<label for="authorization_handler_birthday">Birthday<input type="date" name="authorization_handler[birthday]" id="authorization_handler_birthday" /></label>')
+        html = Nokogiri::HTML(builder.input(:birthday))
+
+        expect(html.css("label[for='authorization_handler_birthday']").length).to eq(1)
+        expect(html.css("#date_field_authorization_handler_birthday").length).to eq(1)
+        expect(html.css("input[type='text']").length).to eq(1)
+        expect(html.css("#authorization_handler_birthday").length).to eq(1)
       end
 
       context "specifying the input type" do
         it "renders it" do
-          html = builder.input(:document_number, as: :email_field)
-          expect(html).to eq('<label for="authorization_handler_document_number">Document number<input required="required" type="email" name="authorization_handler[document_number]" id="authorization_handler_document_number" /><span class="form-error">There&#39;s an error in this field.</span></label>')
+          html = Nokogiri::HTML(builder.input(:document_number, as: :email_field))
+
+          expect(html.css("label[for='authorization_handler_document_number']").length).to eq(1)
+          expect(html.css(".label-required").length).to eq(1)
+          expect(html.css("input[type='email']").length).to eq(1)
+          expect(html.css(".form-error").length).to eq(1)
         end
       end
     end

@@ -1,17 +1,14 @@
 # frozen_string_literal: true
+
 module Decidim
-  # This query class returns the visible Participatory Processes given an
-  # Organization.
+  # This query class filters all processes given an organization.
   class OrganizationParticipatoryProcesses < Rectify::Query
     def initialize(organization)
       @organization = organization
     end
 
     def query
-      raise MandatoryOrganization unless @organization
-      ParticipatoryProcess.where(organization: @organization).published
+      ParticipatoryProcess.where(organization: @organization)
     end
-
-    class MandatoryOrganization < StandardError; end
   end
 end

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
-  describe User, :db do
+  describe User do
     let(:organization) { build(:organization) }
     let(:user) { build(:user, organization: organization) }
 
@@ -18,18 +19,6 @@ module Decidim
       user_group = create(:user_group)
       create(:user_group_membership, user: subject, user_group: user_group)
       expect(subject.user_groups).to eq([user_group])
-    end
-
-    context "with roles" do
-      let(:user) { build(:user, :admin) }
-
-      it { is_expected.to be_valid }
-
-      context "with an invalid role" do
-        let(:user) { build(:user, roles: ["foo"]) }
-
-        it { is_expected.not_to be_valid }
-      end
     end
 
     describe "name" do
@@ -48,14 +37,9 @@ module Decidim
           expect(user.name).to eq("Anonymous")
         end
       end
-
     end
 
-    describe "validations" do
-      before do
-        Decidim::AvatarUploader.enable_processing = true
-      end
-
+    describe "validations", processing_uploads_for: Decidim::AvatarUploader do
       context "when the file is too big" do
         before do
           expect(subject.avatar).to receive(:size).and_return(11.megabytes)
@@ -65,10 +49,11 @@ module Decidim
       end
 
       context "when the file is a malicious image" do
+        let(:avatar_path) { Decidim::Dev.asset("malicious.jpg") }
         let(:user) do
           build(
             :user,
-            avatar: Rack::Test::UploadedFile.new(File.join(File.dirname(__FILE__), "..", "..", "..", "..", "decidim-dev", "spec", "support", "malicious.jpg"), "image/jpg")
+            avatar: Rack::Test::UploadedFile.new(avatar_path, "image/jpg")
           )
         end
 
@@ -79,7 +64,7 @@ module Decidim
     describe "validation scopes" do
       context "when a user with the same email exists in another organization" do
         let(:email) { "foo@bar.com" }
-        let(:user) { build(:user, email: email) }
+        let(:user) { create(:user, email: email) }
 
         before do
           create(:user, email: email)
@@ -93,6 +78,13 @@ module Decidim
       it "sends them asynchronously" do
         create(:user)
         expect(ActionMailer::DeliveryJob).to have_been_enqueued.on_queue("mailers")
+      end
+    end
+
+    context "#deleted?" do
+      it "returns true if deleted_at is present" do
+        subject.deleted_at = Time.current
+        expect(subject).to be_deleted
       end
     end
   end

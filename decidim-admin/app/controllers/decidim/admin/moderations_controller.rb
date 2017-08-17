@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # This controller allows admins to manage moderations in a participatory process.
-    class ModerationsController < Admin::ApplicationController
+    class ModerationsController < Decidim::Admin::ApplicationController
       include Concerns::ParticipatoryProcessAdmin
 
       helper_method :moderations
@@ -17,12 +18,12 @@ module Decidim
         Admin::UnreportResource.call(reportable) do
           on(:ok) do
             flash[:notice] = I18n.t("reportable.unreport.success", scope: "decidim.moderations.admin")
-            redirect_to decidim_admin.participatory_process_moderations_path
+            redirect_to moderations_path
           end
 
           on(:invalid) do
             flash.now[:alert] = I18n.t("reportable.unreport.invalid", scope: "decidim.moderations.admin")
-            redirect_to decidim_admin.participatory_process_moderations_path
+            redirect_to moderations_path
           end
         end
       end
@@ -33,12 +34,12 @@ module Decidim
         Admin::HideResource.call(reportable) do
           on(:ok) do
             flash[:notice] = I18n.t("reportable.hide.success", scope: "decidim.moderations.admin")
-            redirect_to decidim_admin.participatory_process_moderations_path
+            redirect_to moderations_path
           end
 
           on(:invalid) do
             flash.now[:alert] = I18n.t("reportable.hide.invalid", scope: "decidim.moderations.admin")
-            redirect_to decidim_admin.participatory_process_moderations_path
+            redirect_to moderations_path
           end
         end
       end
@@ -47,17 +48,20 @@ module Decidim
 
       def moderations
         @moderations ||= begin
-          moderations = Decidim::Moderation.where(participatory_process: participatory_process)
-          moderations = if params[:hidden]
-                          moderations.where.not(hidden_at: nil)
-                        else
-                          moderations.where(hidden_at: nil)
+          if params[:hidden]
+            participatory_process_moderations.where.not(hidden_at: nil)
+          else
+            participatory_process_moderations.where(hidden_at: nil)
           end
         end
       end
 
       def reportable
-        @reportable ||= Decidim::Moderation.where(participatory_process: participatory_process).find(params[:id]).reportable
+        @reportable ||= participatory_process_moderations.find(params[:id]).reportable
+      end
+
+      def participatory_process_moderations
+        @participatory_process_moderations ||= Decidim::Moderation.where(participatory_process: current_participatory_process)
       end
     end
   end

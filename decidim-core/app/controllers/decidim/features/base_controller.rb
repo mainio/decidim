@@ -8,7 +8,7 @@ module Decidim
     class BaseController < Decidim::ApplicationController
       layout "layouts/decidim/participatory_process"
       include NeedsParticipatoryProcess
-      include FeatureSettings
+      include Settings
       include ActionAuthorization
 
       helper Decidim::FiltersHelper
@@ -16,8 +16,9 @@ module Decidim
       helper Decidim::FeatureReferenceHelper
       helper Decidim::TranslationsHelper
       helper Decidim::ParticipatoryProcessHelper
+      helper Decidim::IconHelper
       helper Decidim::ResourceHelper
-      helper Decidim::OrganizationScopesHelper
+      helper Decidim::ScopesHelper
       helper Decidim::ActionAuthorizationHelper
       helper Decidim::AttachmentsHelper
 
@@ -46,7 +47,6 @@ module Decidim
       def ability_context
         super.merge(
           current_manifest: current_manifest,
-          current_participatory_process: current_participatory_process,
           current_settings: current_settings,
           feature_settings: feature_settings
         )

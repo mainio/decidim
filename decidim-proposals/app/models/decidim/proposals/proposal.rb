@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Proposals
     # The data store for a Proposal in the Decidim::Proposals component.
@@ -10,21 +11,31 @@ module Decidim
       include Decidim::HasReference
       include Decidim::HasCategory
       include Decidim::Reportable
+      include Decidim::HasAttachments
       include Decidim::Comments::Commentable
 
       feature_manifest_name "proposals"
 
-      has_many :votes, foreign_key: "decidim_proposal_id", class_name: ProposalVote, dependent: :destroy, counter_cache: "proposal_votes_count"
+      has_many :votes, foreign_key: "decidim_proposal_id", class_name: "ProposalVote", dependent: :destroy, counter_cache: "proposal_votes_count"
 
       validates :title, :body, presence: true
 
-      geocoded_by :address, http_headers: lambda { |proposal| { "Referer" => proposal.feature.organization.host } }
+      geocoded_by :address, http_headers: ->(proposal) { { "Referer" => proposal.feature.organization.host } }
 
-      scope :accepted,   -> { where(state: "accepted") }
-      scope :rejected,   -> { where(state: "rejected") }
+      scope :accepted, -> { where(state: "accepted") }
+      scope :rejected, -> { where(state: "rejected") }
+      scope :evaluating, -> { where(state: "evaluating") }
+
+      def self.order_randomly(seed)
+        transaction do
+          connection.execute("SELECT setseed(#{connection.quote(seed)})")
+          order("RANDOM()").load
+        end
+      end
 
       def author_name
-        user_group&.name || author&.name || I18n.t("decidim.proposals.models.proposal.fields.official_proposal")
+        return I18n.t("decidim.proposals.models.proposal.fields.official_proposal") if official?
+        user_group&.name || author.name
       end
 
       def author_avatar_url
@@ -59,6 +70,13 @@ module Decidim
         state == "rejected"
       end
 
+      # Public: Checks if the organization has marked the proposal as evaluating it.
+      #
+      # Returns Boolean.
+      def evaluating?
+        state == "evaluating"
+      end
+
       # Public: Overrides the `commentable?` Commentable concern method.
       def commentable?
         feature.settings.comments_enabled?
@@ -79,9 +97,28 @@ module Decidim
         true
       end
 
-      # Public: Overrides the `reported_content` Reportable concern method.
-      def reported_content
-        "<h3>#{title}</h3><p>#{body}</p>"
+      # Public: Overrides the `reported_content_url` Reportable concern method.
+      def reported_content_url
+        ResourceLocatorPresenter.new(self).url
+      end
+
+      # Public: Whether the proposal is official or not.
+      def official?
+        author.nil?
+      end
+
+      # Public: Overrides the `notifiable?` Notifiable concern method.
+      # When a proposal is commented the proposal's author is notified if it is not the same
+      # who has commented the proposal and if the proposal's author has comment notifications enabled.
+      def notifiable?(context)
+        return true if official?
+        context[:author] != author && author.comments_notifications?
+      end
+
+      # Public: Overrides the `users_to_notify` Notifiable concern method.
+      def users_to_notify
+        return Decidim::Admin::ProcessAdmins.for(feature.participatory_process) if official?
+        [author]
       end
     end
   end

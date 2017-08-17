@@ -3,8 +3,7 @@
 require "spec_helper"
 
 describe "Participatory process admin manages participatory process admins", type: :feature do
-  include_context "participatory process admin"
-  let(:user) { process_admin }
+  include_context "participatory process administration by process admin"
 
   it_behaves_like "manage process admins examples"
 
@@ -12,13 +11,13 @@ describe "Participatory process admin manages participatory process admins", typ
     before do
       switch_to_host(organization.host)
       login_as user, scope: :user
-      visit decidim_admin.participatory_process_path(participatory_process)
-      click_link "Process admins"
+      visit decidim_admin.edit_participatory_process_path(participatory_process)
+      click_link "Process users"
     end
 
     it "cannot remove himself" do
       within find("#process_admins tr", text: user.email) do
-        expect(page).not_to have_content("Destroy")
+        expect(page).to have_no_content("Destroy")
       end
     end
   end

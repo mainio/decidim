@@ -1,14 +1,11 @@
 # frozen_string_literal: true
-require_dependency "decidim/admin/application_controller"
 
 module Decidim
   module Admin
     # Controller that allows managing participatory processes.
     #
-    class ParticipatoryProcessesController < ApplicationController
-      helper_method :participatory_process
-      helper Decidim::OrganizationScopesHelper
-      layout "decidim/admin/participatory_process", only: [:show, :edit, :update]
+    class ParticipatoryProcessesController < Decidim::Admin::ApplicationController
+      helper_method :current_participatory_process
 
       def index
         authorize! :index, Decidim::ParticipatoryProcess
@@ -27,7 +24,7 @@ module Decidim
         CreateParticipatoryProcess.call(@form) do
           on(:ok) do |participatory_process|
             flash[:notice] = I18n.t("participatory_processes.create.success", scope: "decidim.admin")
-            redirect_to participatory_process_path(participatory_process)
+            redirect_to participatory_process_steps_path(participatory_process)
           end
 
           on(:invalid) do
@@ -38,50 +35,61 @@ module Decidim
       end
 
       def edit
-        @participatory_process = collection.find(params[:id])
-        authorize! :update, @participatory_process
-        @form = form(ParticipatoryProcessForm).from_model(@participatory_process)
+        authorize! :update, current_participatory_process
+        @form = form(ParticipatoryProcessForm).from_model(current_participatory_process)
+        render layout: "decidim/admin/participatory_process"
       end
 
       def update
-        @participatory_process = collection.find(params[:id])
-        authorize! :update, @participatory_process
-        @form = form(ParticipatoryProcessForm).from_params(params)
+        authorize! :update, current_participatory_process
+        @form = form(ParticipatoryProcessForm).from_params(participatory_process_params)
 
-        UpdateParticipatoryProcess.call(@participatory_process, @form) do
+        UpdateParticipatoryProcess.call(current_participatory_process, @form) do
           on(:ok) do |participatory_process|
             flash[:notice] = I18n.t("participatory_processes.update.success", scope: "decidim.admin")
-            redirect_to participatory_process_path(participatory_process)
+            redirect_to edit_participatory_process_path(participatory_process)
           end
 
           on(:invalid) do
             flash.now[:alert] = I18n.t("participatory_processes.update.error", scope: "decidim.admin")
-            render :edit
+            render :edit, layout: "decidim/admin/participatory_process"
           end
         end
       end
 
-      def show
-        @participatory_process = collection.find(params[:id])
-        authorize! :read, @participatory_process
-      end
-
       def destroy
-        @participatory_process = collection.find(params[:id])
-        authorize! :destroy, @participatory_process
-        @participatory_process.destroy!
+        authorize! :destroy, current_participatory_process
+        current_participatory_process.destroy!
 
         flash[:notice] = I18n.t("participatory_processes.destroy.success", scope: "decidim.admin")
 
         redirect_to participatory_processes_path
       end
 
+      def copy
+        authorize! :create, Decidim::ParticipatoryProcess
+      end
+
       private
 
-      attr_reader :participatory_process
+      def current_participatory_process
+        @current_participatory_process ||= collection.find(params[:id]) if params[:id]
+      end
 
       def collection
-        @collection ||= ManageableParticipatoryProcessesForUser.for(current_user)
+        @collection ||= Decidim::ParticipatoryProcessesWithUserRole.for(current_user)
+      end
+
+      def ability_context
+        super.merge(current_participatory_process: current_participatory_process)
+      end
+
+      def participatory_process_params
+        {
+          id: params[:id],
+          hero_image: current_participatory_process.hero_image,
+          banner_image: current_participatory_process.banner_image
+        }.merge(params[:participatory_process].to_unsafe_h)
       end
     end
   end

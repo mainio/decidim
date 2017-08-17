@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   # Features inside a component can expose different Resources, these resources
   # will be used to be linked between each other and other possible features.
@@ -68,13 +69,6 @@ module Decidim
     # Returns a String.
     def route_name
       super || model_class_name.demodulize.underscore
-    end
-
-    # The engine for the resource. It will be used to build routes.
-    #
-    # Returns a Rails::Engine.
-    def mounted_engine_name
-      "decidim_#{feature_manifest.name}"
     end
   end
 end

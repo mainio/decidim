@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # A command with all the business logic when updating a scope.
@@ -35,7 +36,10 @@ module Decidim
 
       def attributes
         {
-          name: form.name
+          name: form.name,
+          code: form.code,
+          scope_type: form.scope_type,
+          parent: @parent_scope
         }
       end
     end

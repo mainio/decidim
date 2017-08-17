@@ -36,7 +36,7 @@
             </div>
             <% if current_user %>
               <div class="topbar__dropmenu topbar__user__logged">
-                <ul class="dropdown menu" data-dropdown-menu data-close-on-click-inside="false">
+                <ul class="dropdown menu" data-dropdown-menu>
                   <li class="is-dropdown-submenu-parent show-for-medium">
                     <%= link_to current_user.name, decidim.account_path %>
                     <ul class="menu is-dropdown-submenu js-append usermenu-off-canvas">
@@ -64,7 +64,7 @@
         <div class="show-for-medium" data-set="nav-holder">
           <nav class="navbar js-append">
             <div class="row column">
-              <%= render partial: "layouts/decidim/main_nav" %>
+              <%= main_menu.render %>
             </div>
           </nav>
         </div>
@@ -85,7 +85,7 @@
             <% if current_organization.static_pages.any? %>
               <ul class="footer-nav">
                 <% current_organization.static_pages.each do |page| %>
-                  <li><%= link_to translated_attribute(page.title), decidim.page_path(page) %></a></li>
+                  <li><%= link_to translated_attribute(page.title), decidim.page_path(page) %></li>
                 <% end %>
               </ul>
             <% end %>

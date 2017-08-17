@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
-  describe UserGroupMembership, :db do
+  describe UserGroupMembership do
     subject { create(:user_group_membership) }
 
     it "is valid" do

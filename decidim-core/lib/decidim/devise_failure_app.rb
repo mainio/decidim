@@ -1,4 +1,3 @@
-# encoding: utf-8
 # frozen_string_literal: true
 
 module Decidim
@@ -7,7 +6,7 @@ module Decidim
   # introducing a bug).
   class DeviseFailureApp < ::Devise::FailureApp
     def scope_url
-      opts  = {}
+      opts = {}
 
       # Initialize script_name with nil to prevent infinite loops in
       # authenticated mounted engines in rails 4.2 and 5.0

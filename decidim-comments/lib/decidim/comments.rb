@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "decidim/comments/admin"
 require "decidim/comments/engine"
 require "decidim/comments/admin_engine"
@@ -13,5 +14,7 @@ module Decidim
     autoload :CommentMutationType, "decidim/comments/api/comment_mutation_type"
     autoload :CommentType, "decidim/comments/api/comment_type"
     autoload :Commentable, "decidim/comments/commentable"
+    autoload :CommentSerializer, "decidim/comments/comment_serializer"
+    autoload :Export, "decidim/comments/export"
   end
 end

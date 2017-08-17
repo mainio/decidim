@@ -21,17 +21,12 @@ module Decidim
         @current_ability ||= current_ability_klass.new(current_user, ability_context)
       end
 
-      def current_ability_klass
-        Decidim::Ability
-      end
-
       def ability_context
         {
           current_settings: try(:current_settings),
           feature_settings: try(:feature_settings),
           current_organization: try(:current_organization),
-          current_feature: try(:current_feature),
-          current_participatory_process: try(:current_participatory_process)
+          current_feature: try(:current_feature)
         }
       end
 

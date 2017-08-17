@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   # A command with the business logic to invite a user to an organization.
   class InviteUser < Rectify::Command
@@ -13,7 +14,7 @@ module Decidim
       return broadcast(:invalid) if form.invalid?
 
       if user.present?
-        set_user_roles
+        update_user
       else
         invite_user
       end
@@ -29,21 +30,24 @@ module Decidim
       @user ||= Decidim::User.where(organization: form.organization).where(email: form.email.downcase).first
     end
 
-    def set_user_roles
-      user.roles += form.roles
+    def update_user
+      user.admin = form.role == "admin"
+      user.roles << form.role if form.role != "admin"
+      user.roles = user.roles.uniq
       user.save!
     end
 
     def invite_user
-      @user = Decidim::User.invite!(
-        {
-          name: form.name,
-          email: form.email.downcase,
-          organization: form.organization,
-          roles: form.roles,
-          comments_notifications: true,
-          replies_notifications: true
-        },
+      @user = Decidim::User.new(
+        name: form.name,
+        email: form.email.downcase,
+        organization: form.organization,
+        admin: form.role == "admin",
+        roles: form.role == "admin" ? [] : [form.role],
+        comments_notifications: true,
+        replies_notifications: true
+      )
+      @user.invite!(
         form.invited_by,
         invitation_instructions: form.invitation_instructions
       )

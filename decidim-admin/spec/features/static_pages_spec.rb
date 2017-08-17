@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 describe "Content pages", type: :feature do
@@ -21,8 +22,9 @@ describe "Content pages", type: :feature do
     it "shows the list of all the pages" do
       decidim_pages.each do |decidim_page|
         expect(page).to have_css(
-                          "a[href=\"#{decidim.page_path(decidim_page)}\"]",
-                          text: decidim_page.title[I18n.locale.to_s].upcase)
+          "a[href=\"#{decidim.page_path(decidim_page)}\"]",
+          text: decidim_page.title[I18n.locale.to_s].upcase
+        )
       end
     end
   end
@@ -35,14 +37,16 @@ describe "Content pages", type: :feature do
     end
 
     it "can create new pages" do
-      find(".actions .new").click
+      within ".secondary-nav" do
+        find(".new").click
+      end
 
       within ".new_static_page" do
         fill_in :static_page_slug, with: "welcome"
 
         fill_in_i18n(
           :static_page_title,
-          "#title-tabs",
+          "#static_page-title-tabs",
           en: "Welcome to Decidim",
           es: "Te damos la bienvendida a Decidim",
           ca: "Et donem la benvinguda a Decidim"
@@ -50,7 +54,7 @@ describe "Content pages", type: :feature do
 
         fill_in_i18n_editor(
           :static_page_content,
-          "#content-tabs",
+          "#static_page-content-tabs",
           en: "<p>Some HTML content</p>",
           es: "<p>Contenido HTML</p>",
           ca: "<p>Contingut HTML</p>"
@@ -59,7 +63,7 @@ describe "Content pages", type: :feature do
         find("*[type=submit]").click
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
@@ -77,54 +81,49 @@ describe "Content pages", type: :feature do
 
       it "can edit them" do
         within find("tr", text: translated(decidim_page.title)) do
-          click_link "Edit"
+          page.find(".action-icon.action-icon--edit").click
         end
 
         within ".edit_static_page" do
           fill_in_i18n(
             :static_page_title,
-            "#title-tabs",
-            en: "Not welcomed anymore",
+            "#static_page-title-tabs",
+            en: "Not welcomed anymore"
           )
           fill_in_i18n_editor(
             :static_page_content,
-            "#content-tabs",
-            en: "This is the new <strong>content</strong>",
+            "#static_page-content-tabs",
+            en: "This is the new <strong>content</strong>"
           )
           find("*[type=submit]").click
         end
 
-        within ".flash" do
+        within ".callout-wrapper" do
           expect(page).to have_content("successfully")
         end
 
         within "table" do
           expect(page).to have_content("Not welcomed anymore")
-          click_link("Not welcomed anymore")
-        end
-
-        within "dl" do
-          expect(page).to have_content("This is the new content")
         end
       end
 
       it "can destroy them" do
         within find("tr", text: translated(decidim_page.title)) do
-          click_link "Destroy"
+          page.find(".action-icon.action-icon--remove").click
         end
 
-        within ".flash" do
+        within ".callout-wrapper" do
           expect(page).to have_content("successfully")
         end
 
         within "table" do
-          expect(page).not_to have_content(translated(decidim_page.title))
+          expect(page).to have_no_content(translated(decidim_page.title))
         end
       end
 
       it "can visit them" do
         within find("tr", text: translated(decidim_page.title)) do
-          click_link "View public page"
+          page.find(".action-icon.action-icon--preview").click
         end
 
         expect(page).to have_content(translated(decidim_page.title))

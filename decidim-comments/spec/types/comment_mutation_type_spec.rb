@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 require "decidim/api/test/type_context"
 
@@ -9,14 +10,10 @@ module Decidim
       let(:model) { create(:comment) }
 
       describe "upVote" do
-        let(:query) {
-          "{ upVote { upVoted } }"
-        }
+        let(:query) { "{ upVote { upVoted } }" }
 
         before do
-          allow(Decidim::Comments::VoteComment).to receive(:call).with(model, current_user, weight: 1).and_return (
-            model
-          )
+          allow(Decidim::Comments::VoteComment).to receive(:call).with(model, current_user, weight: 1).and_return(model)
         end
 
         it "should call UpVoteComment command" do
@@ -26,14 +23,10 @@ module Decidim
       end
 
       describe "downVote" do
-        let(:query) {
-          "{ downVote { downVoted } }"
-        }
+        let(:query) { "{ downVote { downVoted } }" }
 
         before do
-          allow(Decidim::Comments::VoteComment).to receive(:call).with(model, current_user, weight: -1).and_return (
-            model
-          )
+          allow(Decidim::Comments::VoteComment).to receive(:call).with(model, current_user, weight: -1).and_return(model)
         end
 
         it "should call UpVoteComment command" do

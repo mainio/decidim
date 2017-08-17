@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Comments
-    describe CreateRegistration, :db do
+    describe CreateRegistration do
       describe "call" do
         let(:organization) { create(:organization) }
 
@@ -15,9 +16,9 @@ module Decidim
         let(:tos_agreement) { "1" }
         let(:newsletter_notifications) { "1" }
 
-        let(:user_group_name) { nil }
-        let(:user_group_document_number) { nil }
-        let(:user_group_phone) { nil }
+        let(:user_group_name) { "My organization" }
+        let(:user_group_document_number) { "123456789Z" }
+        let(:user_group_phone) { "333-333-333" }
 
         let(:form_params) do
           {
@@ -66,7 +67,7 @@ module Decidim
           end
 
           it "creates a new user" do
-            expect(User).to receive(:create!).with({
+            expect(User).to receive(:create!).with(
               name: form.name,
               email: form.email,
               password: form.password,
@@ -76,10 +77,9 @@ module Decidim
               organization: organization,
               comments_notifications: true,
               replies_notifications: true
-            }).and_call_original
-            expect do
-              command.call
-            end.to change { User.count }.by(1)
+            ).and_call_original
+
+            expect { command.call }.to change { User.count }.by(1)
           end
         end
 
@@ -89,6 +89,7 @@ module Decidim
           let(:user_group_name) { "My organization" }
           let(:user_group_document_number) { "123456789Z" }
           let(:user_group_phone) { "333-333-333" }
+          let(:user_group_decidim_organization_id) { organization.id }
 
           describe "when the form is not valid" do
             before do
@@ -100,9 +101,7 @@ module Decidim
             end
 
             it "doesn't create a user group" do
-              expect do
-                command.call
-              end.not_to change { UserGroup.count }
+              expect { command.call }.not_to change { UserGroup.count }
             end
           end
 
@@ -112,11 +111,13 @@ module Decidim
             end
 
             it "creates a new user group" do
-              expect(UserGroup).to receive(:new).with({
+              expect(UserGroup).to receive(:new).with(
                 name: form.user_group_name,
                 document_number: form.user_group_document_number,
-                phone: form.user_group_phone
-              }).and_call_original
+                phone: form.user_group_phone,
+                decidim_organization_id: organization.id
+              ).and_call_original
+
               expect do
                 command.call
                 expect(UserGroup.last.users.first).to eq(User.last)

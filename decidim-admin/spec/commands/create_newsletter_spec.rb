@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Admin
-    describe CreateNewsletter, :db do
+    describe CreateNewsletter do
       describe "call" do
         let(:user) { create(:user, organization: organization) }
         let(:organization) { create(:organization) }

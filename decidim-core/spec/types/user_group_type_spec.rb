@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 require "decidim/api/test/type_context"
 
@@ -25,10 +26,30 @@ module Decidim
     end
 
     describe "avatarUrl" do
-      let (:query) { "{ avatarUrl }" }
+      let(:query) { "{ avatarUrl }" }
 
       it "returns the user avatar url" do
         expect(response).to include("avatarUrl" => model.avatar.url)
+      end
+    end
+
+    describe "isVerified" do
+      let(:query) { "{ isVerified }" }
+
+      context "when the user group is verified" do
+        let(:model) { create(:user_group, :verified) }
+
+        it "returns true" do
+          expect(response).to include("isVerified" => true)
+        end
+      end
+
+      context "when the user group is not verified" do
+        let(:model) { create(:user_group, :rejected) }
+
+        it "returns false" do
+          expect(response).to include("isVerified" => false)
+        end
       end
     end
   end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module System
     module Devise
@@ -6,6 +7,7 @@ module Decidim
       # and views.
       class SessionsController < ::Devise::SessionsController
         helper Decidim::DecidimFormHelper
+
         layout "decidim/system/login"
       end
     end

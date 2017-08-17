@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 Decidim::Core::Engine.routes.draw do
   mount Decidim::Api::Engine => "/api"
 
@@ -24,6 +25,7 @@ Decidim::Core::Engine.routes.draw do
   resources :participatory_process_groups, only: :show, path: "processes_groups"
   resources :participatory_processes, only: [:index, :show], path: "processes" do
     resources :participatory_process_steps, only: [:index], path: "steps"
+    resource :participatory_process_widget, only: :show, path: "embed"
   end
 
   scope "/processes/:participatory_process_id/f/:feature_id" do
@@ -34,8 +36,6 @@ Decidim::Core::Engine.routes.draw do
         mount manifest.engine, at: "/", as: "decidim_#{manifest.name}"
       end
     end
-
-    get "/", to: redirect("/404"), as: :feature
   end
 
   authenticate(:user) do
@@ -44,22 +44,24 @@ Decidim::Core::Engine.routes.draw do
         get :first_login
       end
     end
-    resource :account, only: [:show, :update], controller: "account"
+    resource :account, only: [:show, :update, :destroy], controller: "account" do
+      member do
+        get :delete
+      end
+    end
     resource :notifications_settings, only: [:show, :update], controller: "notifications_settings"
     resources :own_user_groups, only: [:index]
   end
 
   resources :pages, only: [:index, :show], format: false
 
+  get "/scopes/search", to: "scopes#search", as: :scopes_search
+
   get "/static_map", to: "static_map#show", as: :static_map
   get "/cookies/accept", to: "cookie_policy#accept", as: :accept_cookies
 
-  match "/404", to: "pages#show", id: "404", via: :all
-  match "/500", to: "pages#show", id: "500", via: :all
-
-  if Rails.env.development? && defined?(LetterOpenerWeb::Engine)
-    mount LetterOpenerWeb::Engine, at: "/letter_opener"
-  end
+  match "/404", to: "errors#not_found", via: :all
+  match "/500", to: "errors#internal_server_error", via: :all
 
   resource :report, only: [:create]
 

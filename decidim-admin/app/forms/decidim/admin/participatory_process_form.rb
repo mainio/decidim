@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # A form object used to create participatory processes from the admin
@@ -17,6 +18,7 @@ module Decidim
       translatable_attribute :target, String
       translatable_attribute :participatory_scope, String
       translatable_attribute :participatory_structure, String
+      translatable_attribute :announcement, String
 
       mimic :participatory_process
 
@@ -24,10 +26,14 @@ module Decidim
       attribute :slug, String
       attribute :hashtag, String
       attribute :promoted, Boolean
+      attribute :scopes_enabled, Boolean
       attribute :scope_id, Integer
       attribute :hero_image
+      attribute :remove_hero_image
       attribute :banner_image
+      attribute :remove_banner_image
       attribute :participatory_process_group_id, Integer
+      attribute :show_statistics, Boolean
 
       validates :slug, presence: true
       validates :title, :subtitle, :description, :short_description, translatable_presence: true
@@ -37,6 +43,11 @@ module Decidim
 
       validates :hero_image, file_size: { less_than_or_equal_to: ->(_record) { Decidim.maximum_attachment_size } }, file_content_type: { allow: ["image/jpeg", "image/png"] }
       validates :banner_image, file_size: { less_than_or_equal_to: ->(_record) { Decidim.maximum_attachment_size } }, file_content_type: { allow: ["image/jpeg", "image/png"] }
+
+      def map_model(model)
+        self.scope_id = model.decidim_scope_id
+        self.participatory_process_group_id = model.decidim_participatory_process_group_id
+      end
 
       def scope
         @scope ||= current_organization.scopes.where(id: scope_id).first
@@ -49,7 +60,7 @@ module Decidim
       private
 
       def slug_uniqueness
-        return unless current_organization.participatory_processes.where(slug: slug).where.not(id: id).any?
+        return unless OrganizationParticipatoryProcesses.new(current_organization).query.where(slug: slug).where.not(id: id).any?
 
         errors.add(:slug, :taken)
       end

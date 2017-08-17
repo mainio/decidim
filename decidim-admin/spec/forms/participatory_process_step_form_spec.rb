@@ -1,5 +1,5 @@
-# coding: utf-8
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -31,7 +31,7 @@ module Decidim
             "description_es" => description[:es],
             "description_ca" => description[:ca],
             "start_date" => start_date,
-            "end_date" => end_date,
+            "end_date" => end_date
           }
         }
       end

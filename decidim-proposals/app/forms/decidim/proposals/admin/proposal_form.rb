@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Proposals
     module Admin
@@ -11,8 +12,9 @@ module Decidim
         attribute :address, String
         attribute :latitude, Float
         attribute :longitude, Float
-        attribute :decidim_category_id, Integer
-        attribute :decidim_scope_id, Integer
+        attribute :category_id, Integer
+        attribute :scope_id, Integer
+        attribute :attachment, AttachmentForm
 
         validates :title, :body, presence: true
         validates :address, geocoding: true, if: -> { current_feature.settings.geocoding_enabled? }
@@ -20,6 +22,12 @@ module Decidim
         validates :scope, presence: true, if: ->(form) { form.decidim_scope_id.present? }
 
         delegate :categories, to: :current_feature, prefix: false
+
+        def map_model(model)
+          return unless model.categorization
+
+          self.category_id = model.categorization.decidim_category_id
+        end
 
         def organization_scopes
           current_organization.scopes
@@ -42,7 +50,7 @@ module Decidim
         #
         # Returns a Decidim::Scope
         def scope
-          @scope ||= process_scope || organization_scopes.where(id: decidim_scope_id).first
+          @scope ||= organization_scopes.where(id: scope_id).first || process_scope
         end
       end
     end

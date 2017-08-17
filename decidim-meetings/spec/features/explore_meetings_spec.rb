@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe "Explore meetings", type: :feature do
@@ -24,6 +26,11 @@ describe "Explore meetings", type: :feature do
         visit_feature
         within ".filters" do
           fill_in :filter_search_text, with: translated(meetings.first.title)
+
+          # The form should be auto-submitted when filter box is filled up, but
+          # somehow it's not happening. So we workaround that be explicitly
+          # clicking on "Search" until we find out why.
+          find(".icon--magnifying-glass").click
         end
 
         expect(page).to have_css(".card--meeting", count: 1)
@@ -57,7 +64,7 @@ describe "Explore meetings", type: :feature do
         visit_feature
 
         within ".filters" do
-          check scope.name
+          select2(translated(scope.name), xpath: '//select[@id="filter_scope_id"]/..', search: true)
         end
 
         expect(page).to have_css(".card--meeting", count: 1)
@@ -83,7 +90,7 @@ describe "Explore meetings", type: :feature do
     end
 
     context "No meetings scheduled" do
-      let!(:meetings){ [] }
+      let!(:meetings) { [] }
 
       it "shows the correct warning" do
         visit_feature
@@ -92,9 +99,20 @@ describe "Explore meetings", type: :feature do
         end
       end
     end
+
+    context "when paginating" do
+      before do
+        Decidim::Meetings::Meeting.destroy_all
+      end
+
+      let!(:collection) { create_list :meeting, collection_size, feature: feature }
+      let!(:resource_selector) { ".card--meeting" }
+
+      it_behaves_like "a paginated resource"
+    end
   end
 
-  context "show" do
+  context "show", :serves_map do
     let(:meetings_count) { 1 }
     let(:meeting) { meetings.first }
     let(:date) { 10.days.from_now }
@@ -105,7 +123,7 @@ describe "Explore meetings", type: :feature do
         end_time: date.end_of_day
       )
 
-      visit decidim_meetings.meeting_path(participatory_process_id: participatory_process.id, feature_id: feature.id, id: meeting.id)
+      visit resource_locator(meeting).path
     end
 
     it "shows all meeting info" do
@@ -124,7 +142,7 @@ describe "Explore meetings", type: :feature do
 
     context "without category or scope" do
       it "does not show any tag" do
-        expect(page).not_to have_selector("ul.tags.tags--meeting")
+        expect(page).to have_no_selector("ul.tags.tags--meeting")
       end
     end
 
@@ -162,15 +180,15 @@ describe "Explore meetings", type: :feature do
       it "shows tags for scope" do
         expect(page).to have_selector("ul.tags.tags--meeting")
         within "ul.tags.tags--meeting" do
-          expect(page).to have_content(meeting.scope.name)
+          expect(page).to have_content(translated(meeting.scope.name))
         end
       end
 
       it "links to the filter for this scope" do
         within "ul.tags.tags--meeting" do
-          click_link meeting.scope.name
+          click_link translated(meeting.scope.name)
         end
-        expect(page).to have_checked_field(meeting.scope.name)
+        expect(page).to have_select("filter_scope_id", selected: translated(meeting.scope.name))
       end
     end
 
@@ -217,18 +235,39 @@ describe "Explore meetings", type: :feature do
     let(:attached_to) { meeting }
     it_behaves_like "has attachments"
 
-    context "when the meeting is closed" do
-      let!(:meeting) { create(:meeting, :closed, feature: feature) }
-
+    shared_examples_for "a closing report page" do
       it "shows the closing report" do
         visit_feature
         click_link translated(meeting.title)
         expect(page).to have_i18n_content(meeting.closing_report)
 
         within ".definition-data" do
-          expect(page).to have_content(meeting.attendees_count)
-          expect(page).to have_content(meeting.contributions_count)
-          expect(page).to have_content(meeting.attending_organizations)
+          expect(page).to have_content("ATTENDEES COUNT #{meeting.attendees_count}")
+          expect(page).to have_content("ATTENDING ORGANIZATIONS #{meeting.attending_organizations}")
+        end
+      end
+    end
+
+    context "when the meeting is closed and had no contributions" do
+      let!(:meeting) { create(:meeting, :closed, contributions_count: 0, feature: feature) }
+
+      it_behaves_like "a closing report page"
+
+      it "does not show contributions count" do
+        within ".definition-data" do
+          expect(page).to have_no_content("CONTRIBUTIONS COUNT 0")
+        end
+      end
+    end
+
+    context "when the meeting is closed and had contributions" do
+      let!(:meeting) { create(:meeting, :closed, contributions_count: 1, feature: feature) }
+
+      it_behaves_like "a closing report page"
+
+      it "shows contributions count" do
+        within ".definition-data" do
+          expect(page).to have_content("CONTRIBUTIONS COUNT 1")
         end
       end
     end

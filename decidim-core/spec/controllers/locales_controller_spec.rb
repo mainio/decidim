@@ -1,8 +1,11 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   describe LocalesController, type: :controller do
+    routes { Decidim::Core::Engine.routes }
+
     let(:organization) { create(:organization) }
 
     before do

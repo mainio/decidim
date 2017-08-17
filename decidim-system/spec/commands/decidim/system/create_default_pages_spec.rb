@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -14,7 +15,7 @@ module Decidim
       end
 
       it "sets the content with each locale" do
-        I18n.available_locales = [:en, :ca]
+        allow(Decidim).to receive(:available_locales).and_return [:en, :ca]
 
         subject
 

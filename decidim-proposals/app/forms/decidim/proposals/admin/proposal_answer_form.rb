@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Proposals
     module Admin
@@ -10,7 +11,7 @@ module Decidim
         translatable_attribute :answer, String
         attribute :state, String
 
-        validates :state, presence: true, inclusion: { in: %w(accepted rejected) }
+        validates :state, presence: true, inclusion: { in: %w(accepted rejected evaluating) }
         validates :answer, translatable_presence: true, if: ->(form) { form.state == "rejected" }
       end
     end

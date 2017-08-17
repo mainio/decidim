@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module System
-    describe RegisterOrganization, :db do
+    describe RegisterOrganization do
       describe "call" do
         let(:form) do
           RegisterOrganizationForm.new(params)
@@ -44,7 +45,7 @@ module Decidim
 
             expect(admin.email).to eq("f.laguardia@gotham.gov")
             expect(admin.organization.name).to eq("Gotham City")
-            expect(admin.roles).to include("admin")
+            expect(admin).to be_admin
             expect(admin).to be_created_by_invite
           end
 

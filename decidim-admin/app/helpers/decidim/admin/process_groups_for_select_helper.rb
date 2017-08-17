@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # This class contains helpers needed to format ParticipatoryProcessGroups
@@ -11,7 +12,7 @@ module Decidim
       # Returns an Array.
       def process_groups_for_select
         @process_groups_for_select ||=
-          current_organization.participatory_process_groups.map do |group|
+          OrganizationParticipatoryProcessGroups.new(current_organization).map do |group|
             [translated_attribute(group.name), group.id]
           end
       end

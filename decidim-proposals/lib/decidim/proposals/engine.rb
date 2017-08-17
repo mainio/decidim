@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "kaminari"
 require "social-share-button"
 
@@ -13,6 +14,7 @@ module Decidim
       routes do
         resources :proposals, only: [:create, :new, :index, :show] do
           resource :proposal_vote, only: [:create, :destroy]
+          resource :proposal_widget, only: :show, path: "embed"
         end
         root to: "proposals#index"
       end
@@ -23,7 +25,7 @@ module Decidim
 
       initializer "decidim_proposals.inject_abilities_to_user" do |_app|
         Decidim.configure do |config|
-          config.abilities += ["Decidim::Proposals::Abilities::CurrentUser"]
+          config.abilities += ["Decidim::Proposals::Abilities::CurrentUserAbility"]
         end
       end
     end

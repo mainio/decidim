@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # A class used to find the admins for a participatory process including
@@ -34,7 +35,7 @@ module Decidim
       end
 
       def process_admins
-        Decidim::Admin::ParticipatoryProcessUserRole
+        Decidim::ParticipatoryProcessUserRole
           .where(participatory_process: process, role: :admin)
           .pluck(:decidim_user_id)
       end

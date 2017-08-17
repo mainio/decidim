@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   # This class deals with uploading hero images to ParticipatoryProcesses.
   class ImageUploader < ApplicationUploader
@@ -27,13 +28,13 @@ module Decidim
 
     def validate_size
       manipulate! do |image|
-        validation_error!(I18n.t("carrierwave.errors.image_too_big")) if image.size > 10.megabytes
+        validation_error!(I18n.t("carrierwave.errors.image_too_big")) if image.size > Decidim.maximum_attachment_size
         image
       end
     end
 
     def max_image_height_or_width
-      2000
+      3840
     end
 
     private

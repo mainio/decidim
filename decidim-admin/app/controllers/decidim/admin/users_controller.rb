@@ -1,19 +1,18 @@
 # frozen_string_literal: true
-require_dependency "decidim/admin/application_controller"
 
 module Decidim
   module Admin
     # Controller that allows managing all admins at the admin panel.
     #
-    class UsersController < Admin::ApplicationController
+    class UsersController < Decidim::Admin::ApplicationController
       def index
         authorize! :index, :admin_users
-        @users = collection
+        @users = collection.page(params[:page]).per(15)
       end
 
       def new
         authorize! :new, :admin_users
-        @form = form(InviteAdminForm).instance
+        @form = form(InviteUserForm).instance
       end
 
       def create
@@ -22,13 +21,12 @@ module Decidim
         default_params = {
           organization: current_organization,
           invitation_instructions: "invite_admin",
-          roles: %w(admin),
           invited_by: current_user,
           comments_notifications: true,
           replies_notifications: true
         }
 
-        @form = form(InviteAdminForm).from_params(params.merge(default_params))
+        @form = form(InviteUserForm).from_params(params.merge(default_params))
 
         InviteUser.call(@form) do
           on(:ok) do
@@ -62,7 +60,7 @@ module Decidim
       def destroy
         authorize! :destroy, :admin_users
 
-        RemoveUserRole.call(user, "admin") do
+        RemoveAdmin.call(user) do
           on(:ok) do
             flash[:notice] = I18n.t("users.destroy.success", scope: "decidim.admin")
           end
@@ -82,7 +80,7 @@ module Decidim
       end
 
       def collection
-        @collection ||= current_organization.admins
+        @collection ||= current_organization.admins.or(current_organization.users_with_any_role)
       end
     end
   end

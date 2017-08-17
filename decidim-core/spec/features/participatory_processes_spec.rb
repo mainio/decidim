@@ -1,15 +1,17 @@
-# coding: utf-8
 # frozen_string_literal: true
+
 require "spec_helper"
 
 describe "Participatory Processes", type: :feature do
   let(:organization) { create(:organization) }
-  let!(:participatory_process) do
+  let(:show_statistics) { true }
+  let(:base_process) do
     create(
       :participatory_process,
       organization: organization,
       description: { en: "Description", ca: "Descripció", es: "Descripción" },
-      short_description: { en: "Short description", ca: "Descripció curta", es: "Descripción corta" }
+      short_description: { en: "Short description", ca: "Descripció curta", es: "Descripción corta" },
+      show_statistics: show_statistics
     )
   end
 
@@ -17,7 +19,24 @@ describe "Participatory Processes", type: :feature do
     switch_to_host(organization.host)
   end
 
+  context "when there are no processes" do
+    before do
+      visit decidim.participatory_processes_path
+    end
+
+    it "shows a message about the lack of processes" do
+      expect(page).to have_content("No participatory processes yet!")
+    end
+  end
+
+  context "when the process does not exist" do
+    it_behaves_like "a 404 page" do
+      let(:target_path) { decidim.participatory_process_path(99_999_999) }
+    end
+  end
+
   context "when there are some processes" do
+    let!(:participatory_process) { base_process }
     let!(:promoted_process) { create(:participatory_process, :promoted, organization: organization) }
     let!(:unpublished_process) { create(:participatory_process, :unpublished, organization: organization) }
 
@@ -42,11 +61,11 @@ describe "Participatory Processes", type: :feature do
         expect(page).to have_content(translated(promoted_process.title, locale: :en))
         expect(page).to have_selector("article.card", count: 2)
 
-        expect(page).not_to have_content(translated(unpublished_process.title, locale: :en))
+        expect(page).to have_no_content(translated(unpublished_process.title, locale: :en))
       end
     end
 
-    it "links to the individial process page" do
+    it "links to the individual process page" do
       click_link(translated(participatory_process.title, locale: :en))
 
       expect(current_path).to eq decidim.participatory_process_path(participatory_process)
@@ -58,8 +77,7 @@ describe "Participatory Processes", type: :feature do
         create(:participatory_process_step,
                :active,
                participatory_process: participatory_process,
-               title: { en: "Active step", ca: "Fase activa", es: "Fase activa" },
-              )
+               title: { en: "Active step", ca: "Fase activa", es: "Fase activa" })
       end
 
       it "links to the active step" do
@@ -74,11 +92,15 @@ describe "Participatory Processes", type: :feature do
     end
   end
 
-  describe "show" do
-    let!(:published_feature) { create(:feature, :published, participatory_process: participatory_process) }
-    let!(:unpublished_feature) { create(:feature, :unpublished, participatory_process: participatory_process) }
+  describe "when going to the participatory process page" do
+    let!(:participatory_process) { base_process }
+    let!(:proposals_feature) { create(:feature, :published, participatory_process: participatory_process, manifest_name: :proposals) }
+    let!(:meetings_feature) { create(:feature, :unpublished, participatory_process: participatory_process, manifest_name: :meetings) }
 
     before do
+      create_list(:proposal, 3, feature: proposals_feature)
+      allow(Decidim).to receive(:feature_manifests).and_return([proposals_feature.manifest, meetings_feature.manifest])
+
       visit decidim.participatory_process_path(participatory_process)
     end
 
@@ -105,8 +127,23 @@ describe "Participatory Processes", type: :feature do
     context "when the process has some features" do
       it "shows the features" do
         within ".process-nav" do
-          expect(page).to have_content(translated(published_feature.name, locale: :en).upcase)
-          expect(page).to have_no_content(translated(unpublished_feature.name, locale: :en).upcase)
+          expect(page).to have_content(translated(proposals_feature.name, locale: :en).upcase)
+          expect(page).to have_no_content(translated(meetings_feature.name, locale: :en).upcase)
+        end
+      end
+
+      it "shows the stats for those features" do
+        within ".process_stats" do
+          expect(page).to have_content("3 PROPOSALS")
+          expect(page).to have_no_content("0 MEETINGS")
+        end
+      end
+
+      context "when the process stats are not enabled" do
+        let(:show_statistics) { false }
+
+        it "the stats for those features are not visible" do
+          expect(page).to have_no_content("3 PROPOSALS")
         end
       end
     end

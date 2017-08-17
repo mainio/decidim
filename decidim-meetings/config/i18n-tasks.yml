@@ -1,6 +1,10 @@
 base_locale: en
-locales: [en]
 ignore_unused:
 - "decidim.features.meetings.name"
+- "decidim.features.meetings.settings.*"
 - "activemodel.attributes.*"
 - "decidim.resource_links.*"
+ignore_missing:
+  - decidim.scopes.global
+search:
+  strict: false

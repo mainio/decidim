@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Devise
     # This controller customizes the behaviour of Devise::Invitiable.
@@ -16,6 +17,13 @@ module Decidim
       # to a custom path after it has accepted the invitation.
       def after_accept_path_for(resource)
         params[:invite_redirect] || after_sign_in_path_for(resource)
+      end
+
+      # When a managed user accepts the invitation is promoted to non-managed user.
+      def accept_resource
+        resource = resource_class.accept_invitation!(update_resource_params)
+        resource.update_attribute(:managed, false) if resource.managed?
+        resource
       end
     end
   end

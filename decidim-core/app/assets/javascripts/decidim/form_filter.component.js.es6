@@ -1,4 +1,4 @@
-/* eslint-disable no-div-regex, no-useless-escape, no-param-reassign */
+/* eslint-disable no-div-regex, no-useless-escape, no-param-reassign, id-length */
 
 /**
  * A plain Javascript component that handles the form filter.
@@ -7,15 +7,21 @@
  */
 ((exports) => {
   class FormFilterComponent {
-    mounted;
-    $form;
-
     constructor($form) {
       this.$form = $form;
+      this.id = this.$form.attr('id') || this._getUID();
       this.mounted = false;
+      this.select2Filters = [];
 
       this._onFormChange = this._onFormChange.bind(this);
       this._onPopState = this._onPopState.bind(this);
+
+      if (window.Decidim.PopStateHandler) {
+        this.popStateSubmiter = false;
+      } else {
+        this.popStateSubmiter = true;
+        window.Decidim.PopStateHandler = this.id;
+      }
     }
 
     /**
@@ -26,8 +32,12 @@
     unmountComponent() {
       if (this.mounted) {
         this.mounted = false;
-        this.$form.off('change', 'input, select', this._onFormChange);
-        exports.Decidim.History.unregisterCallback(`filters-${this.$form.attr('id')}`)
+        this.$form.off('change', 'input:not(.select2-search__field), select', this._onFormChange);
+        this.select2Filters.forEach((select) => {
+          select.destroy();
+        });
+
+        exports.Decidim.History.unregisterCallback(`filters-${this.id}`)
       }
     }
 
@@ -39,8 +49,13 @@
     mountComponent() {
       if (this.$form.length > 0 && !this.mounted) {
         this.mounted = true;
-        this.$form.on('change', 'input, select', this._onFormChange);
-        exports.Decidim.History.registerCallback(`filters-${this.$form.attr('id')}`, () => {
+        let select2Filters = this.select2Filters;
+        this.$form.find('select.select2').each(function(index, select) {
+          select2Filters.push(new window.Decidim.Select2Field(select));
+        });
+        this.$form.on('change', 'input:not(.select2-search__field), select', this._onFormChange);
+
+        exports.Decidim.History.registerCallback(`filters-${this.id}`, () => {
           this._onPopState();
         });
       }
@@ -56,7 +71,7 @@
     }
 
     /**
-     * Finds the values of the location prams that match the given regexp.
+     * Finds the values of the location params that match the given regexp.
      * @private
      * @param {Regexp} regex - a Regexp to match the params.
      * @returns {String[]} - An array of values of the params that match the regexp.
@@ -83,8 +98,15 @@
       // The RegExp g flag returns null or an array of coincidences. It doesn't return the match groups
       if (regexpResult) {
         const filterParams = regexpResult.reduce((acc, result) => {
-          const [, key, value] = result.match(/filter\[([^\]]*)\](?:\[\])?=([^&]*)/);
-          acc[key] = value;
+          const [, key, array, value] = result.match(/filter\[([^\]]*)\](\[\])?=([^&]*)/);
+          if (array) {
+            if (!acc[key]) {
+              acc[key]=[];
+            }
+            acc[key].push(value);
+          } else {
+            acc[key] = value;
+          }
           return acc;
         }, {});
 
@@ -102,7 +124,7 @@
     _parseLocationOrderValue() {
       const url = this._getLocation();
       const match = url.match(/order=([^&]*)/);
-      const $orderMenu = $('.order-by .menu');
+      const $orderMenu = this.$form.find('.order-by .menu');
       let order = $orderMenu.find('.menu a:first').data('order');
 
       if (match) {
@@ -120,6 +142,7 @@
     _clearForm() {
       this.$form.find('input[type=checkbox]').attr('checked', false);
       this.$form.find('input[type=radio]').attr('checked', false);
+      this.$form.find('select.select2').val(null).trigger('change.select2');
 
       // This ensure the form is reset in a valid state where a fieldset of
       // radio buttons has the first selected.
@@ -161,13 +184,20 @@
             field = this.$form.find(`input#filter_${fieldId},select#filter_${fieldId}`);
 
             if (field.length > 0) {
-              field.val(filterParams[fieldId]);
+              if (field.hasClass("select2")) {
+                field.val(filterParams[fieldId]).trigger('change.select2');
+              } else {
+                field.val(filterParams[fieldId]);
+              }
             }
           }
         });
       }
 
-      this.$form.submit();
+      // Only one instance should submit the form on browser history navigation
+      if (this.popStateSubmiter) {
+        this.$form.submit();
+      }
     }
 
     /**
@@ -178,6 +208,7 @@
     _onFormChange() {
       const formAction = this.$form.attr('action');
       const params = this.$form.serialize();
+
       let newUrl = '';
 
       this.$form.submit();
@@ -189,6 +220,15 @@
       }
 
       exports.Decidim.History.pushState(newUrl);
+    }
+
+    /**
+     * Generates a unique identifier for the form.
+     * @private
+     * @returns {String} - Returns a unique identifier
+     */
+    _getUID() {
+      return `filter-form-${new Date().setUTCMilliseconds()}-${Math.floor(Math.random() * 10000000)}`;
     }
   }
 

@@ -14,8 +14,10 @@ en:
         name: Results
         settings:
           global:
+            announcement: Announcement
             comments_enabled: Comments enabled
           step:
+            announcement: Announcement
             comments_blocked: Comments blocked
     resource_links:
       included_proposals:
@@ -27,7 +29,8 @@ en:
         confirm_destroy: Are you sure you want to delete this result?
         destroy: Delete
         edit: Edit
-        new: New %{name}
+        new: New
+        preview: Preview
         title: Actions
       admin:
         models:
@@ -41,11 +44,11 @@ en:
             success: Result successfully deleted
           edit:
             title: Edit result
-            update: Update result
+            update: Update
           index:
             title: Results
           new:
-            create: Create result
+            create: Create
             title: New result
           update:
             invalid: There's been a problem updating this result
@@ -61,6 +64,8 @@ en:
             other: "%{count} results"
         filters:
           category: Category
+          category_prompt: Select a category
+          scope_prompt: Select a scope
           scopes: Scopes
           search: Search
         filters_small_view:

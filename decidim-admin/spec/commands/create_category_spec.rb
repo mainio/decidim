@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Admin
-    describe CreateCategory, :db do
+    describe CreateCategory do
       describe "call" do
         let(:organization) { create(:organization) }
         let(:participatory_process) { create :participatory_process, organization: organization }
@@ -24,7 +25,7 @@ module Decidim
             form_params,
             current_process: participatory_process
           ).with_context(
-            current_organization: organization,
+            current_organization: organization
           )
         end
         let(:command) { described_class.new(form, participatory_process) }

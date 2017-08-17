@@ -1,5 +1,4 @@
 const webpack              = require('webpack');
-const webpackValidator     = require('webpack-validator');
 const webpackConfigUtils   = require('webpack-config-utils');
 const getIfUtils           = webpackConfigUtils.getIfUtils;
 const ProgressBarPlugin    = require('progress-bar-webpack-plugin');
@@ -10,27 +9,28 @@ module.exports = env => {
   const ifProd = envUtils.ifProd;
   const ifTest = envUtils.ifTest;
 
-  const config = webpackValidator({
+  const config = {
     entry: {
-      comments: './decidim-comments/app/frontend/entry.js'
+      comments: './decidim-comments/app/frontend/entry.ts'
     },
     output: {
       path: __dirname,
       filename: 'decidim-[name]/app/assets/javascripts/decidim/[name]/bundle.js'
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.graphql', '.yml']
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.yml']
     },
     devtool: ifProd('source-map', 'eval'),
     module: {
-      noParse: [
-        /\/sinon\.js/
-      ],
       loaders: [
         {
           test: /\.jsx?$/,
           exclude: /node_modules/,
           loaders: ['babel-loader', 'eslint-loader']
+        },
+        {
+          test: /\.tsx?$/,
+          loaders: ['awesome-typescript-loader']
         },
         {
           test: /\.js.es6$/,
@@ -42,7 +42,8 @@ module.exports = env => {
         },
         {
           test: /\.(graphql|gql)$/,
-          loaders: ['raw-loader']
+          exclude: /node_modules/,
+          loader: 'graphql-tag/loader'
         },
         {
           test: /\.json$/,
@@ -76,6 +77,6 @@ module.exports = env => {
       'react/lib/ExecutionEnvironment': 'react',
       'react/lib/ReactContext': 'react'
     }
-  });
+  };
   return config;
 };

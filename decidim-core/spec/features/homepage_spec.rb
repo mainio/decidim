@@ -1,8 +1,19 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
+
 require "spec_helper"
 
 describe "Homepage", type: :feature do
+  context "when there's no organization" do
+    before do
+      visit decidim.root_path
+    end
+
+    it "redirects to system UI and shows a warning" do
+      expect(page.current_path).to eq(decidim_system.new_admin_session_path)
+      expect(page).to have_content("You must create an organization to get started")
+    end
+  end
+
   context "when there's an organization" do
     let(:official_url) { "http://mytesturl.me" }
     let(:organization) { create(:organization, official_url: official_url) }
@@ -52,9 +63,9 @@ describe "Homepage", type: :feature do
       end
     end
 
-    describe "includes participatory porcesses ending soon" do
+    describe "includes participatory processes ending soon" do
       context "when exists more than 8 participatory processes" do
-        let!(:participatory_process){
+        let!(:participatory_process) do
           create_list(
             :participatory_process,
             10,
@@ -63,7 +74,7 @@ describe "Homepage", type: :feature do
             description: { en: "Description", ca: "Descripció", es: "Descripción" },
             short_description: { en: "Short description", ca: "Descripció curta", es: "Descripción corta" }
           )
-        }
+        end
 
         it "should show a maximum of 8" do
           visit current_path
@@ -92,22 +103,22 @@ describe "Homepage", type: :feature do
 
     describe "includes statistics" do
       let!(:users) { create_list(:user, 4, :confirmed, organization: organization) }
-      let!(:participatory_process){
-          create_list(
-            :participatory_process,
-            2,
-            :published, 
-            organization: organization,
-            description: { en: "Description", ca: "Descripció", es: "Descripción" },
-            short_description: { en: "Short description", ca: "Descripció curta", es: "Descripción corta" }
-          )
-      }
+      let!(:participatory_process) do
+        create_list(
+          :participatory_process,
+          2,
+          :published,
+          organization: organization,
+          description: { en: "Description", ca: "Descripció", es: "Descripción" },
+          short_description: { en: "Short description", ca: "Descripció curta", es: "Descripción corta" }
+        )
+      end
 
       context "when organization show_statistics attribute is false" do
         let(:organization) { create(:organization, show_statistics: false) }
 
         it "should not show the statistics block" do
-          expect(page).not_to have_content("Current state of #{organization.name}")
+          expect(page).to have_no_content("Current state of #{organization.name}")
         end
       end
 
@@ -122,16 +133,16 @@ describe "Homepage", type: :feature do
           within "#statistics" do
             expect(page).to have_content("Current state of #{organization.name}")
             expect(page).to have_content("PROCESSES")
-            expect(page).to have_content("USERS")
+            expect(page).to have_content("PARTICIPANTS")
           end
         end
 
         it "should have the correct values for the statistics" do
-          within ".users-count" do
+          within ".users_count" do
             expect(page).to have_content("4")
           end
 
-          within ".processes-count" do
+          within ".processes_count" do
             expect(page).to have_content("2")
           end
         end
@@ -140,14 +151,21 @@ describe "Homepage", type: :feature do
 
     describe "social links" do
       before do
+        organization.update(
+          twitter_handler: "twitter_handler",
+          facebook_handler: "facebook_handler",
+          youtube_handler: "youtube_handler",
+          github_handler: "github_handler"
+        )
+
         visit current_path
       end
 
-      it "includes the linsk to social networks" do
-        expect(page).to have_xpath("//a[@href = 'https://twitter.com/#{organization.twitter_handler}']")
-        expect(page).to have_xpath("//a[@href = 'https://www.facebook.com/#{organization.facebook_handler}']")
-        expect(page).to have_xpath("//a[@href = 'https://www.youtube.com/#{organization.youtube_handler}']")
-        expect(page).to have_xpath("//a[@href = 'https://www.github.com/#{organization.github_handler}']")
+      it "includes the links to social networks" do
+        expect(page).to have_xpath("//a[@href = 'https://twitter.com/twitter_handler']")
+        expect(page).to have_xpath("//a[@href = 'https://www.facebook.com/facebook_handler']")
+        expect(page).to have_xpath("//a[@href = 'https://www.youtube.com/youtube_handler']")
+        expect(page).to have_xpath("//a[@href = 'https://www.github.com/github_handler']")
       end
     end
   end

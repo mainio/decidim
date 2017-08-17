@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # frozen_literal_string: true
 
 require "spec_helper"
@@ -71,6 +73,12 @@ describe Decidim::Budgets::Admin::ProjectForm do
     let(:category_id) { category.id + 10 }
 
     it { is_expected.not_to be_valid }
+  end
+
+  it "properly maps category id from model" do
+    project = create(:project, feature: current_feature, category: category)
+
+    expect(described_class.from_model(project).decidim_category_id).to eq(category_id)
   end
 
   context "with proposals" do

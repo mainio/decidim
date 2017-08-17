@@ -1,13 +1,13 @@
-# coding: utf-8
 # frozen_string_literal: true
-RSpec.shared_examples "manage processes examples" do
+
+shared_examples "manage processes examples" do
   context "previewing processes" do
     context "when the process is unpublished" do
       let!(:participatory_process) { create(:participatory_process, :unpublished, organization: organization) }
 
       it "allows the user to preview the unpublished process" do
         within find("tr", text: translated(participatory_process.title)) do
-          click_link "Preview"
+          page.find("a.action-icon--preview").click
         end
 
         expect(page).to have_css(".process-header")
@@ -20,7 +20,7 @@ RSpec.shared_examples "manage processes examples" do
 
       it "allows the user to preview the unpublished process" do
         within find("tr", text: translated(participatory_process.title)) do
-          click_link "Preview"
+          page.find("a.action-icon--preview").click
         end
 
         expect(current_path).to eq decidim.participatory_process_path(participatory_process)
@@ -29,56 +29,43 @@ RSpec.shared_examples "manage processes examples" do
     end
   end
 
-  it "displays all fields from a single participatory process" do
-    within "table" do
-      click_link participatory_process.title["en"]
-    end
-
-    within "dl" do
-      expect(page).to have_content(stripped translated(participatory_process.title, locale: :en))
-      expect(page).to have_content(stripped translated(participatory_process.title, locale: :es))
-      expect(page).to have_content(stripped translated(participatory_process.title, locale: :ca))
-      expect(page).to have_content(stripped translated(participatory_process.subtitle, locale: :en))
-      expect(page).to have_content(stripped translated(participatory_process.subtitle, locale: :es))
-      expect(page).to have_content(stripped translated(participatory_process.subtitle, locale: :ca))
-      expect(page).to have_content(stripped translated(participatory_process.short_description, locale: :en))
-      expect(page).to have_content(stripped translated(participatory_process.short_description, locale: :es))
-      expect(page).to have_content(stripped translated(participatory_process.short_description, locale: :ca))
-      expect(page).to have_content(stripped translated(participatory_process.description, locale: :en))
-      expect(page).to have_content(stripped translated(participatory_process.description, locale: :es))
-      expect(page).to have_content(stripped translated(participatory_process.description, locale: :ca))
-      expect(page).to have_content(participatory_process.hashtag)
-      expect(page).to have_content(participatory_process.slug)
-      expect(page).to have_xpath("//img[@src=\"#{participatory_process.hero_image.url}\"]")
-      expect(page).to have_xpath("//img[@src=\"#{participatory_process.banner_image.url}\"]")
+  context "viewing a missing process" do
+    it_behaves_like "a 404 page" do
+      let(:target_path) { decidim_admin.participatory_process_path(99_999_999) }
     end
   end
 
-  it "updates an participatory_process" do
-    click_link translated(participatory_process.title)
-    click_processes_menu_link "Settings"
+  context "updating a participatory process" do
+    before do
+      click_link translated(participatory_process.title)
+    end
 
-    within ".edit_participatory_process" do
+    it "updates a participatory_process" do
       fill_in_i18n(
         :participatory_process_title,
-        "#title-tabs",
+        "#participatory_process-title-tabs",
         en: "My new title",
         es: "Mi nuevo título",
         ca: "El meu nou títol"
       )
       attach_file :participatory_process_banner_image, image3_path
 
-      find("*[type=submit]").click
-    end
+      page.execute_script("$('#date_field_participatory_process_end_date').focus()")
+      page.find(".datepicker-dropdown .day", text: "22").click
 
-    within ".flash" do
-      expect(page).to have_content("successfully")
-    end
+      within ".edit_participatory_process" do
+        find("*[type=submit]").click
+      end
 
-    within ".tabs-content" do
-      expect(page).to have_content("My new title")
-      expect(page).not_to have_css("img[src*='#{image2_filename}']")
-      expect(page).to have_css("img[src*='#{image3_filename}']")
+      within ".callout-wrapper" do
+        expect(page).to have_content("successfully")
+      end
+
+      within ".container" do
+        expect(page).to have_selector("input[value='My new title']")
+        expect(page).to have_no_css("img[src*='#{image2_filename}']")
+        expect(page).to have_css("img[src*='#{image3_filename}']")
+      end
     end
   end
 
@@ -87,7 +74,6 @@ RSpec.shared_examples "manage processes examples" do
 
     before do
       click_link translated(participatory_process.title)
-      click_processes_menu_link "Settings"
     end
 
     it "publishes the process" do
@@ -106,7 +92,6 @@ RSpec.shared_examples "manage processes examples" do
 
     before do
       click_link translated(participatory_process.title)
-      click_processes_menu_link "Settings"
     end
 
     it "unpublishes the process" do
@@ -117,7 +102,7 @@ RSpec.shared_examples "manage processes examples" do
 
       participatory_process.reload
       expect(participatory_process).not_to be_published
-  end
+    end
   end
 
   context "when there are multiple organizations in the system" do
@@ -129,7 +114,31 @@ RSpec.shared_examples "manage processes examples" do
 
     it "doesn't let the admin manage processes form other organizations" do
       within "table" do
-        expect(page).not_to have_content(external_participatory_process.title)
+        expect(page).to have_no_content(external_participatory_process.title["en"])
+      end
+    end
+  end
+
+  context "when the process has a scope" do
+    let(:scope) { create(:scope, organization: organization) }
+
+    before do
+      participatory_process.update_attributes!(scopes_enabled: true, scope: scope)
+    end
+
+    it "disables the scope for a participatory process" do
+      click_link translated(participatory_process.title)
+
+      uncheck :participatory_process_scopes_enabled
+
+      expect(page).to have_selector("select#participatory_process_scope_id[disabled]")
+
+      within ".edit_participatory_process" do
+        find("*[type=submit]").click
+      end
+
+      within ".callout-wrapper" do
+        expect(page).to have_content("successfully")
       end
     end
   end

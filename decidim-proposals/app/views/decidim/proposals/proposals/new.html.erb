@@ -5,9 +5,14 @@
   <% end %>
   <h2 class="section-heading"><%= t(".title") %></h2>
 </div>
+
 <div class="row">
   <div class="columns large-6 medium-centered">
     <div class="card">
+      <% if translated_attribute(feature_settings.new_proposal_help_text).present? %>
+        <%= render partial: "decidim/shared/announcement", locals: { announcement: feature_settings.new_proposal_help_text } %>
+      <% end %>
+
       <div class="card__content">
         <%= decidim_form_for(@form) do |form| %>
           <div class="field">
@@ -20,6 +25,9 @@
 
           <% if feature_settings.geocoding_enabled? %>
             <div class="field">
+              <%= form.check_box :has_address %>
+            </div>
+            <div class="field" id="address_input">
               <%= form.text_field :address %>
             </div>
           <% end %>
@@ -30,9 +38,9 @@
             </div>
           <% end %>
 
-          <% if !@form.process_scope %>
+          <% if current_participatory_process.has_subscopes? %>
             <div class="field">
-              <%= form.collection_select :scope_id, organization_scopes, :id, :name %>
+              <%= form.scopes_select :scope_id, prompt: I18n.t("decidim.scopes.global"), remote_path: decidim.scopes_search_path(root: current_participatory_process.scope) %>
             </div>
           <% end %>
 
@@ -42,11 +50,28 @@
             </div>
           <% end %>
 
+          <% if feature_settings.attachments_allowed? %>
+            <fieldset>
+              <legend><%= t('.attachment_legend') %></legend>
+              <%= form.fields_for :attachment, @form.attachment do |form| %>
+                <div class="field">
+                  <%= form.text_field :title %>
+                </div>
+
+                <div class="field">
+                  <%= form.upload :file, optional: false %>
+                </div>
+              <% end %>
+            </fieldset>
+          <% end %>
+
           <div class="actions">
-            <%= form.submit t(".send"), class: "button expanded" %>
+            <%= form.submit t(".send"), class: "button expanded", "data-disable-with" => "#{t('.send')}..." %>
           </div>
         <% end %>
       </div>
     </div>
   </div>
 </div>
+
+<%= javascript_include_tag "decidim/proposals/add_proposal" %>

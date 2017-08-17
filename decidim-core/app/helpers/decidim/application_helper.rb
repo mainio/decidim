@@ -1,8 +1,11 @@
-# encoding: utf-8
 # frozen_string_literal: true
+
 module Decidim
   # Main module to add application-wide helpers.
   module ApplicationHelper
+    include Decidim::OmniauthHelper
+    include Decidim::ScopesHelper
+
     # Truncates a given text respecting its HTML tags.
     #
     # text    - The String text to be truncated.
@@ -17,6 +20,7 @@ module Decidim
       options[:tail] = options.delete(:separator) || options[:tail] || "..."
       options[:count_tags] ||= false
       options[:count_tail] ||= false
+      options[:tail_before_final_tag] ||= true
 
       Truncato.truncate(text, options)
     end

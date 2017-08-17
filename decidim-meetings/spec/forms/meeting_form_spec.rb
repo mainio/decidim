@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # frozen_literal_string: true
 
 require "spec_helper"
@@ -52,9 +54,10 @@ describe Decidim::Meetings::Admin::MeetingForm do
   end
 
   before do
-    Geocoder::Lookup::Test.add_stub(address, [
-      { 'latitude' => latitude, 'longitude' => longitude }
-    ])
+    Geocoder::Lookup::Test.add_stub(
+      address,
+      [{ "latitude" => latitude, "longitude" => longitude }]
+    )
   end
 
   subject { described_class.from_params(attributes).with_context(context) }
@@ -137,5 +140,11 @@ describe Decidim::Meetings::Admin::MeetingForm do
     expect(subject).to be_valid
     expect(subject.latitude).to eq(latitude)
     expect(subject.longitude).to eq(longitude)
+  end
+
+  it "properly maps category id from model" do
+    meeting = create(:meeting, feature: current_feature, category: category)
+
+    expect(described_class.from_model(meeting).decidim_category_id).to eq(category_id)
   end
 end

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
+
 module Decidim
   module Meetings
     module Admin
       # This controller allows an admin to manage meetings from a Participatory Process
       class MeetingClosesController < Admin::ApplicationController
-        helper ResourceHelper
         helper_method :meeting
 
         def edit

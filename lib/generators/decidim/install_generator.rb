@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails/generators/base"
 require "securerandom"
 
@@ -11,27 +12,27 @@ module Decidim
     # definition order of the public methods.
     class InstallGenerator < Rails::Generators::Base
       desc "Install decidim"
-      source_root File.expand_path("../templates", __FILE__)
+      source_root File.expand_path("templates", __dir__)
 
       class_option :app_name, type: :string, default: nil,
                               desc: "The name of the app"
-      class_option :migrate, type: :boolean, default: false,
-                             desc: "Run migrations after installing decidim"
       class_option :recreate_db, type: :boolean, default: false,
-                                 desc: "Run migrations after installing decidim"
+                                 desc: "Recreate db after installing decidim"
 
       def install
         route "mount Decidim::Core::Engine => '/'"
       end
 
       def copy_migrations
-        rake "railties:install:migrations"
+        rails_command "railties:install:migrations"
         recreate_db if options[:recreate_db]
-        rake "db:migrate" if options[:migrate]
       end
 
       def add_seeds
-        append_file "db/seeds.rb", "\n# You can remove the 'faker' gem if you don't want Decidim seeds.\nDecidim.seed!"
+        append_file("db/seeds.rb", <<~SEEDS_CONTENT)
+          # You can remove the 'faker' gem if you don't want Decidim seeds.
+          Decidim.seed!
+        SEEDS_CONTENT
       end
 
       def copy_initializer
@@ -51,7 +52,8 @@ module Decidim
 
       def append_assets
         append_file "app/assets/javascripts/application.js", "//= require decidim"
-        gsub_file "app/assets/javascripts/application.js", /\/\/= require turbolinks\n/, ""
+        gsub_file "app/assets/javascripts/application.js", %r{//= require turbolinks\n}, ""
+        gsub_file "app/assets/javascripts/application.js", %r{//= require rails-ujs\n}, "//= require jquery\n//= require jquery_ujs\n"
         inject_into_file "app/assets/stylesheets/application.css",
                          before: "*= require_tree ." do
           "*= require decidim\n "
@@ -63,52 +65,57 @@ module Decidim
       def smtp_environment
         inject_into_file "config/environments/production.rb",
                          after: "config.log_formatter = ::Logger::Formatter.new" do
-          %(
-
-  config.action_mailer.smtp_settings = {
-    :address        => Rails.application.secrets.smtp_address,
-    :port           => Rails.application.secrets.smtp_port,
-    :authentication => Rails.application.secrets.smtp_authentication,
-    :user_name      => Rails.application.secrets.smtp_username,
-    :password       => Rails.application.secrets.smtp_password,
-    :domain         => Rails.application.secrets.smtp_domain,
-    :enable_starttls_auto => Rails.application.secrets.smtp_starttls_auto,
-    :openssl_verify_mode => 'none'
-  }
-
-  if Rails.application.secrets.sendgrid
-    config.action_mailer.default_options = {
-      "X-SMTPAPI" => {
-        filters:  {
-          clicktrack: { settings: { enable: 0 } },
-          opentrack:  { settings: { enable: 0 } }
-        }
-      }.to_json
-    }
-  end
-          )
+          <<~RUBY.gsub(/^ *\|/, "")
+            |
+            |  config.action_mailer.smtp_settings = {
+            |    :address        => Rails.application.secrets.smtp_address,
+            |    :port           => Rails.application.secrets.smtp_port,
+            |    :authentication => Rails.application.secrets.smtp_authentication,
+            |    :user_name      => Rails.application.secrets.smtp_username,
+            |    :password       => Rails.application.secrets.smtp_password,
+            |    :domain         => Rails.application.secrets.smtp_domain,
+            |    :enable_starttls_auto => Rails.application.secrets.smtp_starttls_auto,
+            |    :openssl_verify_mode => 'none'
+            |  }
+            |
+            |  if Rails.application.secrets.sendgrid
+            |    config.action_mailer.default_options = {
+            |      "X-SMTPAPI" => {
+            |        filters:  {
+            |          clicktrack: { settings: { enable: 0 } },
+            |          opentrack:  { settings: { enable: 0 } }
+            |        }
+            |      }.to_json
+            |    }
+            |  end
+          RUBY
         end
       end
 
       def letter_opener_web
+        route <<~RUBY.gsub(/^ *\|/, "")
+          |
+          |  if Rails.env.development?
+          |   mount LetterOpenerWeb::Engine, at: "/letter_opener"
+          |  end
+        RUBY
+
         inject_into_file "config/environments/development.rb",
                          after: "config.action_mailer.raise_delivery_errors = false" do
-          %(
-
-  config.action_mailer.delivery_method = :letter_opener_web)
+          <<~RUBY.gsub(/^ *\|/, "")
+            |
+            |  config.action_mailer.delivery_method = :letter_opener_web
+          RUBY
         end
       end
 
       private
 
       def recreate_db
-        unless ENV["CI"]
-          rake "db:environment:set", env: "development"
-          rake "db:drop"
-        end
-        rake "db:create"
-        rake "db:migrate"
-        rake "db:test:prepare"
+        rails_command "db:environment:set db:drop" unless ENV["CI"]
+        rails_command "db:create"
+        rails_command "db:migrate"
+        rails_command "db:test:prepare"
       end
 
       def scss_variables

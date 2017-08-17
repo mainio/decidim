@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Devise
     # This controller customizes the behaviour of Devise's
@@ -7,7 +8,6 @@ module Decidim
       include FormFactory
       include Decidim::DeviseControllers
 
-      helper Decidim::OmniauthHelper
       helper_method :terms_and_conditions_page
 
       before_action :configure_permitted_parameters

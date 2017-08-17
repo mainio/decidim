@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 module Decidim
   module Comments
     # Some resources will be configured as commentable objects so users can
     # comment on them. The will be able to create conversations between users
     # to discuss or share their thoughts about the resource.
     class Comment < ApplicationRecord
-      include Reportable
+      include Decidim::Reportable
       include Decidim::Authorable
       include Decidim::Comments::Commentable
 
@@ -18,12 +19,15 @@ module Decidim
       MAX_DEPTH = 3
 
       belongs_to :commentable, foreign_key: "decidim_commentable_id", foreign_type: "decidim_commentable_type", polymorphic: true
-      has_many :up_votes, -> { where(weight: 1) }, foreign_key: "decidim_comment_id", class_name: CommentVote, dependent: :destroy
-      has_many :down_votes, -> { where(weight: -1) }, foreign_key: "decidim_comment_id", class_name: CommentVote, dependent: :destroy
+      belongs_to :root_commentable, foreign_key: "decidim_root_commentable_id", foreign_type: "decidim_root_commentable_type", polymorphic: true
+      has_many :up_votes, -> { where(weight: 1) }, foreign_key: "decidim_comment_id", class_name: "CommentVote", dependent: :destroy
+      has_many :down_votes, -> { where(weight: -1) }, foreign_key: "decidim_comment_id", class_name: "CommentVote", dependent: :destroy
 
-      validates :author, :commentable, :body, presence: true
+      validates :body, presence: true
       validates :depth, numericality: { greater_than_or_equal_to: 0 }
       validates :alignment, inclusion: { in: [0, 1, -1] }
+
+      validates :body, length: { maximum: 500 }
 
       validate :commentable_can_have_comments
 
@@ -50,15 +54,21 @@ module Decidim
         down_votes.any? { |vote| vote.author == user }
       end
 
-      # Public: Returns the commentable object of the parent comment
-      def root_commentable
-        return commentable if depth == 0
-        commentable.root_commentable
+      # Public: Overrides the `reported_content_url` Reportable concern method.
+      def reported_content_url
+        ResourceLocatorPresenter.new(root_commentable).url(anchor: "comment_#{id}")
       end
 
-      # Public: Overrides the `reported_content` Reportable concern method.
-      def reported_content
-        "<p>#{body}</p>"
+      # Public: Overrides the `notifiable?` Notifiable concern method.
+      # When a comment is commented the comment's author is notified if it is not the same
+      # who has replied the comment and if the comment's author has replied notifiations enabled.
+      def notifiable?(context)
+        context[:author] != author && author.replies_notifications?
+      end
+
+      # Public: Overrides the `users_to_notify` Notifiable concern method.
+      def users_to_notify
+        [author]
       end
 
       private

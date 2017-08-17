@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Pages
     # The data store for a Page in the Decidim::Pages component. It stores a
@@ -33,6 +34,11 @@ module Decidim
       # Public: Overrides the `comments_have_votes?` Commentable concern method.
       def comments_have_votes?
         true
+      end
+
+      # Public: Overrides the `notifiable?` Notifiable concern method.
+      def notifiable?(_context)
+        false
       end
     end
   end

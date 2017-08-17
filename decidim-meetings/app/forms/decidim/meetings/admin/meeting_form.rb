@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Meetings
     module Admin
@@ -30,22 +31,26 @@ module Decidim
         validates :scope, presence: true, if: ->(form) { form.decidim_scope_id.present? }
         validates :category, presence: true, if: ->(form) { form.decidim_category_id.present? }
 
+        def map_model(model)
+          return unless model.categorization
+
+          self.decidim_category_id = model.categorization.decidim_category_id
+        end
+
         def process_scope
           current_feature.participatory_process.scope
         end
 
+        alias feature current_feature
+
         def scope
           return unless current_feature
-          @scope ||= process_scope || current_feature.scopes.where(id: decidim_scope_id).first
+          @scope ||= current_feature.scopes.where(id: decidim_scope_id).first || process_scope
         end
 
         def category
           return unless current_feature
           @category ||= current_feature.categories.where(id: decidim_category_id).first
-        end
-
-        def feature
-          current_feature
         end
       end
     end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails"
 require "active_support/all"
 
@@ -28,6 +29,20 @@ module Decidim
 
       initializer "decidim_comments.mutation_extensions" do
         Comments::MutationExtensions.extend!(Decidim::Api::MutationType)
+      end
+
+      initializer "decidim.stats" do
+        Decidim.stats.register :comments_count, priority: StatsRegistry::MEDIUM_PRIORITY do |features, start_at, end_at|
+          Decidim.feature_manifests.sum do |feature|
+            feature.stats.filter(tag: :comments).with_context(features, start_at, end_at).map { |_name, value| value }.sum
+          end
+        end
+      end
+
+      initializer "decidim_comments.inject_abilities_to_user" do |_app|
+        Decidim.configure do |config|
+          config.abilities += ["Decidim::Comments::Abilities::CurrentUserAbility"]
+        end
       end
     end
   end

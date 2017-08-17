@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Comments
-    describe CreateOmniauthRegistration, :db do
+    describe CreateOmniauthRegistration do
       describe "call" do
         let(:organization) { create(:organization) }
         let(:email) { "user@from-facebook.com" }
@@ -36,9 +37,7 @@ module Decidim
           let(:oauth_signature) { "1234" }
 
           it "raises a InvalidOauthSignature exception" do
-            expect {
-              command.call
-            }.to raise_error InvalidOauthSignature
+            expect { command.call }.to raise_error InvalidOauthSignature
           end
         end
 
@@ -109,6 +108,7 @@ module Decidim
             last_identity = Identity.last
             expect(last_identity.provider).to eq(form.provider)
             expect(last_identity.uid).to eq(form.uid)
+            expect(last_identity.organization).to eq(organization)
           end
 
           it "confirms the user if the email is already verified" do

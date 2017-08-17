@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 describe "Account", type: :feature, perform_enqueued: true do
-  let(:user) { create(:user, :confirmed) }
+  let(:user) { create(:user, :confirmed, password: "password1234", password_confirmation: "password1234") }
   let(:organization) { user.organization }
 
   before do
@@ -82,6 +83,20 @@ describe "Account", type: :feature, perform_enqueued: true do
           expect(user.reload.valid_password?("sekritpass123")).to eq(false)
         end
       end
+
+      context "when updating the email" do
+        it "needs to confirm it" do
+          within "form.edit_user" do
+            fill_in :user_email, with: "foo@bar.com"
+
+            find("*[type=submit]").click
+          end
+
+          within_flash_messages do
+            expect(page).to have_content("email to confirm")
+          end
+        end
+      end
     end
 
     context "when on the notifications settings page" do
@@ -91,15 +106,15 @@ describe "Account", type: :feature, perform_enqueued: true do
 
       it "updates the user's notifications" do
         within ".switch.comments_notifications" do
-          page.find('.switch-paddle').click
+          page.find(".switch-paddle").click
         end
 
         within ".switch.replies_notifications" do
-          page.find('.switch-paddle').click
+          page.find(".switch-paddle").click
         end
 
         within ".switch.newsletter_notifications" do
-          page.find('.switch-paddle').click
+          page.find(".switch-paddle").click
         end
 
         within "form.edit_user" do
@@ -109,6 +124,35 @@ describe "Account", type: :feature, perform_enqueued: true do
         within_flash_messages do
           expect(page).to have_content("successfully")
         end
+      end
+    end
+
+    context "when on the delete my account page" do
+      before do
+        visit decidim.delete_account_path
+      end
+
+      it "the user can delete his account" do
+        fill_in :delete_account_delete_reason, with: "I just want to delete my account"
+
+        click_button "Delete my account"
+
+        click_button "Yes, I want to delete my account"
+
+        within_flash_messages do
+          expect(page).to have_content("successfully")
+        end
+
+        find(".sign-in-link").click
+
+        within ".new_user" do
+          fill_in :user_email, with: user.email
+          fill_in :user_password, with: "password1234"
+          find("*[type=submit]").click
+        end
+
+        expect(page).to have_no_content("Signed in successfully")
+        expect(page).to have_no_content(user.name)
       end
     end
   end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Proposals
     module Admin
@@ -9,7 +10,9 @@ module Decidim
 
         def new
           authorize! :create, Proposal
-          @form = form(Admin::ProposalForm).from_params({})
+          @form = form(Admin::ProposalForm).from_params(
+            attachment: form(AttachmentForm).from_params({})
+          )
         end
 
         def create
@@ -54,7 +57,7 @@ module Decidim
         private
 
         def proposals
-          @proposals ||= Proposal.where(feature: current_feature)
+          @proposals ||= Proposal.where(feature: current_feature).page(params[:page]).per(15)
         end
 
         def proposal

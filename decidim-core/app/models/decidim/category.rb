@@ -1,14 +1,16 @@
 # frozen_string_literal: true
+
 module Decidim
   # Categories serve as a taxonomy for components to use for while in the
   # context of a participatory process.
   class Category < ApplicationRecord
-    belongs_to :participatory_process, foreign_key: "decidim_participatory_process_id", class_name: Decidim::ParticipatoryProcess, inverse_of: :categories
-    has_many :subcategories, foreign_key: "parent_id", class_name: Decidim::Category, dependent: :destroy, inverse_of: :parent
-    belongs_to :parent, class_name: Decidim::Category, foreign_key: "parent_id", inverse_of: :subcategories
+    belongs_to :participatory_process, foreign_key: "decidim_participatory_process_id", class_name: "Decidim::ParticipatoryProcess", inverse_of: :categories
+    has_many :subcategories, foreign_key: "parent_id", class_name: "Decidim::Category", dependent: :destroy, inverse_of: :parent
+    belongs_to :parent, class_name: "Decidim::Category", foreign_key: "parent_id", inverse_of: :subcategories, optional: true
+    has_many :categorizations, foreign_key: "decidim_category_id", class_name: "Decidim::Categorization", dependent: :destroy
 
     validate :forbid_deep_nesting
-    before_save :subcategories_have_same_process
+    before_validation :subcategories_have_same_process
 
     # Scope to return only the first-class categories, that is, those that are
     # not subcategories.
@@ -16,6 +18,10 @@ module Decidim
     # Returns an ActiveRecord::Relation.
     def self.first_class
       where(parent_id: nil)
+    end
+
+    def unused?
+      categorizations.empty?
     end
 
     private

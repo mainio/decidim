@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # A command with all the business logic when creating a new participatory
@@ -36,7 +37,7 @@ module Decidim
 
       def create_participatory_process_group
         transaction do
-          group = ParticipatoryProcessGroup.create(
+          ParticipatoryProcessGroup.create(
             name: form.name,
             description: form.description,
             hero_image: form.hero_image,

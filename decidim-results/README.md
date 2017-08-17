@@ -8,7 +8,7 @@ results will be available as a Feature for a Participatory Process.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'decidim-results
+gem 'decidim-results'
 ```
 
 And then execute:
@@ -17,7 +17,7 @@ $ bundle
 ```
 
 ## Contributing
-See [Decidim](https://github.com/AjuntamentdeBarcelona/decidim).
+See [Decidim](https://github.com/decidim/decidim).
 
 ## License
-See [Decidim](https://github.com/AjuntamentdeBarcelona/decidim).
+See [Decidim](https://github.com/decidim/decidim).

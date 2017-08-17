@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -27,20 +27,21 @@ module Decidim
         }
       end
       let(:organization) { create(:organization) }
+      let(:homepage_image_path) { Decidim::Dev.asset("city.jpeg") }
       let(:attributes) do
         {
           "organization" => {
             "name" => name,
             "reference_prefix" => reference_prefix,
             "default_locale" => :en,
-            "available_locales" => %w{en ca es},
+            "available_locales" => %w(en ca es),
             "welcome_text_en" => welcome_text[:en],
             "welcome_text_es" => welcome_text[:es],
             "welcome_text_ca" => welcome_text[:ca],
             "description_en" => description[:en],
             "description_es" => description[:es],
             "description_ca" => description[:ca],
-            "homepage_image" => Rack::Test::UploadedFile.new(File.join(File.dirname(__FILE__), "..", "..", "..", "decidim-dev", "spec", "support", "city.jpeg"), "image/jpeg"),
+            "homepage_image" => Rack::Test::UploadedFile.new(homepage_image_path, "image/jpeg"),
             "show_statics" => false,
             "twitter_handler" => twitter_handler,
             "facebook_handler" => facebook_handler,

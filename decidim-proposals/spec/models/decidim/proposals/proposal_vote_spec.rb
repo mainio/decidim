@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
@@ -8,7 +9,7 @@ module Decidim
       let!(:feature) { create(:feature, organization: organization, manifest_name: "proposals") }
       let!(:participatory_process) { create(:participatory_process, organization: organization) }
       let!(:author) { create(:user, organization: organization) }
-      let!(:proposal) { create(:proposal, feature: feature, author: author)}
+      let!(:proposal) { create(:proposal, feature: feature, author: author) }
       let!(:proposal_vote) { create(:proposal_vote, proposal: proposal, author: author) }
 
       subject { proposal_vote }
@@ -26,9 +27,9 @@ module Decidim
       end
 
       it "validates uniqueness for author and proposal combination" do
-        expect {
+        expect do
           create(:proposal_vote, proposal: proposal, author: author)
-        }.to raise_error(ActiveRecord::RecordInvalid)
+        end.to raise_error(ActiveRecord::RecordInvalid)
       end
 
       context "when no author" do

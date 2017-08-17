@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   module Admin
-    describe UpdateStaticPage, :db do
+    describe UpdateStaticPage do
       describe "call" do
         let(:organization) { create(:organization) }
         let(:page) { create(:static_page, organization: organization) }

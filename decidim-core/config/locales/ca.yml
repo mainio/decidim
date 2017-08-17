@@ -1,6 +1,8 @@
 ca:
   activemodel:
     attributes:
+      account:
+        delete_reason: Raó per eliminar el teu compte
       report:
         details: Comentaris addicionals
       user:
@@ -8,6 +10,7 @@ ca:
         name: El teu nom
         password: Contrasenya
         password_confirmation: Confirma la teva contrasenya
+        remove_avatar: Elimina la imatge d'usuari
         user_group_document_number: Número de document acreditatiu
         user_group_name: Nom de l'organització
         user_group_phone: Telèfon de l'organització
@@ -31,6 +34,17 @@ ca:
       image_too_big: La imatge és massa gran
   decidim:
     account:
+      delete:
+        alert: Aquesta acció no es pot desfer. Si elimines el teu compte no seràs capaç d'iniciar sessió.
+        confirm:
+          close: Tanca la finestra
+          ok: Sí, vull eliminar el meu compte
+          question: Segur que vols eliminar el teu compte?
+          title: Eliminar el meu compte
+        explanation: Si us plau, omple la raó per la qual vols eliminar el teu compte (opcional).
+      destroy:
+        error: Hi ha hagut un error en eliminar el teu compte.
+        success: El teu compte s'ha eliminat correctament.
       show:
         change_password: Canvia la contrasenya
         update_account: Actualitzar compte
@@ -104,6 +118,18 @@ ca:
       shared:
         omniauth_buttons:
           or: O
+    errors:
+      internal_server_error:
+        title: Hi ha hagut un problema amb el nostre servidor
+        try_later: Si us plau, torna-ho a intentar més tard.
+      not_found:
+        back_home: Tornar a l'inici
+        content_doesnt_exist: Aquesta adreça és incorrecta o ha estat eliminada.
+        title: No s'ha trobat la pàgina que busques
+    export_mailer:
+      export:
+        ready: S'adjunta una versió comprimida de l'exportació.
+      subject: L'exportació "%{name}" està a punt
     features:
       dummy:
         actions:
@@ -127,8 +153,13 @@ ca:
         proposal: propostes
         result: Resultats
     forms:
+      current_file: Fitxer actual
+      current_image: Imatge actual
+      default_image: Imatge predeterminada
       errors:
         error: Hi ha un error en aquest camp.
+    managed_users:
+      expired_session: La sessió de suplantació actual ha caducat.
     menu:
       home: Inici
       more_information: Més informació
@@ -147,7 +178,8 @@ ca:
         success: La configuració de les notificacions s'han actualitzat correctament.
     own_user_groups:
       index:
-        not_verified: No verificada
+        pending: Pendents
+        rejected: Rebutjades
         verified: Verificada
     pages:
       index:
@@ -175,19 +207,37 @@ ca:
         participatory_structure: Estructura participativa
         scope: Àmbit
         target: A qui va dirigit?
+      statistics:
+        answers_count: Respostes
+        comments_count: Comentaris
+        headline: Activitat
+        meetings_count: Trobades
+        orders_count: Vots
+        pages_count: Pàgines
+        processes_count: Processos
+        projects_count: Projectes
+        proposals_count: Propostes
+        results_count: Resultats
+        surveys_count: Enquestes
+        users_count: Participants
+        votes_count: Suports
     reported_mailer:
       hide:
         hello: Hola %{name},
-        report_html: "<p>El següent contingut:</p>%{content}<p>ha estat amagat automàticament.</p>"
+        manage_moderations: Gestionar moderacions
+        report_html: <p>El següent <a href="%{url}">contingut</a> s'ha ocultat automàticament.</p>
         subject: Un contingut ha estat amagat automàticament
       report:
         hello: Hola %{name},
-        report_html: "<p>El següent contingut:</p>%{content}<p>ha estat denunciat.</p>"
+        manage_moderations: Gestionar moderacions
+        report_html: <p>El següent <a href="%{url}">contingut</a> ha estat reportat.</p>
         subject: Un contingut ha estat denunciat
     reports:
       create:
         error: S'ha produït un error en denunciar. Torna-ho a intentar.
         success: La denúncia s'ha creat amb èxit i serà revisada per un administrador.
+    scopes:
+      global: Àmbit global
     shared:
       action_authorization_modal:
         incomplete:
@@ -204,6 +254,10 @@ ca:
           invalid: "%{field} no és vàlid."
           ok: D'acord
           title: Acció no autoritzada
+      embed_modal:
+        close_window: Tanca la finestra
+        embed: Si us plau, enganxa aquest codi a la teva pàgina
+        embed_link: Incrustar
       flag_modal:
         already_reported: Aquest contingut ja ha estat denunciat i serà revisat per un administrador.
         close: Tancar
@@ -218,6 +272,8 @@ ca:
         sign_up: Donar-se d'alta
       reference:
         reference: 'Referència: %{reference}'
+      results_per_page:
+        label: 'Resultats per pàgina:'
       share_modal:
         close_window: Tanca la finestra
         share: Compartir
@@ -249,6 +305,8 @@ ca:
         subject: Contrasenya modificada
   errors:
     messages:
+      content_type_whitelist_error: El tipus de fitxer no és vàlid
+      cycle_detected: Un dels pares de l'àmbit d'aplicació no pot ser un dels seus descendents
       file_size_is_less_than_or_equal_to: la mida del fitxer ha de ser menor que o igual a %{count}
       invalid_manifest: Arxiu de manifest invàlid
       invalid_participatory_process: Procés participatiu invàlid
@@ -258,6 +316,8 @@ ca:
       too_many_marks: Està utilitzant massa símbols d'exclamació o interrogació
       too_much_caps: Està utilitzant massa majúscules
       too_short: És massa curt
+  forms:
+    required: Obligatori
   invisible_captcha:
     sentence_for_humans: Si ets un humà, pots ignorar aquest camp
     timestamp_error_message: Ho sentim, has estat massa ràpid! Torna a enviar-ho.
@@ -268,15 +328,23 @@ ca:
         link_label: aquí
         ok: Hi estic d'acord
       footer:
-        made_with_open_source: 'Aquesta web està feta amb <a target="_blank" href="https://github.com/AjuntamentdeBarcelona/decidim">software lliure</a>.'
+        made_with_open_source: 'Web feta amb <a target="_blank" href="https://github.com/decidim/decidim">programari lliure</a>.'
       header:
         close_menu: Tancar menú
         navigation: Navegació
         sign_in: Entra
         sign_up: Registra't
+      impersonation_warning:
+        close_session: Tanca la sessió
+        description_html: Esteu suplantant l'usuari <b>%{user_name}</b>.
+        expire_time_html: La vostra sessió caducarà en <b><span class="minutes">%{minutes}</span> minutes</b>.
       participatory_process_groups:
         participatory_process_group:
           browse: Explorar
+      participatory_process_widgets:
+        show:
+          active_step: Fase activa
+          take_part: Participa
       participatory_processes:
         index:
           promoted_processes: Processos destacats
@@ -306,19 +374,15 @@ ca:
       user_profile:
         account: Compte
         authorizations: Autoritzacions
+        delete_my_account: Eliminar el meu compte
         notifications_settings: Configuració de les notificacions
         title: Configuració d'usuari
         user_groups: Organitzacions
+      widget:
+        see_more: Veure més
   locale:
     name: Català
   pages:
-    '404':
-      back_home: Tornar a l'inici
-      content_doesnt_exist: Aquesta adreça és incorrecta o ha estat eliminada.
-      title: No s'ha trobat la pàgina que busques!
-    '500':
-      title: Hi ha hagut un problema amb el nostre servidor
-      try_later: Si us plau, torna-ho a intentar més tard.
     home:
       extended:
         debates: Debats
@@ -331,7 +395,7 @@ ca:
         proposals_explanation: Espai obert de propostes dels ciutadans sobre quin tipus de ciutat volem viure.
       footer_sub_hero:
         footer_sub_hero_body: Construïm una societat més oberta, transparent i col·laborativa.<br />Uneix-te, participa i decideix.
-        footer_sub_hero_headline: Benvingut a la plataforma participativa %{organization}.
+        footer_sub_hero_headline: Benvinguda i benvingut a la plataforma participativa %{organization}.
         register: Registra't
       hero:
         participate: Participa
@@ -341,9 +405,19 @@ ca:
         active_step: Fase activa
         see_all_processes: Veure tots els processos
       statistics:
+        answers_count: Respostes
+        comments_count: Comentaris
         headline: Estat actual de %{organization}
-        processes: Processos
-        users: Usuaris
+        meetings_count: Trobades
+        orders_count: Vots
+        pages_count: Pàgines
+        processes_count: Processos
+        projects_count: Projectes
+        proposals_count: Propostes
+        results_count: Resultats
+        surveys_count: Enquestes
+        users_count: Participants
+        votes_count: Suports
       sub_hero:
         register: Registre
   social_share_button:

@@ -23,10 +23,11 @@ ca:
         result_meetings: Trobades relacionades
     results:
       actions:
-        confirm_destroy: Esteu segur que voleu suprimir aquest resultat?
+        confirm_destroy: Segur que vols suprimir aquest resultat?
         destroy: Esborra
         edit: Edita
-        new: Nou/va %{name}
+        new: Nou
+        preview: Previsualitzar
         title: Accions
       admin:
         models:
@@ -40,11 +41,11 @@ ca:
             success: El resultat ha estat eliminat correctament
           edit:
             title: Edita resultat
-            update: Actualitza resultat
+            update: Actualitzar
           index:
             title: Resultats
           new:
-            create: Crea resultat
+            create: Crear
             title: Nou resultat
           update:
             invalid: Hi ha hagut un problema en actualitzar aquest resultat
@@ -60,6 +61,8 @@ ca:
             other: "%{count} resultats"
         filters:
           category: Categoria
+          category_prompt: Selecciona una categoria
+          scope_prompt: Seleccioneu un àmbit
           scopes: Àmbits
           search: Cerca
         filters_small_view:

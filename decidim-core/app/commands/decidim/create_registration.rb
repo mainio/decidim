@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   # A command with all the business logic to create a user through the sign up form.
   # It enables the option to sign up as a user group.
@@ -21,7 +22,7 @@ module Decidim
 
       transaction do
         create_user
-        create_user_group if form.is_user_group?
+        create_user_group if form.user_group?
       end
 
       broadcast(:ok, @user)
@@ -47,7 +48,8 @@ module Decidim
       UserGroupMembership.create!(user: @user,
                                   user_group: UserGroup.new(name: form.user_group_name,
                                                             document_number: form.user_group_document_number,
-                                                            phone: form.user_group_phone))
+                                                            phone: form.user_group_phone,
+                                                            decidim_organization_id: form.current_organization.id))
     end
   end
 end

@@ -1,13 +1,10 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
-  describe Attachment do
+  describe Attachment, processing_uploads_for: Decidim::AttachmentUploader do
     subject { build(:attachment) }
-
-    before do
-      Decidim::AttachmentUploader.enable_processing = true
-    end
 
     it { is_expected.to be_valid }
 
@@ -22,10 +19,12 @@ module Decidim
       end
 
       context "when the file is a malicious image" do
+        let(:attachment_path) { Decidim::Dev.asset("malicious.jpg") }
+
         subject do
           build(
             :attachment,
-            file: Rack::Test::UploadedFile.new(File.join(File.dirname(__FILE__), "..", "..", "..", "..", "decidim-dev", "spec", "support", "malicious.jpg"), "image/jpg")
+            file: Rack::Test::UploadedFile.new(attachment_path, "image/jpg")
           )
         end
 

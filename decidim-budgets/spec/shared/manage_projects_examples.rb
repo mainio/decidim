@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
-RSpec.shared_examples "manage projects" do
+
+shared_examples "manage projects" do
   it "updates a project" do
     within find("tr", text: translated(project.title)) do
-      click_link "Edit"
+      find("a.action-icon--edit").click
     end
 
     within ".edit_project" do
       fill_in_i18n(
         :project_title,
-        "#title-tabs",
+        "#project-title-tabs",
         en: "My new title",
         es: "Mi nuevo título",
         ca: "El meu nou títol"
@@ -18,7 +18,7 @@ RSpec.shared_examples "manage projects" do
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
@@ -29,10 +29,12 @@ RSpec.shared_examples "manage projects" do
 
   context "previewing projects" do
     it "allows the user to preview the project" do
-      new_window = window_opened_by { click_link translated(project.title) }
+      within find("tr", text: translated(project.title)) do
+        @new_window = window_opened_by { find("a.action-icon--preview").click }
+      end
 
-      within_window new_window do
-        expect(current_path).to eq decidim_budgets.project_path(id: project.id, participatory_process_id: participatory_process.id, feature_id: current_feature.id)
+      within_window @new_window do
+        expect(current_path).to eq resource_locator(project).path
         expect(page).to have_content(translated(project.title))
       end
     end
@@ -61,32 +63,32 @@ RSpec.shared_examples "manage projects" do
   end
 
   it "creates a new project" do
-    find(".actions .new").click
+    find(".card-title a.button").click
 
     within ".new_project" do
       fill_in_i18n(
         :project_title,
-        "#title-tabs",
+        "#project-title-tabs",
         en: "My project",
         es: "Mi proyecto",
         ca: "El meu projecte"
       )
       fill_in_i18n_editor(
         :project_description,
-        "#description-tabs",
+        "#project-description-tabs",
         en: "A longer description",
         es: "Descripción más larga",
         ca: "Descripció més llarga"
       )
       fill_in :project_budget, with: 22_000_000
 
-      select scope.name, from: :project_decidim_scope_id
+      select2 translated(scope.name), xpath: '//select[@id="project_decidim_scope_id"]/..', search: true
       select translated(category.name), from: :project_decidim_category_id
 
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
@@ -104,15 +106,15 @@ RSpec.shared_examples "manage projects" do
 
     it "deletes a project" do
       within find("tr", text: translated(project2.title)) do
-        click_link "Delete"
+        find("a.action-icon--remove").click
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
       within "table" do
-        expect(page).to_not have_content(translated(project2.title))
+        expect(page).to have_no_content(translated(project2.title))
       end
     end
   end

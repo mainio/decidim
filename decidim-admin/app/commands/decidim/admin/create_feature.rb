@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # This command gets called when a feature is created from the admin panel.
@@ -37,7 +38,8 @@ module Decidim
           manifest_name: manifest.name,
           name: form.name,
           participatory_process: participatory_process,
-          settings: @form.settings,
+          settings: form.settings,
+          default_step_settings: form.default_step_settings,
           step_settings: form.step_settings
         )
       end

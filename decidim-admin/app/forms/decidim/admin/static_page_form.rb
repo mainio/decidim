@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # A form object to create or update pages.
@@ -13,9 +14,15 @@ module Decidim
 
       validates :slug, presence: true
       validates :title, :content, translatable_presence: true
+      validates :slug, format: { with: /\A[a-z0-9-]+/ }
+
       validate :slug, :slug_uniqueness
 
       alias organization current_organization
+
+      def slug
+        super.to_s.downcase
+      end
 
       private
 

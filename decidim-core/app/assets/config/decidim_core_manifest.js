@@ -5,3 +5,6 @@
 //= link decidim/orders
 //= link decidim/map.js
 //= link decidim/map.css
+//= link_directory ../../../vendor/assets/javascripts/datepicker-locales
+//= link decidim/widget.js
+//= link decidim/impersonation.js

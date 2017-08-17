@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # A command with all the business logic when creating a new participatory
@@ -34,7 +35,7 @@ module Decidim
 
       private
 
-      attr_reader :form
+      attr_reader :form, :participatory_process
 
       def update_participatory_process
         @participatory_process.assign_attributes(attributes)
@@ -48,10 +49,13 @@ module Decidim
           slug: form.slug,
           hashtag: form.hashtag,
           hero_image: form.hero_image,
+          remove_hero_image: form.remove_hero_image,
           banner_image: form.banner_image,
+          remove_banner_image: form.remove_banner_image,
           promoted: form.promoted,
           description: form.description,
           short_description: form.short_description,
+          scopes_enabled: form.scopes_enabled,
           scope: form.scope,
           developer_group: form.developer_group,
           local_area: form.local_area,
@@ -60,7 +64,9 @@ module Decidim
           participatory_structure: form.participatory_structure,
           meta_scope: form.meta_scope,
           end_date: form.end_date,
-          participatory_process_group: form.participatory_process_group
+          participatory_process_group: form.participatory_process_group,
+          show_statistics: form.show_statistics,
+          announcement: form.announcement
         }
       end
     end

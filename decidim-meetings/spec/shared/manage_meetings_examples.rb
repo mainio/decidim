@@ -1,25 +1,26 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
-RSpec.shared_examples "manage meetings" do
+
+shared_examples "manage meetings" do
   let(:address) { "Carrer Pare Llaurador 113, baixos, 08224 Terrassa" }
   let(:latitude) { 40.1234 }
   let(:longitude) { 2.1234 }
 
   before do
-    Geocoder::Lookup::Test.add_stub(address, [
-      { 'latitude' => latitude, 'longitude' => longitude }
-    ])
+    Geocoder::Lookup::Test.add_stub(
+      address,
+      [{ "latitude" => latitude, "longitude" => longitude }]
+    )
   end
 
   it "updates a meeting" do
     within find("tr", text: translated(meeting.title)) do
-      click_link "Edit"
+      page.find("a.action-icon--edit").click
     end
 
     within ".edit_meeting" do
       fill_in_i18n(
         :meeting_title,
-        "#title-tabs",
+        "#meeting-title-tabs",
         en: "My new title",
         es: "Mi nuevo título",
         ca: "El meu nou títol"
@@ -29,7 +30,7 @@ RSpec.shared_examples "manage meetings" do
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
@@ -40,59 +41,69 @@ RSpec.shared_examples "manage meetings" do
 
   context "previewing meetings" do
     it "allows the user to preview the meeting" do
-      new_window = window_opened_by { click_link translated(meeting.title) }
+      within find("tr", text: translated(meeting.title)) do
+        @new_window = window_opened_by { find("a.action-icon--preview").click }
+      end
 
-      within_window new_window do
-        expect(current_path).to eq decidim_meetings.meeting_path(id: meeting.id, participatory_process_id: participatory_process.id, feature_id: current_feature.id)
+      within_window @new_window do
+        expect(current_path).to eq resource_locator(meeting).path
         expect(page).to have_content(translated(meeting.title))
       end
     end
   end
 
   it "creates a new meeting" do
-    find(".actions .new").click
+    find(".card-title a.button").click
+
+    fill_in_i18n(
+      :meeting_title,
+      "#meeting-title-tabs",
+      en: "My meeting",
+      es: "Mi meeting",
+      ca: "El meu meeting"
+    )
+    fill_in_i18n(
+      :meeting_location,
+      "#meeting-location-tabs",
+      en: "Location",
+      es: "Location",
+      ca: "Location"
+    )
+    fill_in_i18n(
+      :meeting_location_hints,
+      "#meeting-location_hints-tabs",
+      en: "Location hints",
+      es: "Location hints",
+      ca: "Location hints"
+    )
+    fill_in_i18n_editor(
+      :meeting_description,
+      "#meeting-description-tabs",
+      en: "A longer description",
+      es: "Descripción más larga",
+      ca: "Descripció més llarga"
+    )
+
+    fill_in :meeting_address, with: address
+
+    page.execute_script("$('#datetime_field_meeting_start_time').focus()")
+    page.find(".datepicker-dropdown .day", text: "12").click
+    page.find(".datepicker-dropdown .hour", text: "10:00").click
+    page.find(".datepicker-dropdown .minute", text: "10:50").click
+
+    page.execute_script("$('#datetime_field_meeting_end_time').focus()")
+    page.find(".datepicker-dropdown .day", text: "12").click
+    page.find(".datepicker-dropdown .hour", text: "12:00").click
+    page.find(".datepicker-dropdown .minute", text: "12:50").click
+
+    select2 translated(scope.name), xpath: '//select[@id="meeting_decidim_scope_id"]/..', search: true
+    select translated(category.name), from: :meeting_decidim_category_id
 
     within ".new_meeting" do
-      fill_in_i18n(
-        :meeting_title,
-        "#title-tabs",
-        en: "My meeting",
-        es: "Mi meeting",
-        ca: "El meu meeting"
-      )
-      fill_in_i18n(
-        :meeting_location,
-        "#location-tabs",
-        en: "Location",
-        es: "Location",
-        ca: "Location"
-      )
-      fill_in_i18n(
-        :meeting_location_hints,
-        "#location_hints-tabs",
-        en: "Location hints",
-        es: "Location hints",
-        ca: "Location hints"
-      )
-      fill_in_i18n_editor(
-        :meeting_description,
-        "#description-tabs",
-        en: "A longer description",
-        es: "Descripción más larga",
-        ca: "Descripció més llarga"
-      )
-
-      fill_in :meeting_address, with: address
-      fill_in :meeting_start_time, with: 1.day.from_now
-      fill_in :meeting_end_time, with: 1.day.from_now + 2.hours
-
-      select scope.name, from: :meeting_decidim_scope_id
-      select translated(category.name), from: :meeting_decidim_category_id
-
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
@@ -110,15 +121,15 @@ RSpec.shared_examples "manage meetings" do
 
     it "deletes a meeting" do
       within find("tr", text: translated(meeting2.title)) do
-        click_link "Delete"
+        page.find("a.action-icon--remove").click
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
       within "table" do
-        expect(page).not_to have_content(translated(meeting2.title))
+        expect(page).to have_no_content(translated(meeting2.title))
       end
     end
   end
@@ -130,13 +141,13 @@ RSpec.shared_examples "manage meetings" do
 
     it "updates a meeting" do
       within find("tr", text: translated(meeting.title)) do
-        click_link "Edit"
+        page.find("a.action-icon--edit").click
       end
 
       within ".edit_meeting" do
         fill_in_i18n(
           :meeting_title,
-          "#title-tabs",
+          "#meeting-title-tabs",
           en: "My new title",
           es: "Mi nuevo título",
           ca: "El meu nou títol"
@@ -146,7 +157,7 @@ RSpec.shared_examples "manage meetings" do
         find("*[type=submit]").click
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
@@ -156,49 +167,56 @@ RSpec.shared_examples "manage meetings" do
     end
 
     it "creates a new meeting" do
-      find(".actions .new").click
+      find(".card-title a.button").click
+
+      fill_in_i18n(
+        :meeting_title,
+        "#meeting-title-tabs",
+        en: "My meeting",
+        es: "Mi meeting",
+        ca: "El meu meeting"
+      )
+      fill_in_i18n(
+        :meeting_location,
+        "#meeting-location-tabs",
+        en: "Location",
+        es: "Location",
+        ca: "Location"
+      )
+      fill_in_i18n(
+        :meeting_location_hints,
+        "#meeting-location_hints-tabs",
+        en: "Location hints",
+        es: "Location hints",
+        ca: "Location hints"
+      )
+      fill_in_i18n_editor(
+        :meeting_description,
+        "#meeting-description-tabs",
+        en: "A longer description",
+        es: "Descripción más larga",
+        ca: "Descripció més llarga"
+      )
+
+      fill_in :meeting_address, with: address
+      page.execute_script("$('#datetime_field_meeting_start_time').focus()")
+      page.find(".datepicker-dropdown .day", text: "12").click
+      page.find(".datepicker-dropdown .hour", text: "10:00").click
+      page.find(".datepicker-dropdown .minute", text: "10:50").click
+
+      page.execute_script("$('#datetime_field_meeting_end_time').focus()")
+      page.find(".datepicker-dropdown .day", text: "12").click
+      page.find(".datepicker-dropdown .hour", text: "12:00").click
+      page.find(".datepicker-dropdown .minute", text: "12:50").click
+
+      select2 translated(scope.name), xpath: '//select[@id="meeting_decidim_scope_id"]/..', search: true
+      select translated(category.name), from: :meeting_decidim_category_id
 
       within ".new_meeting" do
-        fill_in_i18n(
-          :meeting_title,
-          "#title-tabs",
-          en: "My meeting",
-          es: "Mi meeting",
-          ca: "El meu meeting"
-        )
-        fill_in_i18n(
-          :meeting_location,
-          "#location-tabs",
-          en: "Location",
-          es: "Location",
-          ca: "Location"
-        )
-        fill_in_i18n(
-          :meeting_location_hints,
-          "#location_hints-tabs",
-          en: "Location hints",
-          es: "Location hints",
-          ca: "Location hints"
-        )
-        fill_in_i18n_editor(
-          :meeting_description,
-          "#description-tabs",
-          en: "A longer description",
-          es: "Descripción más larga",
-          ca: "Descripció més llarga"
-        )
-
-        fill_in :meeting_address, with: address
-        fill_in :meeting_start_time, with: 1.day.from_now
-        fill_in :meeting_end_time, with: 1.day.from_now + 2.hours
-
-        select scope.name, from: :meeting_decidim_scope_id
-        select translated(category.name), from: :meeting_decidim_category_id
-
         find("*[type=submit]").click
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
@@ -216,13 +234,13 @@ RSpec.shared_examples "manage meetings" do
 
     it "closes a meeting with a report" do
       within find("tr", text: translated(meeting.title)) do
-        click_link "Close"
+        page.find("a.action-icon--close").click
       end
 
       within ".edit_close_meeting" do
         fill_in_i18n(
           :close_meeting_closing_report,
-          "#closing_report-tabs",
+          "#close_meeting-closing_report-tabs",
           en: "The meeting was great!",
           es: "El encuentro fue genial",
           ca: "La trobada va ser genial"
@@ -234,7 +252,7 @@ RSpec.shared_examples "manage meetings" do
         click_button "Close"
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("Meeting successfully closed")
       end
 
@@ -250,7 +268,7 @@ RSpec.shared_examples "manage meetings" do
 
       it "can update the information" do
         within find("tr", text: translated(meeting.title)) do
-          click_link "Close"
+          page.find("a.action-icon--close").click
         end
 
         within ".edit_close_meeting" do
@@ -258,7 +276,7 @@ RSpec.shared_examples "manage meetings" do
           click_button "Close"
         end
 
-        within ".flash" do
+        within ".callout-wrapper" do
           expect(page).to have_content("Meeting successfully closed")
         end
       end

@@ -1,15 +1,17 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   describe StaticMapController, type: :controller do
+    routes { Decidim::Core::Engine.routes }
+
     let(:organization) { create(:organization) }
-    let(:feature) { create(:feature, organization: organization)}
+    let(:feature) { create(:feature, organization: organization) }
     let(:resource) { create(:dummy_resource, feature: feature) }
 
     before do
       @request.env["decidim.current_organization"] = organization
-      @request.env["decidim.current_participatory_process"] = feature.participatory_process
       @request.env["decidim.current_feature"] = feature
     end
 
@@ -22,7 +24,7 @@ module Decidim
       let(:data) { "1234" }
 
       it "generates a static map image data using the StaticMapGenerator" do
-        generator = double()
+        generator = double
 
         expect(StaticMapGenerator).to receive(:new).with(resource).and_return(generator)
         expect(generator).to receive(:data).and_return(data)

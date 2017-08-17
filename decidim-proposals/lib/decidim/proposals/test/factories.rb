@@ -1,10 +1,4 @@
 # frozen_string_literal: true
-require "decidim/core/test/factories"
-require "decidim/admin/test/factories"
-require "decidim/comments/test/factories"
-require "decidim/meetings/test/factories"
-require "decidim/results/test/factories"
-require "decidim/budgets/test/factories"
 
 FactoryGirl.define do
   factory :proposal_feature, parent: :feature do
@@ -16,6 +10,14 @@ FactoryGirl.define do
       step_settings do
         {
           participatory_process.active_step.id => { votes_enabled: true }
+        }
+      end
+    end
+
+    trait :with_votes_disabled do
+      step_settings do
+        {
+          participatory_process.active_step.id => { votes_enabled: false }
         }
       end
     end
@@ -55,6 +57,14 @@ FactoryGirl.define do
       settings do
         {
           geocoding_enabled: true
+        }
+      end
+    end
+
+    trait :with_attachments_allowed do
+      settings do
+        {
+          attachments_allowed: true
         }
       end
     end

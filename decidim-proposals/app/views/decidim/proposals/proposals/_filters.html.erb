@@ -17,7 +17,7 @@
   <% end %>
 
   <% if feature_settings.proposal_answering_enabled && current_settings.proposal_answering_enabled %>
-    <%= form.collection_radio_buttons :state, [["all", t('.all')], ["accepted", t('.accepted')], ["rejected", t('.rejected')]], :first, :last, legend_title: t('.state') %>
+    <%= form.collection_radio_buttons :state, [["all", t('.all')], ["accepted", t('.accepted')], ["rejected", t('.rejected')], ["evaluating", t('.evaluating')]], :first, :last, legend_title: t('.state') %>
   <% end %>
 
   <% if linked_classes_for(Decidim::Proposals::Proposal).any? %>
@@ -28,12 +28,12 @@
     <%= form.collection_check_boxes :activity, [["voted", t('.voted')]], :first, :last, legend_title: t('.activity') %>
   <% end %>
 
-  <% if current_organization.scopes.any? && !current_participatory_process.scope %>
-    <%= form.collection_check_boxes :scope_id, search_organization_scopes, lambda {|scope| scope.id.to_s}, :name, legend_title: t('.scopes') %>
+  <% if current_participatory_process.has_subscopes? %>
+    <%= form.scopes_select :scope_id, legend_title: t(".scopes"), label: false, prompt: t('.scope_prompt'), remote_path: decidim.scopes_search_path(root: current_participatory_process.scope, include_root: true), multiple: true %>
   <% end %>
 
   <% if current_feature.categories.any? %>
-    <%= form.categories_select :category_id, current_feature.categories, legend_title: t('.category'), disable_parents: false, label: false, include_blank: true %>
+    <%= form.categories_select :category_id, current_feature.categories, legend_title: t('.category'), disable_parents: false, label: false, prompt: t('.category_prompt') %>
   <% end %>
 
   <%= hidden_field_tag :order, order, id: nil, class: "order_filter" %>

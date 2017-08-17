@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
 
 require "spec_helper"
 
-describe "Admin manage participatory processes", type: :feature do
-  include_context "participatory process admin"
+describe "Admin manages participatory processes", type: :feature do
+  include_context "participatory process administration by admin"
   it_behaves_like "manage processes examples"
+  it_behaves_like "manage processes announcements"
 
   before do
     switch_to_host(organization.host)
@@ -14,34 +14,36 @@ describe "Admin manage participatory processes", type: :feature do
     visit decidim_admin.participatory_processes_path
   end
 
-  it "creates a new participatory_process" do
-    find(".actions .new").click
+  it "creates a new participatory process" do
+    within ".secondary-nav__actions" do
+      page.find("a.button").click
+    end
 
     within ".new_participatory_process" do
       fill_in_i18n(
         :participatory_process_title,
-        "#title-tabs",
+        "#participatory_process-title-tabs",
         en: "My participatory process",
         es: "Mi proceso participativo",
         ca: "El meu procés participatiu"
       )
       fill_in_i18n(
         :participatory_process_subtitle,
-        "#subtitle-tabs",
+        "#participatory_process-subtitle-tabs",
         en: "Subtitle",
         es: "Subtítulo",
         ca: "Subtítol"
       )
       fill_in_i18n_editor(
         :participatory_process_short_description,
-        "#short_description-tabs",
+        "#participatory_process-short_description-tabs",
         en: "Short description",
         es: "Descripción corta",
         ca: "Descripció curta"
       )
       fill_in_i18n_editor(
         :participatory_process_description,
-        "#description-tabs",
+        "#participatory_process-description-tabs",
         en: "A longer description",
         es: "Descripción más larga",
         ca: "Descripció més llarga"
@@ -58,15 +60,35 @@ describe "Admin manage participatory processes", type: :feature do
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
-    within ".tabs-content" do
-      expect(page).to have_content("My participatory process")
-      expect(page).to have_content(@group_name)
-      expect(page).to have_css("img[src*='#{image1_filename}']")
-      expect(page).to have_css("img[src*='#{image2_filename}']")
+    within ".container" do
+      expect(current_path).to eq decidim_admin.participatory_process_steps_path(Decidim::ParticipatoryProcess.last)
+      expect(page).to have_content("STEPS")
+      expect(page).to have_content("Introduction")
+    end
+  end
+
+  context "updating a participatory process" do
+    let!(:participatory_process3) { create(:participatory_process, organization: organization) }
+
+    before do
+      visit decidim_admin.participatory_processes_path
+    end
+
+    it "update a participatory process without images does not delete them" do
+      click_link translated(participatory_process3.title)
+      click_submenu_link "Info"
+      click_button "Update"
+
+      within ".callout-wrapper" do
+        expect(page).to have_content("successfully")
+      end
+
+      expect(page).to have_css("img[src*='#{participatory_process3.hero_image.url}']")
+      expect(page).to have_css("img[src*='#{participatory_process3.banner_image.url}']")
     end
   end
 
@@ -79,15 +101,14 @@ describe "Admin manage participatory processes", type: :feature do
 
     it "deletes a participatory_process" do
       click_link translated(participatory_process2.title)
-      click_processes_menu_link "Settings"
       click_link "Destroy"
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
       within "table" do
-        expect(page).not_to have_content(translated(participatory_process2.title))
+        expect(page).to have_no_content(translated(participatory_process2.title))
       end
     end
   end

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
+
 module Decidim
   module Devise
     # Custom Devise SessionsController to avoid namespace problems.
     class SessionsController < ::Devise::SessionsController
       include Decidim::DeviseControllers
-      helper Decidim::OmniauthHelper
 
       def after_sign_in_path_for(user)
         return first_login_authorizations_path if first_login_and_not_authorized?(user) &&
-                                                  !user.roles.include?("admin")
+                                                  !user.admin?
         super
       end
 

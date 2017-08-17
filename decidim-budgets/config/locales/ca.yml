@@ -12,10 +12,11 @@ ca:
     budgets:
       actions:
         attachments: Adjunts
-        confirm_destroy: Estàs segur que vols eliminar aquest projecte?
+        confirm_destroy: Segur que vols eliminar aquest projecte?
         destroy: Esborrar
         edit: Editar
-        new: Nou %{name}
+        new: Nou
+        preview: Previsualitzar
         title: Accions
       admin:
         models:
@@ -29,13 +30,13 @@ ca:
             success: Projecte eliminat correctament
           edit:
             title: Editar projecte
-            update: Actualitzar projecte
+            update: Actualitzar
           index:
             finished_orders: Vots finalitzats
             pending_orders: Vots en procés
             title: Projectes
           new:
-            create: Crear projecte
+            create: Crear
             title: Nou resultat
           update:
             invalid: Hi ha hagut un problema actualitzant aquest projecte
@@ -57,7 +58,7 @@ ca:
           ok: D'acord
           title: Pressupost superat
         budget_summary:
-          are_you_sure: Estàs segur de que vols cancel·lar el teu vot?
+          are_you_sure: Segur que vols cancel·lar el teu vot?
           assigned: 'Assignat:'
           cancel_order: eliminar el teu vot i començar de nou
           checked_out:
@@ -71,6 +72,8 @@ ca:
             other: "%{count} projectes"
         filters:
           category: Categoria
+          category_prompt: Selecciona una categoria
+          scope_prompt: Seleccioneu un àmbit
           scopes: Àmbits
           search: Cerca
         filters_small_view:
@@ -110,6 +113,7 @@ ca:
             vote_threshold_percent: Percentatge del pressupost mínim per fer el vot
           step:
             comments_blocked: Comentaris bloquejats
+            show_votes: Mostra vots
             votes_enabled: Suports habilitats
     orders:
       checkout:
@@ -118,6 +122,9 @@ ca:
       destroy:
         error: S'ha produït un error en cancel·lar el seu vot
         success: El seu vot ha estat cancel·lat correctament
+    resource_links:
+      included_proposals:
+        project_proposals: 'Propostes incloses en aquest projecte:'
   index:
     confirmed_orders_count: Nombre de vots
   total_budget: Pressupost total

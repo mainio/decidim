@@ -1,6 +1,6 @@
-# coding: utf-8
 # frozen_string_literal: true
-RSpec.shared_examples "manage process steps examples" do
+
+shared_examples "manage process steps examples" do
   let(:active) { false }
   let!(:process_step) do
     create(
@@ -13,70 +13,59 @@ RSpec.shared_examples "manage process steps examples" do
   before do
     switch_to_host(organization.host)
     login_as user, scope: :user
-    visit decidim_admin.participatory_process_path(participatory_process)
+    visit decidim_admin.edit_participatory_process_path(participatory_process)
     click_link "Steps"
   end
 
-  it "displays all fields from a single participatory process" do
-    within "#steps table" do
-      click_link translated(process_step.title)
-    end
-
-    within "dl" do
-      expect(page).to have_content(stripped translated(process_step.title, locale: :en))
-      expect(page).to have_content(stripped translated(process_step.title, locale: :es))
-      expect(page).to have_content(stripped translated(process_step.title, locale: :ca))
-      expect(page).to have_content(stripped translated(process_step.description, locale: :en))
-      expect(page).to have_content(stripped translated(process_step.description, locale: :es))
-      expect(page).to have_content(stripped translated(process_step.description, locale: :ca))
-    end
-  end
-
   it "creates a new participatory_process" do
-    find("#steps .actions .new").click
+    find(".card-title a.button").click
+
+    fill_in_i18n(
+      :participatory_process_step_title,
+      "#participatory_process_step-title-tabs",
+      en: "My participatory process step",
+      es: "Mi fase de proceso participativo",
+      ca: "La meva fase de procés participatiu"
+    )
+    fill_in_i18n_editor(
+      :participatory_process_step_description,
+      "#participatory_process_step-description-tabs",
+      en: "A longer description",
+      es: "Descripción más larga",
+      ca: "Descripció més llarga"
+    )
+
+    page.execute_script("$('#date_field_participatory_process_step_start_date').focus()")
+    page.find(".datepicker-dropdown .day", text: "12").click
+    page.execute_script("$('#date_field_participatory_process_step_end_date').focus()")
+    page.find(".datepicker-dropdown .day", text: "22").click
 
     within ".new_participatory_process_step" do
-      fill_in_i18n(
-        :participatory_process_step_title,
-        "#title-tabs",
-        en: "My participatory process step",
-        es: "Mi fase de proceso participativo",
-        ca: "La meva fase de procés participatiu"
-      )
-      fill_in_i18n_editor(
-        :participatory_process_step_description,
-        "#description-tabs",
-        en: "A longer description",
-        es: "Descripción más larga",
-        ca: "Descripció més llarga"
-      )
-
-      fill_in :participatory_process_step_start_date, with: 1.months.ago.to_date
-      fill_in :participatory_process_step_end_date, with: 2.months.from_now.to_date
-
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
     within "#steps table" do
       expect(page).to have_content("My participatory process step")
+      expect(page).to have_content("12,")
+      expect(page).to have_content("22,")
     end
   end
 
   it "updates a participatory_process_step" do
     within "#steps" do
       within find("tr", text: translated(process_step.title)) do
-        click_link "Edit"
+        page.find(".action-icon--edit").click
       end
     end
 
     within ".edit_participatory_process_step" do
       fill_in_i18n(
         :participatory_process_step_title,
-        "#title-tabs",
+        "#participatory_process_step-title-tabs",
         en: "My new title",
         es: "Mi nuevo título",
         ca: "El meu nou títol"
@@ -85,7 +74,7 @@ RSpec.shared_examples "manage process steps examples" do
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
@@ -104,15 +93,15 @@ RSpec.shared_examples "manage process steps examples" do
 
     it "deletes a participatory_process_step" do
       within find("tr", text: translated(process_step2.title)) do
-        click_link "Destroy"
+        page.find(".action-icon--remove").click
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
       within "#steps table" do
-        expect(page).not_to have_content(translated(process_step2.title))
+        expect(page).to have_no_content(translated(process_step2.title))
       end
     end
   end
@@ -120,7 +109,7 @@ RSpec.shared_examples "manage process steps examples" do
   context "activating a step" do
     it "activates a step" do
       within find("tr", text: translated(process_step.title)) do
-        click_link "Activate"
+        page.find(".action-icon--activate").click
       end
 
       within find("tr", text: translated(process_step.title)) do

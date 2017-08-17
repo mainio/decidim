@@ -1,4 +1,6 @@
 ca:
+  actions:
+    confirm_destroy: N'estàs segur?
   activemodel:
     attributes:
       attachment:
@@ -8,7 +10,7 @@ ca:
       category:
         description: Descripció
         name: Nom
-        parent: Pare
+        parent_id: Superior
       feature:
         name: Nom
         weight: Pes
@@ -25,27 +27,37 @@ ca:
         official_img_footer: Logotip oficial del peu de pàgina
         official_img_header: Logotip oficial de la capçalera
         official_url: URL oficial de l'organització
+        reference_prefix: Prefix de referència
         show_statistics: Mostra Estadístiques
         welcome_text: Text de benvinguda
       participatory_process:
         banner_image: Imatge de bandera
+        copy_categories: Copiar categories
+        copy_features: Copiar funcionalitats
+        copy_steps: Copiar fases
         description: Descripció
         developer_group: Grup promotor
         domain: Àrees municipals
         end_date: Data de finalització
-        hashtag: Etiqueta
+        hashtag: Hashtag
         hero_image: Imatge de portada
         local_area: Àrea municipal
         meta_scope: 'Metadades: àmbit'
+        participatory_process_group_id: Grup de processos
         participatory_scope: Àmbit participatiu
         participatory_structure: Estructura participativa
-        promoted: Promogut
-        scope: Àmbit
+        promoted: Destacat
+        scope_id: Àmbit
         short_description: Descripció breu
         slug: Nom curt d'URL
         subtitle: Subtítol
         target: A qui va dirigit?
         title: Títol
+      participatory_process_group:
+        description: Descripció
+        hero_image: Imatge
+        name: Nom
+        participatory_process_ids: Processos relacionats
       participatory_process_step:
         description: Descripció
         end_date: Data de finalització
@@ -54,9 +66,17 @@ ca:
         title: Títol
       participatory_process_user_role:
         email: Correu electrònic
+        name: Nom
+        role: Rol
       scope:
+        code: Codi
         name: Nom
         organization: Organització
+        scope_type: Tipus d'àmbit
+      scope_type:
+        name: Nom
+        organization: Organització
+        plural: Plural
       static_page:
         content: Contingut
         organization: Organització
@@ -79,33 +99,41 @@ ca:
         meta_scope: 'Metadades: àmbit'
         participatory_scope: Àmbit participatiu
         participatory_structure: Estructura participativa
-        promoted: Promogut
+        promoted: Destacat
         scope: Àmbit
         short_description: Descripció breu
         slug: Nom curt d'URL
         subtitle: Subtítol
         target: A qui va dirigit?
         title: Títol
+      decidim/participatory_process_step:
+        end_date: Data de finalització
+        start_date: Data d'inici
       decidim/static_page:
         content: Contingut
         slug: Nom curt d'URL
         title: Títol
+  date:
+    formats:
+      datepicker: "%m/%d/%Y"
   decidim:
     admin:
       actions:
         activate: Activar
+        add: Afegir
         configure: Configurar
         confirm_destroy: Segur que ho vols eliminar?
-        create: Crear
         destroy: Eliminar
+        duplicate: Duplicar
         edit: Editar
+        export: Exporta
         manage: Gestionar
-        new: Nou %{name}
+        new: Nou/va
         permissions: Permisos
         preview: Previsualitzar
         publish: Publicar
+        reject: Rebutjar
         resend_invitation: Tornar a enviar invitació
-        title: Accions
         unpublish: Despublicar
         verify: Verificar
       attachments:
@@ -116,7 +144,9 @@ ca:
           success: L'adjunt s'ha eliminat correctament.
         edit:
           title: Edita arxiu adjunt
-          update: Actualitza adjunt
+          update: Actualitzar
+        index:
+          attachments_title: Adjunts
         new:
           create: Crea arxiu adjunt
           title: Nou arxiu adjunt
@@ -128,32 +158,26 @@ ca:
           error: S'ha produït un error en crear aquesta categoria.
           success: Categoria creada correctament.
         destroy:
-          error: S'ha produït un error en eliminar aquesta categoria. Si us plau, elimini qualsevol subcategoria en primer lloc, assegureu-vos que cap altra entitat pertany a aquesta categoria i torni a intentar-ho.
+          error: S'ha produït un error en eliminar aquesta categoria. Si us plau, elimina qualsevol subcategoria en primer lloc, assegura't que cap altra entitat pertany a aquesta categoria i torna a intentar-ho.
           success: Categoria eliminada correctament.
         edit:
           title: Edita categoria
-          update: Actualitza la categoria
+          update: Actualitzar
+        index:
+          categories_title: Categories
+          category_used: Aquesta categoria no es pot suprimir perquè és en ús.
         new:
           create: Crea una categoria
           title: Nova categoria
         update:
           error: S'ha produït un error en actualitzar aquesta categoria.
           success: Categoria actualitzada correctament.
-      decidim:
-        admin:
-          attachments:
-            index:
-              attachments_title: Adjunts
-          categories:
-            index:
-              categories_title: Categories
-          participatory_process_steps:
-            index:
-              steps_hint: Pots arrossegar les files de la taula per reordenar les fases del procés.
-              steps_title: Fases
-          participatory_process_user_roles:
-            index:
-              process_admins_title: Administradors del procés participatiu
+      dashboard:
+        show:
+          welcome: Benvingut al nou panell d'administració de Decidim.
+      exports:
+        export_as: "%{name} com a %{export_format}"
+        notice: La teva exportació està actualment en curs. Rebràs un correu electrònic quan hagi finalitzat.
       feature_permissions:
         edit:
           everyone: Tothom
@@ -172,6 +196,7 @@ ca:
           title: Editar funcionalitat
           update: Actualitza
         form:
+          default_step_settings: Configuració per defecte
           global_settings: Configuració global
           step_settings: Configuració de fase
         index:
@@ -191,25 +216,60 @@ ca:
         update:
           error: S'ha produït un error en actualitzar aquesta funcionalitat.
           success: La funcionalitat s'ha actualitzat correctament.
+      managed_users:
+        close_session:
+          error: S'ha produït un error en tancar la sessió de suplantació actual.
+          success: La sessió de suplantació actual s'ha finalitzat amb èxit.
+        create:
+          error: S'ha produït un error en crear l'usuari gestionat.
+          success: L'usuari gestionat s'ha creat correctament.
+        form:
+          name: Nom
+        impersonate:
+          error: S'ha produït un error en suplantar l'usuari gestionat.
+        impersonations:
+          new:
+            impersonate: Suplantar
+            new_managed_user_impersonation: Nova suplantació d'usuaris gestionats
+        index:
+          impersonate: Suplantar
+          needs_authoriation_warning: Necessiteu almenys una autorització habilitada per a aquesta organització.
+          promote: Promocionar
+          view_logs: Veure registres
+        new:
+          create: Crear
+          new_managed_user: Nou usuari gestionat
+          select_authorization_method: Seleccioneu un mètode d'autorització
+          step: Fase %{current} de %{total}
+        promotion:
+          error: S'ha produït un error en promoure l'usuari gestionat.
+          success: S'ha promogut amb èxit l'usuari gestionat.
+        promotions:
+          new:
+            explanation: Els usuaris gestionats es poden promocionar a usuaris estàndard. Significa que seran convidats al sistema i no podreu tornar a suplantar-los. L'usuari convidat rebrà un correu electrònic per acceptar la vostra invitació.
+            new_managed_user_promotion: Nova promoció d'usuari gestionat
+            promote: Promocionar
       menu:
+        admins: Administradors
         dashboard: Tauler de control
+        managed_users: Usuaris gestionats
         newsletters: Butlletins
-        participatory_process_groups: Grups de processos participatius
-        participatory_processes: Processos participatius
+        participatory_process_groups: Grups de processos
+        participatory_processes: Processos
         participatory_processes_submenu:
           attachments: Adjunts
           categories: Categories
           features: Funcionalitats
           info: Informació
           moderations: Moderacions
-          process_admins: Administradors del procés
-          settings: Configuració
+          process_admins: Usuaris del procés
           steps: Fases del procés
+        scope_types: Tipus d'àmbit
         scopes: Àmbits
         settings: Configuració
         static_pages: Pàgines
         user_groups: Grups d'usuaris
-        users: Administradors
+        users: Usuaris
       models:
         attachment:
           fields:
@@ -217,9 +277,16 @@ ca:
             title: Títol
           name: Arxiu adjunt
         category:
-          fields:
-            name: Nom
           name: Categoria
+        impersonation_log:
+          fields:
+            admin: Administrador
+            ended_at: Va acabar el
+            expired_at: Vençut el
+            started_at: Va començar el
+            user: Usuari
+        managed_user:
+          name: Usuari gestionat
         newsletter:
           fields:
             created_at: Data de creació
@@ -237,9 +304,9 @@ ca:
         participatory_process_group:
           fields:
             name: Nom
+          name: Grup de processos
         participatory_process_step:
           fields:
-            active: Activa
             end_date: Data de finalització
             start_date: Data d'inici
             title: Títol
@@ -247,16 +314,25 @@ ca:
         participatory_process_user_role:
           fields:
             email: Correu electrònic
+            name: Nom
+            role: Rol
+          name: Usuari del procés
+          roles:
+            admin: Administrador
+            collaborator: Col·laborador
+            moderator: Moderador
         scope:
           fields:
-            created_at: Data de creació
             name: Nom
-          name: Àmbit
+            scope_type: Tipus d'àmbit
+        scope_type:
+          fields:
+            name: Nom
+            plural: Plural
         static_page:
           fields:
             created_at: Data de creació
             title: Títol
-          name: Pàgina
         user:
           fields:
             created_at: Data de creació
@@ -265,17 +341,28 @@ ca:
             invitation_sent_at: Data d'enviament de la invitació
             last_sign_in_at: Darrera data d'identificació
             name: Nom
+            role: Rol
+            roles:
+              admin: Administrador
+              user_manager: Administrador d'usuaris
           name: Usuari
         user_group:
           fields:
+            actions: Accions
             created_at: Data de creació
             document_number: Número de document
             name: Nom
             phone: Telèfon
+            state: Estat
             users_count: Número d'usuaris
       moderations:
         index:
-          title: Grup de processos participatius
+          title: Moderacions
+        report:
+          reasons:
+            does_not_belong: No pertany
+            offensive: Ofensiu
+            spam: Contingut brossa
       newsletters:
         create:
           error: S'ha produït un error en crear aquest butlletí.
@@ -292,13 +379,13 @@ ca:
         form:
           interpolations_hint: 'Consell: Podeu utilitzar "%{name}" en qualsevol part del cos o assumpte i serà reemplaçat pel nom del destinatari.'
         index:
-          confirm_delete: Esteu segur que voleu suprimir aquest butlletí?
+          confirm_delete: Segur que vols suprimir aquest butlletí?
           title: Butlletins
         new:
           save: Desar
           title: Nou butlletí
         show:
-          confirm_deliver: Estàs segur de que vols enviar aquest butlletí? Aquesta acció no es pot desfer.
+          confirm_deliver: Segur que vols enviar aquest butlletí? Aquesta acció no es pot desfer.
           deliver: Enviar butlletí
           preview: Previsualitzar
           subject: Assumpte
@@ -308,18 +395,32 @@ ca:
       organization:
         edit:
           title: Edita organització
-          update: Actualitza organització
+          update: Actualitzar
+        form:
+          current_image: Imatge actual
+          facebook: Facebook
+          github: GitHub
+          instagram: Instagram
+          social_handlers: Social
+          twitter: Twitter
+          url: URL
+          youtube: YouTube
         update:
           error: S'ha produït un error en actualitzar aquesta organització.
           success: Organització actualitzada correctament.
+      participatory_process_copies:
+        new:
+          copy: Còpia
+          select: Selecciona quines dades voleu duplicar
       participatory_process_groups:
         destroy:
           success: Grup eliminat correctament.
         edit:
+          title: Editar grup de procés
           update: Actualitza
         new:
           create: Crear
-          name: Nom
+          title: Nou grup de processos
         update:
           error: Hi ha hagut un error actualitzant aquest grup de processos participatius.
           success: Grup de procés participatiu actualitzat correctament.
@@ -346,9 +447,11 @@ ca:
           success: La fase de procés participatiu s'ha eliminat correctament.
         edit:
           title: Editar fase de procés participatiu
-          update: Actualitzar fase de procés participatiu
+          update: Actualitzar
+        index:
+          steps_title: Fases del procés
         new:
-          create: Crear fase de procés participatiu
+          create: Crear
           title: Nova fase de procés participatiu
         ordering:
           error: S'ha produït un error en la reordenació de les fases d'aquest procés participatiu.
@@ -357,10 +460,21 @@ ca:
           success: La fase de procés participatiu s'ha actualitzat correctament.
       participatory_process_user_roles:
         create:
-          error: S'ha produït un error en crear un nou administrador per a aquest procés participatiu.
-          success: L'administrador per a aquest procés participatiu s'ha creat correctament.
+          error: Hi ha hagut un error en afegir un usuari a aquest procés participatiu.
+          success: Usuari creat amb èxit per a aquest procés participatiu.
         destroy:
-          success: L'administrador per a aquest procés participatiu s'ha eliminat correctament.
+          success: Usuari eliminat amb èxit per a aquest procés participatiu.
+        edit:
+          title: Editar usuari de procés participatiu.
+          update: Actualitzar
+        index:
+          process_admins_title: Usuaris del procés participatiu
+        new:
+          create: Crear
+          title: Nou usuari de procés participatiu.
+        update:
+          error: Hi ha hagut un error actualitzant l'usuari d'aquest procés participatiu.
+          success: Usuari actualitzat satisfactòriament per a aquest procés participatiu.
       participatory_processes:
         create:
           error: S'ha produït un error en crear un nou procés participatiu.
@@ -368,17 +482,41 @@ ca:
         destroy:
           success: El procés participatiu s'ha eliminat correctament.
         edit:
-          update: Actualitzar procés participatiu
+          update: Actualitzar
+        form:
+          title: Informació general
+        index:
+          not_published: No publicat
+          published: Publicat
         new:
-          create: Crear procés participatiu
+          create: Crear
           title: Nou procés participatiu
         update:
           error: S'ha produït un error en l'actualització d'aquest procés participatiu.
           success: El procés participatiu s'ha actualitzat correctament.
+      participatory_processes_copies:
+        create:
+          error: Hi ha hagut un error duplicant el procés participatiu.
+          success: El procés participatiu ha estat duplicat correctament.
       participatory_processes_group:
         create:
           error: S'ha produït un error creant aquest grup de processos participatius.
           success: Grup de processos participatius creat correctament.
+      scope_types:
+        create:
+          error: S'ha produït un error en crear un nou tipus d'àmbit.
+          success: Tipus d'àmbit creat amb èxit.
+        destroy:
+          success: Tipus d'àmbit destruït amb èxit
+        edit:
+          title: Editar tipus d'àmbit
+          update: Actualitzar
+        new:
+          create: Crea tipus d'àmbit
+          title: Nou àmbit
+        update:
+          error: S'ha produït un error en actualitzar aquest tipus d'àmbit.
+          success: Tipus d'àmbit actualitzat amb èxit
       scopes:
         create:
           error: S'ha produït un error en crear un nou àmbit.
@@ -387,10 +525,11 @@ ca:
           success: Àmbit eliminat amb èxit
         edit:
           title: Edita àmbit
-          update: Actualitza àmbit
+          update: Actualitzar
         new:
           create: Crea àmbit
           title: Nou àmbit
+        no_scopes: No hi ha àmbits a aquest nivell.
         update:
           error: S'ha produït un error en l'actualització d'aquest àmbit.
           success: Àmbit actualitzat correctament
@@ -404,24 +543,44 @@ ca:
           success: La pàgina s'ha eliminat correctament.
         edit:
           title: Editar pàgina
-          update: Actualitzar pàgina
+          update: Actualitzar
         new:
-          create: Crear pàgina
+          create: Nova
           title: Nova pàgina
         update:
           error: S'ha produït un error en l'actualització d'aquests pàgina.
           success: La pàgina s'ha actualitzat correctament.
       titles:
         dashboard: Tauler de control
+        impersonations: Suplantacions
+        managed_users: Usuaris gestionats
         participatory_process_groups: Grups de processos participatius
         participatory_processes: Processos participatius
+        scope_types: Tipus d'àmbit
         scopes: Àmbits
         static_pages: Pàgines
         user_groups: Grups d'usuaris
         users: Usuaris
-      user_groups:
+      user_group:
+        reject:
+          invalid: Hi va hagut un error en rebutjar aquest grup d'usuaris.
+          success: Grup d'usuaris rebutjat amb èxit
         verify:
-          success: El grup d'usuaris ha estat verificat exitosament.
+          invalid: Hi ha hagut un error en rebutjar aquest grup d'usuaris.
+          success: Grup d'usuaris verificat correctament
+      user_groups:
+        index:
+          filter:
+            all: Tots
+            pending: Pendents
+            rejected: Rebutjats
+            verified: Verificats
+          filter_by: Filtra per
+          search: Cerca
+          state:
+            pending: Pendent
+            rejected: Rebutjat
+            verified: Verificat
       users:
         create:
           error: Hi ha hagut un error en convidar a aquest usuari.
@@ -429,6 +588,10 @@ ca:
         destroy:
           error: S'ha produït un error en intentar eliminar aquest usuari.
           success: L'usuari ja no és un administrador.
+        form:
+          email: Correu electrònic
+          name: Nom
+          role: Rol
         new:
           create: Convidar
           title: Convidar un usuari com a administrador
@@ -440,7 +603,7 @@ ca:
         hidden: Ocults
         hide: Amagar
         not_hidden: No ocult
-        title: Moderacions
+        title: Accions
         unreport: Desfer denúncia
       admin:
         reportable:
@@ -454,10 +617,23 @@ ca:
         moderation:
           fields:
             hidden_at: Data d'ocultació
-            report_count: Número de denúncies
+            report_count: Recompte
             reportable: Tipus
-            reported_content: Contingut
+            reported_content_url: URL contingut del contingut reportat
             reports: Denúncies
     participatory_processes:
       participatory_process_groups:
         none: Cap
+  layouts:
+    decidim:
+      admin:
+        newsletters:
+          title: Butlletins
+        settings:
+          title: Configuració
+        users:
+          title: Usuaris
+  time:
+    formats:
+      datepicker: "%m/%d/%Y"
+      timepicker: "%d/%m/%Y %H:%M"

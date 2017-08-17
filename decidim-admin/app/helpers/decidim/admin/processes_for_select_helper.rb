@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Admin
     # This class contains helpers needed to format ParticipatoryProcesses
@@ -10,7 +11,7 @@ module Decidim
       #
       # Returns an Array.
       def processes_for_select
-        @processes_for_select ||= current_organization.participatory_processes.map do |process|
+        @processes_for_select ||= OrganizationParticipatoryProcesses.new(current_organization).map do |process|
           [
             translated_attribute(process.title),
             process.id

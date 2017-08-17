@@ -15,7 +15,8 @@ eu:
         confirm_destroy: Ziur zaude proiektu hau ezabatu nahi duzula?
         destroy: Garbitu
         edit: Editatu
-        new: '%{name} berria'
+        new: Berria
+        preview: Aurreikusi
         title: Ekintzak
       admin:
         models:
@@ -29,11 +30,13 @@ eu:
             success: Proiektu ongi ezabatu da
           edit:
             title: Editatu proiektua
-            update: Eguneratu proiektua
+            update: Eguneratu
           index:
+            finished_orders: Emandako botoak
+            pending_orders: Emateke dauden botoak
             title: Proiektuak
           new:
-            create: Sortu proiektua
+            create: Sortu
             title: Emaitza berria
           update:
             invalid: Arazo bat izan da proiektu hau eguneratzean
@@ -57,7 +60,9 @@ eu:
         budget_summary:
           are_you_sure: Ziur zaude zure botoa ezeztatu nahi duzula?
           assigned: 'Esleituta:'
+          cancel_order: ezabatu ezazu botoa eta hasi berriro
           checked_out:
+            description: 'Jada bozkatu duzu aurrekonturako. Iritziz aldatu baduzu, ezeztatu hemen: %{cancel_link}.'
             title: Botoa zuzen bidali da
           description: Zure aburuz, proiektuetako zeinei esleitu behar diegu aurrekontua? Gutxienez, %{minimum_budget} esleitu nahi dituzun proiektuei, eta bozkatu aurrekontua zehazteko.
           title: Zure esku dago aurrekontua erabakitzea
@@ -67,10 +72,15 @@ eu:
             other: "%{count} proiektu"
         filters:
           category: Kategoria
+          category_prompt: Aukeratu kategoria bat
+          scope_prompt: Hautatu esparrua
           scopes: Esparruak
           search: Bilatu
         filters_small_view:
+          close_modal: Itxi leihoa
+          filter: Iragazi
           filter_by: 'Iragazi honen arabera:'
+          unfold: Zabaldu
         order_progress:
           vote: Bozkatu
         order_selected_projects:
@@ -81,6 +91,9 @@ eu:
           view: Ikusi
         project:
           add: Gehitu
+          count:
+            one: 1 sostengu 
+            other: "%{count} sostengu"
           remove: Kendu
         project_budget_button:
           add: Gehitu
@@ -90,7 +103,18 @@ eu:
           view_all_projects: Ikusi proiektu guztiak
     features:
       budgets:
+        actions:
+          vote: Proiektuaren alde egin
         name: Aurrekontuak
+        settings:
+          global:
+            comments_enabled: Iruzkinak gaituta
+            total_budget: Guztizko aurrekontua
+            vote_threshold_percent: Aurrekontuaren gutxieneko ehunekoa
+          step:
+            comments_blocked: Iruzkinak blokeatuta
+            show_votes: Erakutsi botoak
+            votes_enabled: Botoak gaituta
     orders:
       checkout:
         error: Errorea gertatu da zure botoa prozesatzean
@@ -98,4 +122,9 @@ eu:
       destroy:
         error: Errorea gertatu da zure botoa ezeztatzean
         success: Zure botua zuzen ezeztatu da
+    resource_links:
+      included_proposals:
+        project_proposals: 'Proiektu honetan jasotako proposamenak:'
+  index:
+    confirmed_orders_count: Boto-kopurua
   total_budget: Guztizko aurrekontua

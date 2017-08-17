@@ -2,8 +2,7 @@
 
 # The "main" locale.
 base_locale: en
-## All available locales are inferred from the data by default. Alternatively, specify them explicitly:
-locales: [en]
+
 ## Reporting locale, default: en. Available: en, ru.
 # internal_locale: en
 
@@ -49,8 +48,9 @@ data:
 # Find translate calls
 search:
   ## Paths or `File.find` patterns to search in:
-  # paths:
-  #  - app/
+  paths:
+   - app/
+   - lib/
 
   ## Root directories for relative keys resolution.
   # relative_roots:
@@ -71,7 +71,7 @@ search:
   # only: ["*.rb", "*.html.slim"]
 
   ## If `strict` is `false`, guess usages such as t("categories.#{category}.title"). The default is `true`.
-  # strict: true
+  strict: false
 
   ## Multiple scanners can be used. Their results are merged.
   ## The options specified above are passed down to each scanner. Per-scanner options can be specified as well.
@@ -104,6 +104,9 @@ ignore_unused:
   - invisible_captcha.*
   - decidim.participatory_processes.scopes.global
   - decidim.participatory_processes.participatory_process_groups.none
+  - pages.home.statistics.*
+  - decidim.participatory_processes.statistics.*
+  - forms.*
 # - 'activerecord.attributes.*'
 # - '{devise,kaminari,will_paginate}.*'
 # - 'simple_form.{yes,no}'

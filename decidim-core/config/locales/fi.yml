@@ -147,7 +147,6 @@ fi:
         success: Ilmoitusasetuksesi päivitettiin onnistuneesti.
     own_user_groups:
       index:
-        not_verified: Ei varmennettu
         verified: Varmennettu
     pages:
       index:
@@ -178,11 +177,9 @@ fi:
     reported_mailer:
       hide:
         hello: Hei %{name},
-        report_html: "<p>Seuraava sisältö:<p>%{content}<p>on lisätty automaattisesti.</p>"
         subject: Resurssi on piilotettu automaattisesti
       report:
         hello: Hei %{name},
-        report_html: "<p>Seuraava sisältö:<p>%{content}<p>on raportoitu.</p>"
         subject: Resurssi on raportoitu
     reports:
       create:
@@ -239,6 +236,8 @@ fi:
         someone_invited_you: Joku kutsui sinut liittymään %{application}, voit hyväksyä kutsun alla olevan linkin avulla.
       invite_admin:
         subject: Sinut on kutsuttu hallinnoimaan organisaatiota %{organization}
+      invite_collaborator:
+        subject: Sinut on kutsuttu osallistumaan organisaatioon %{organization}
       organization_admin_invitation_instructions:
         subject: Sinut on kutsuttu hallitsemaan organisaatiota %{organization}
       password_change:
@@ -265,8 +264,6 @@ fi:
         description_html: Tämä sivusto käyttää evästeitä. Jatkamalla tämän sivuston käyttöä hyväksyt selaimeesi asettamamme evästeet. Lue lisää %{link}.
         link_label: täältä
         ok: Hyväksyn
-      footer:
-        made_with_open_source: 'Sivusto rakennettu <a target="_blank" href="https://github.com/AjuntamentdeBarcelona/decidim">avoimen lähdekoodin ohjelmistolla</a>.'
       header:
         close_menu: Sulje valikko
         navigation: Navigaatio
@@ -310,13 +307,6 @@ fi:
   locale:
     name: Suomi
   pages:
-    '404':
-      back_home: Takaisin kotisivulle
-      content_doesnt_exist: Tämä osoite on virheellinen tai sivun osoite on muuttunut.
-      title: Etsimääsi sivua ei löydy
-    '500':
-      title: Palvelimellamme tapahtui virhe
-      try_later: Yritä myöhemmin uudestaan.
     home:
       extended:
         debates: Väittelyt
@@ -340,8 +330,6 @@ fi:
         see_all_processes: Näytä kaikki prosessit
       statistics:
         headline: Tämänhetkinen tila organisaatiolle %{organization}
-        processes: Prosessit
-        users: Käyttäjät
       sub_hero:
         register: Rekisteröidy
   social_share_button:

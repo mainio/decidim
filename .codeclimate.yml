@@ -4,6 +4,8 @@ engines:
     enabled: true
   csslint:
     enabled: true
+    exclude_paths:
+      - "decidim-core/app/assets/stylesheets/decidim/email.css"
   duplication:
     enabled: true
     config:
@@ -23,33 +25,39 @@ engines:
     - efea7ddea03adadd8177a72831e928a3
     - 92b3f6841512dd90c0f7bb79618fb351
     - efea7ddea03adadd8177a72831e928a3
+    exclude_paths:
+    - "decidim-*/spec/**/*"
   eslint:
     enabled: false
   fixme:
     enabled: true
+    exclude_paths:
+     - decidim-comments/app/assets/javascripts/decidim/comments/bundle.js.map
+     - .rubocop.yml
+  grep:
+    enabled: true
+    config:
+      patterns:
+        no-trailing-whitespace:
+          pattern: \s*$
+          annotation: "Don't leave trailing whitespace"
+          severity: minor
+          categories: Style
+  rubocop:
+    enabled: true
+    channel: rubocop-0-48
 
 ratings:
   paths:
   - Gemfile.lock
   - "**.css"
-  - "**.inc"
   - "**.js"
-  - "**.jsx"
-  - "**.module"
-  - "**.php"
-  - "**.py"
   - "**.rb"
 exclude_paths:
-- "**/spec/**/*"
-- "**/*/Rakefile"
 - "**/vendor/**/*"
-- "**/db/**/*"
-- "**/*.test.js"
-- "**/*.test.jsx"
-- "decidim-core/app/assets/stylesheets/decidim/email.css"
-- .rubocop.yml
-- lib/generators/decidim/templates/app.json.erb
-- "decidim-*/db/seeds.rb"
-- "decidim-*/config/routes.rb"
-- "doc/how_to_create_a_plugin.md"
 - "bundle.js"
+- "node_modules/**/*"
+- "development_app/**/*"
+- "docker_development_app/**/*"
+- "spec/decidim_dummy_app/**/*"
+- "coverage/**/*"

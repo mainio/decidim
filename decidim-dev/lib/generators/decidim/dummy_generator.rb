@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rails/generators"
 require "generators/decidim/app_generator"
 
@@ -18,50 +19,62 @@ module Decidim
     class DummyGenerator < Rails::Generators::Base
       desc "Generate dummy app for testing purposes"
 
-      class_option :engine_path, type: :string,
-                                 desc: "The library where the dummy app will be installed"
+      class_option :dummy_app_path, type: :string,
+                                    desc: "The path where the dummy app will be installed"
 
       def source_paths
         [
-          File.expand_path("../templates", __FILE__)
+          File.expand_path("templates", __dir__)
         ]
       end
 
       def cleanup
-        remove_directory_if_exists(dummy_path)
+        remove_directory_if_exists(dummy_app_path)
       end
 
       def create_dummy_app
         Decidim::Generators::AppGenerator.start [
-          dummy_path,
-          "--skip_gemfile",
+          dummy_app_path,
+          "--app_const_base=DummyApplication",
+          "--skip-gemfile",
           "--skip-bundle",
           "--skip-git",
           "--skip-keeps",
+          "--skip-listen",
+          "--skip-spring",
           "--skip-test",
           "--recreate_db"
         ]
       end
 
-      def set_locales
-        inject_into_file "#{dummy_path}/config/application.rb", after: "class Application < Rails::Application" do
-          "\n    config.i18n.available_locales = %w(en ca es)\n    config.i18n.default_locale = :en"
-        end
-      end
-
       def decidim_dev
-        template "decidim_dev.rb", "#{dummy_path}/config/initializers/decidim_dev.rb"
-
         # TODO: Remove these after PhantomJS updates WebKit version (see YML and
         #       initializer comments)
-        template "autoprefixer.yml", "#{dummy_path}/config/autoprefixer.yml"
-        template "autoprefixer_initializer.rb", "#{dummy_path}/config/initializers/autoprefixer.rb"
+        template "autoprefixer.yml", "#{dummy_app_path}/config/autoprefixer.yml"
+        template "autoprefixer_initializer.rb", "#{dummy_app_path}/config/initializers/autoprefixer.rb"
+
+        template "no_animations.rb", "#{dummy_app_path}/app/middleware/no_animations.rb"
+      end
+
+      def test_env
+        gsub_file "#{dummy_app_path}/config/environments/test.rb",
+                  /allow_forgery_protection = (.*)/, "allow_forgery_protection = true"
+
+        inject_into_file "#{dummy_app_path}/config/environments/test.rb",
+                         after: "allow_forgery_protection = true\n" do
+          <<~RUBY.gsub(/^ *\|/, "")
+            |
+            |  # Inject middleware to disable CSS animations
+            |  config.middleware.use NoAnimations
+            |
+          RUBY
+        end
       end
 
       private
 
-      def dummy_path
-        ENV["DUMMY_PATH"] || engine_path + "/spec/#{dir_name}_dummy_app"
+      def dummy_app_path
+        options[:dummy_app_path]
       end
 
       def remove_directory_if_exists(path)
@@ -69,11 +82,7 @@ module Decidim
       end
 
       def dir_name
-        engine_path.split("/").last
-      end
-
-      def engine_path
-        options[:engine_path]
+        dummy_app_path.split("/").last
       end
     end
   end

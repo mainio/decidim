@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
 
 require "spec_helper"
 
-describe "Admin manage participatory process groups", type: :feature do
-  include_context "participatory process admin"
+describe "Admin manages participatory process groups", type: :feature do
+  include_context "participatory process administration by admin"
 
   before do
     switch_to_host(organization.host)
@@ -14,19 +13,19 @@ describe "Admin manage participatory process groups", type: :feature do
   end
 
   it "creates a new participatory process group" do
-    find(".actions .new").click
+    find(".card-title .new").click
 
     within ".new_participatory_process_group" do
       fill_in_i18n(
         :participatory_process_group_name,
-        "#name-tabs",
+        "#participatory_process_group-name-tabs",
         en: "My group",
         es: "Mi grupo",
         ca: "El meu grup"
       )
       fill_in_i18n_editor(
         :participatory_process_group_description,
-        "#description-tabs",
+        "#participatory_process_group-description-tabs",
         en: "A longer description",
         es: "Descripción más larga",
         ca: "Descripció més llarga"
@@ -37,12 +36,12 @@ describe "Admin manage participatory process groups", type: :feature do
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
     expect(page).to have_content("My group")
-      expect(page).to have_content(@participatory_processes.first.title["en"])
+    expect(page).to have_content(@participatory_processes.first.title["en"])
     expect(page).to have_css("img[src*='#{image1_filename}']")
   end
 
@@ -56,20 +55,20 @@ describe "Admin manage participatory process groups", type: :feature do
 
     it "can edit them" do
       within find("tr", text: participatory_process_group.name["en"]) do
-        click_link "Edit"
+        page.find(".action-icon.action-icon--edit").click
       end
 
       within ".edit_participatory_process_group" do
         fill_in_i18n(
           :participatory_process_group_name,
-          "#name-tabs",
+          "#participatory_process_group-name-tabs",
           en: "My old group",
           es: "Mi grupo antiguo",
           ca: "El meu grup antic"
         )
         fill_in_i18n_editor(
           :participatory_process_group_description,
-          "#description-tabs",
+          "#participatory_process_group-description-tabs",
           en: "New description",
           es: "Nueva descripción",
           ca: "Nova descripció"
@@ -80,7 +79,7 @@ describe "Admin manage participatory process groups", type: :feature do
         find("*[type=submit]").click
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
@@ -92,15 +91,15 @@ describe "Admin manage participatory process groups", type: :feature do
 
     it "can destroy them" do
       within find("tr", text: participatory_process_group.name["en"]) do
-        click_link "Destroy"
+        page.find(".action-icon.action-icon--remove").click
       end
 
-      within ".flash" do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
       within "table" do
-        expect(page).not_to have_content(participatory_process_group.name)
+        expect(page).to have_no_content(participatory_process_group.name["en"])
       end
     end
   end

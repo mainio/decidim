@@ -1,19 +1,19 @@
 # frozen_string_literal: true
-require_dependency "decidim/application_controller"
 
 module Decidim
   # A controller that holds the logic to show ParticipatoryProcesses in a
   # public layout.
-  class ParticipatoryProcessesController < ApplicationController
-    include NeedsParticipatoryProcess
-
+  class ParticipatoryProcessesController < Decidim::ApplicationController
     layout "layouts/decidim/participatory_process", only: [:show]
 
-    skip_after_action :verify_participatory_process, only: [:index]
+    before_action -> { extend NeedsParticipatoryProcess }, only: [:show]
 
     helper Decidim::AttachmentsHelper
     helper Decidim::ParticipatoryProcessHelper
-    helper_method :collection, :promoted_participatory_processes, :participatory_processes
+    helper Decidim::IconHelper
+    helper Decidim::WidgetUrlsHelper
+
+    helper_method :collection, :promoted_participatory_processes, :participatory_processes, :stats
 
     def index
       authorize! :read, ParticipatoryProcess
@@ -27,19 +27,23 @@ module Decidim
     private
 
     def collection
-      @collection ||= public_processes.collection
+      @collection ||= (participatory_processes.to_a + participatory_process_groups).flatten
     end
 
     def participatory_processes
-      @participatory_processes ||= public_processes.participatory_processes
+      @participatory_processes ||= OrganizationPrioritizedParticipatoryProcesses.new(current_organization)
     end
 
     def promoted_participatory_processes
-      @promoted_processes ||= participatory_processes.promoted
+      @promoted_processes ||= participatory_processes | PromotedParticipatoryProcesses.new
     end
 
-    def public_processes
-      @public_processes ||= PublicProcesses.new(current_organization)
+    def participatory_process_groups
+      @process_groups ||= Decidim::ParticipatoryProcessGroup.where(organization: current_organization)
+    end
+
+    def stats
+      @stats ||= ParticipatoryProcessStatsPresenter.new(participatory_process: current_participatory_process)
     end
   end
 end

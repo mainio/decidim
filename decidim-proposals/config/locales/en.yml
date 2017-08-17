@@ -14,36 +14,47 @@ en:
     features:
       proposals:
         actions:
-          create: Create proposals
+          create: Create
           vote: Vote
         name: Proposals
         settings:
           global:
+            announcement: Announcement
+            attachments_allowed: Allow attachments
             comments_enabled: Comments enabled
             geocoding_enabled: Geocoding enabled
+            new_proposal_help_text: New proposal help text
             official_proposals_enabled: Official proposals enabled
             proposal_answering_enabled: Proposal answering enabled
             vote_limit: Vote limit
           step:
+            announcement: Announcement
             comments_blocked: Comments blocked
             creation_enabled: Proposal creation enabled
             proposal_answering_enabled: Proposal answering enabled
             votes_blocked: Votes blocked
             votes_enabled: Votes enabled
+            votes_hidden: Votes hidden (if votes are enabled, checking this will hide
+              the number of votes)
     proposals:
       actions:
         answer: Answer
-        edit: Edit
-        new: New proposal
+        new: New
         title: Actions
       admin:
+        actions:
+          preview: Preview
+        exports:
+          comments: Comments
+          proposals: Proposals
         models:
           proposal:
             name: Proposal
         proposal_answers:
           edit:
             accepted: Accepted
-            answer_proposal: Answer proposal
+            answer_proposal: Answer
+            evaluating: Evaluating
             rejected: Rejected
             title: Answer for proposal %{title}
         proposals:
@@ -57,17 +68,16 @@ en:
             invalid: There's been a problem updating this proposal
             success: Proposal successfully updated
           form:
+            attachment_legend: "(Optional) Add an attachment"
             select_a_category: Select a category
           index:
             title: Proposals
           new:
-            create: Create proposal
-            title: New proposal
-          edit:
-            update: Update proposal
-            title: Update proposal
+            create: Create
+            title: Create proposal
       answers:
         accepted: Accepted
+        evaluating: Evaluating
         not_answered: Not answered
         rejected: Rejected
       create:
@@ -81,7 +91,13 @@ en:
             scope: Scope
             state: State
             title: Title
+      proposal_votes:
+        create:
+          error: There's been errors when voting the proposal.
       proposals:
+        author:
+          deleted: Deleted user
+          verified_user_group: Verified organization
         count:
           proposals_count:
             one: 1 proposal
@@ -91,11 +107,14 @@ en:
           activity: Activity
           all: All
           category: Category
+          category_prompt: Select a category
           citizenship: Citizenship
+          evaluating: Evaluating
           official: Official
           origin: Origin
           rejected: Rejected
           related_to: Related to
+          scope_prompt: Select a scope
           scopes: Scopes
           search: Search
           state: State
@@ -113,6 +132,7 @@ en:
             one: <span class="card--list__data__number">1</span>vote
             other: <span class="card--list__data__number">%{count}</span>votes
         new:
+          attachment_legend: "(Optional) Add an attachment"
           back: Back
           select_a_category: Please select a category
           send: Send

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   # A page is used to add static content to the website, it can be useful so
   # organization can add their own terms and conditions, privacy policy or
@@ -7,10 +8,10 @@ module Decidim
   # Pages with a default slug cannot be destroyed and its slug cannot be
   # modified.
   class StaticPage < ApplicationRecord
-    belongs_to :organization, foreign_key: "decidim_organization_id", class_name: Decidim::Organization, inverse_of: :static_pages
+    belongs_to :organization, foreign_key: "decidim_organization_id", class_name: "Decidim::Organization", inverse_of: :static_pages
 
-    validates :slug, :organization, presence: true
-    validates :slug, uniqueness: { scope: :organization }
+    validates :slug, presence: true, uniqueness: { scope: :organization }
+    validates :slug, format: { with: /\A[a-z0-9-]+/ }
 
     # These pages will be created by default when registering an organization
     # and cannot be deleted.

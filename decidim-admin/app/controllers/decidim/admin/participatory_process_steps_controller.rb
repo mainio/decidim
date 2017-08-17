@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-require_dependency "decidim/admin/application_controller"
 
 module Decidim
   module Admin
     # Controller that allows managing participatory process steps.
     #
-    class ParticipatoryProcessStepsController < ApplicationController
+    class ParticipatoryProcessStepsController < Decidim::Admin::ApplicationController
       include Concerns::ParticipatoryProcessAdmin
 
       def index
@@ -21,10 +20,10 @@ module Decidim
         authorize! :create, Decidim::ParticipatoryProcessStep
         @form = form(ParticipatoryProcessStepForm).from_params(params)
 
-        CreateParticipatoryProcessStep.call(@form, participatory_process) do
+        CreateParticipatoryProcessStep.call(@form, current_participatory_process) do
           on(:ok) do
             flash[:notice] = I18n.t("participatory_process_steps.create.success", scope: "decidim.admin")
-            redirect_to participatory_process_steps_path(participatory_process)
+            redirect_to participatory_process_steps_path(current_participatory_process)
           end
 
           on(:invalid) do
@@ -48,7 +47,7 @@ module Decidim
         UpdateParticipatoryProcessStep.call(@participatory_process_step, @form) do
           on(:ok) do
             flash[:notice] = I18n.t("participatory_process_steps.update.success", scope: "decidim.admin")
-            redirect_to participatory_process_steps_path(participatory_process)
+            redirect_to participatory_process_steps_path(current_participatory_process)
           end
 
           on(:invalid) do
@@ -70,12 +69,12 @@ module Decidim
         DestroyParticipatoryProcessStep.call(@participatory_process_step) do
           on(:ok) do
             flash[:notice] = I18n.t("participatory_process_steps.destroy.success", scope: "decidim.admin")
-            redirect_to participatory_process_steps_path(participatory_process)
+            redirect_to participatory_process_steps_path(current_participatory_process)
           end
 
           on(:invalid) do |reason|
             flash[:alert] = I18n.t("participatory_process_steps.destroy.error.#{reason}", scope: "decidim.admin")
-            redirect_to participatory_process_steps_path(participatory_process)
+            redirect_to participatory_process_steps_path(current_participatory_process)
           end
         end
       end
@@ -83,7 +82,7 @@ module Decidim
       private
 
       def collection
-        @collection ||= participatory_process.steps
+        @collection ||= current_participatory_process.steps
       end
     end
   end

@@ -5,13 +5,15 @@ module Decidim
     # Exposes the result resource so users can view them
     class ResultsController < Decidim::Results::ApplicationController
       include FilterResource
+      include Paginable
+      helper Decidim::WidgetUrlsHelper
 
       helper_method :results, :result, :stats_calculator
 
       private
 
       def results
-        @results ||= search.results.page(params[:page]).per(12)
+        @results ||= paginate(search.results.order("title -> '#{I18n.locale}' ASC"))
       end
 
       def result

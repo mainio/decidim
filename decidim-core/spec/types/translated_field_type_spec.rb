@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 require "decidim/api/test/type_context"
 
@@ -23,13 +24,13 @@ module Decidim
 
     describe "translations" do
       context "when locales are not provided" do
-        let(:query) { '{ translations { locale text }}' }
+        let(:query) { "{ translations { locale text }}" }
 
         it "returns all the translations" do
           translations = response["translations"]
           expect(translations.length).to eq(2)
-          expect(translations).to include({ "locale" => "ca", "text" => "Hola"})
-          expect(translations).to include({ "locale" => "en", "text" => "Hello"})
+          expect(translations).to include("locale" => "ca", "text" => "Hola")
+          expect(translations).to include("locale" => "en", "text" => "Hello")
         end
       end
 
@@ -38,8 +39,8 @@ module Decidim
 
         it "returns the translations on the provided locales" do
           translations = response["translations"]
-          expect(translations).to include({ "locale" => "ca", "text" => "Hola"})
-          expect(translations).not_to include({ "locale" => "en", "text" => "Hello"})
+          expect(translations).to include("locale" => "ca", "text" => "Hola")
+          expect(translations).not_to include("locale" => "en", "text" => "Hello")
         end
       end
     end

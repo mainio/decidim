@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 module Decidim
   # A custom mailer for Devise so we can tweak the invitation instructions for
   # each role and use a localised version.
-  class DecidimDeviseMailer < Devise::Mailer
+  class DecidimDeviseMailer < ::Devise::Mailer
     include LocalisedMailer
 
     layout "decidim/mailer"

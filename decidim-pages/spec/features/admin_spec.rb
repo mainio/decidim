@@ -1,5 +1,5 @@
-# coding: utf-8
 # frozen_string_literal: true
+
 require "spec_helper"
 
 describe "Edit a page", type: :feature do
@@ -29,11 +29,11 @@ describe "Edit a page", type: :feature do
       }
 
       within "form.edit_page" do
-        fill_in_i18n_editor(:page_body, "#body-tabs", new_body)
+        fill_in_i18n_editor(:page_body, "#page-body-tabs", new_body)
         find("*[type=submit]").click
       end
 
-      within_flash_messages do
+      within ".callout-wrapper" do
         expect(page).to have_content("successfully")
       end
 
@@ -41,5 +41,13 @@ describe "Edit a page", type: :feature do
 
       expect(page).to have_content("New body")
     end
+  end
+
+  describe "announcements" do
+    before do
+      create(:page, feature: feature, body: body)
+      visit_feature_admin
+    end
+    it_behaves_like "manage announcements"
   end
 end

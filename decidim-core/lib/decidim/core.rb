@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
+
 require "decidim/core/engine"
 require "decidim/core/version"
 require "decidim/core/api"
@@ -16,14 +16,26 @@ module Decidim
   autoload :Resourceable, "decidim/resourceable"
   autoload :Reportable, "decidim/reportable"
   autoload :Authorable, "decidim/authorable"
+  autoload :Notifiable, "decidim/notifiable"
+  autoload :Publicable, "decidim/publicable"
+  autoload :Scopable, "decidim/scopable"
   autoload :Features, "decidim/features"
   autoload :HasAttachments, "decidim/has_attachments"
   autoload :FeatureValidator, "decidim/feature_validator"
+  autoload :HasSettings, "decidim/has_settings"
   autoload :HasFeature, "decidim/has_feature"
   autoload :HasScope, "decidim/has_scope"
   autoload :HasCategory, "decidim/has_category"
   autoload :HasReference, "decidim/has_reference"
   autoload :Attributes, "decidim/attributes"
+  autoload :StatsRegistry, "decidim/stats_registry"
+  autoload :Exporters, "decidim/exporters"
+  autoload :FileZipper, "decidim/file_zipper"
+  autoload :Menu, "decidim/menu"
+  autoload :MenuItem, "decidim/menu_item"
+  autoload :MenuRegistry, "decidim/menu_registry"
+  autoload :ManifestRegistry, "decidim/manifest_registry"
+  autoload :Abilities, "decidim/abilities"
 
   include ActiveSupport::Configurable
 
@@ -34,18 +46,16 @@ module Decidim
     original_locale = I18n.available_locales
     I18n.available_locales = original_locale + [:en] unless original_locale.include?(:en)
 
-    railties = Rails.application.railties.to_a.uniq.select do |railtie|
-      railtie.respond_to?(:load_seed) && railtie.class.name.include?("Decidim::")
-    end
+    Rails.application.railties.to_a.uniq.each do |railtie|
+      next unless railtie.respond_to?(:load_seed) && railtie.class.name.include?("Decidim::")
 
-    railties.each do |railtie|
-      puts "Creating #{railtie.class.name} seeds..."
       railtie.load_seed
     end
 
-    Decidim.feature_manifests.each do |feature|
-      puts "Creating Feature (#{feature.name}) seeds..."
-      feature.seed!
+    Decidim::ParticipatoryProcess.find_each do |process|
+      Decidim.feature_manifests.each do |feature|
+        feature.seed!(process)
+      end
     end
 
     I18n.available_locales = original_locale
@@ -59,13 +69,14 @@ module Decidim
   config_accessor :mailer_sender
 
   # Exposes a configuration option: an Array of `cancancan`'s Ability classes
-  # that will be automatically included to the base `Decidim::Ability` class.
+  # that will be automatically included to the base `Decidim::Abilities::BaseAbility`
+  # class.
   config_accessor :abilities do
     []
   end
 
   # Exposes a configuration option: an Array of `cancancan`'s Ability classes
-  # that will be automatically included to the `Decidim::Admin::Abilities::Base`
+  # that will be automatically included to the `Decidim::Admin::Abilities::BaseAbility`
   # class.
   config_accessor :admin_abilities do
     []
@@ -77,16 +88,43 @@ module Decidim
     []
   end
 
-  # Exposes a configuration option: The application name String.
+  # Exposes a configuration option: The application available locales.
   config_accessor :available_locales do
-    %w(en ca es eu fi)
+    %w(en ca es eu it fi fr nl)
+  end
+
+  # Exposes a configuration option: The application default locale.
+  config_accessor :default_locale do
+    :en
   end
 
   # Exposes a configuration option: an object to configure geocoder
   config_accessor :geocoder
 
-   # Exposes a configuration option: the currency unit
-  config_accessor :currency_unit { "€" }
+  # Exposes a configuration option: a custom method to generate references
+  # Default: Calculates a unique reference for the model in
+  # the following format:
+  #
+  # "BCN-DPP-2017-02-6589" which in this example translates to:
+  #
+  # BCN: A setting configured at the organization to be prepended to each reference.
+  # PROP: Unique name identifier for a resource: Decidim::Proposals::Proposal (MEET for meetings or PROJ for projects).
+  # 2017-02: Year-Month of the resource creation date
+  # 6589: ID of the resource
+  config_accessor :resource_reference_generator do
+    lambda do |resource, feature|
+      ref = feature.participatory_process.organization.reference_prefix
+      class_identifier = resource.class.name.demodulize[0..3].upcase
+      year_month = (resource.created_at || Time.current).strftime("%Y-%m")
+
+      [ref, class_identifier, year_month, resource.id].join("-")
+    end
+  end
+
+  # Exposes a configuration option: the currency unit
+  config_accessor :currency_unit do
+    "€"
+  end
 
   # Exposes a configuration option: The maximum file size of an attachment.
   config_accessor :maximum_attachment_size do
@@ -94,13 +132,15 @@ module Decidim
   end
 
   # The number of reports which an object can receive before hiding it
-  config_accessor :max_reports_before_hiding { 3 }
+  config_accessor :max_reports_before_hiding do
+    3
+  end
 
   # A base path for the uploads. If set, make sure it ends in a slash.
   # Uploads will be set to `<base_path>/uploads/`. This can be useful if you
   # want to use the same uploads place for both staging and production
   # environments, but in different folders.
-  config_accessor :base_uploads_path { nil }
+  config_accessor :base_uploads_path
 
   # Public: Registers a feature, usually held in an external library or in a
   # separate folder in the main repository. Exposes a DSL defined by
@@ -112,19 +152,16 @@ module Decidim
   # name - A Symbol with the feature's unique name.
   #
   # Returns nothing.
-  def self.register_feature(name)
-    manifest = FeatureManifest.new(name: name.to_sym)
-    yield(manifest)
-    manifest.validate!
-    feature_manifests << manifest
+  def self.register_feature(name, &block)
+    feature_registry.register(name, &block)
   end
 
-  # Public: Finds all the registered feature manifest's via the
-  # `register_feature` method.
+  # Public: Finds all registered feature manifest's via the `register_feature`
+  # method.
   #
   # Returns an Array[FeatureManifest].
   def self.feature_manifests
-    @feature_manifests ||= Set.new
+    feature_registry.manifests
   end
 
   # Public: Finds a feature manifest by the feature's name.
@@ -133,8 +170,7 @@ module Decidim
   #
   # Returns a FeatureManifest if found, nil otherwise.
   def self.find_feature_manifest(name)
-    name = name.to_sym
-    feature_manifests.find { |manifest| manifest.name == name }
+    feature_registry.find(name.to_sym)
   end
 
   # Public: Finds a resource manifest by the resource's name.
@@ -144,15 +180,25 @@ module Decidim
   #
   # Returns a ResourceManifest if found, nil otherwise.
   def self.find_resource_manifest(resource_name_or_klass)
-    resource_manifests.find do |manifest|
-      manifest.model_class == resource_name_or_klass || manifest.name.to_s == resource_name_or_klass.to_s
-    end
+    feature_registry.find_resource_manifest(resource_name_or_klass)
   end
 
-  # Private: Stores all the resource manifest across all feature manifest.
+  # Public: Stores the registry of features
+  def self.feature_registry
+    @feature_registry ||= ManifestRegistry.new(:features)
+  end
+
+  # Public: Stores an instance of StatsRegistry
+  def self.stats
+    @stats ||= StatsRegistry.new
+  end
+
+  # Public: Registers configuration for a new or existing menu
   #
-  # Returns an Array[ResourceManifest]
-  def self.resource_manifests
-    @resource_manifests ||= feature_manifests.flat_map(&:resource_manifests)
+  # name   - A string or symbol with the name of the menu
+  # &block - A block using the DSL defined in `Decidim::MenuItem`
+  #
+  def self.menu(name, &block)
+    MenuRegistry.register(name.to_sym, &block)
   end
 end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module System
     # A command with all the business logic when creating a new organization in
@@ -30,7 +31,7 @@ module Decidim
       attr_reader :organization
 
       def localized_attribute(slug, attribute)
-        I18n.available_locales.inject({}) do |result, locale|
+        Decidim.available_locales.inject({}) do |result, locale|
           text = I18n.with_locale(locale) do
             I18n.t(attribute, scope: "decidim.system.default_pages.placeholders", page: slug)
           end

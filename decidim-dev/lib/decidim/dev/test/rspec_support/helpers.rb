@@ -2,6 +2,12 @@
 
 # Helpers that get automatically included in feature specs.
 module Decidim::FeatureTestHelpers
+  def click_submenu_link(text)
+    within ".secondary-nav--subnav" do
+      click_link text
+    end
+  end
+
   def within_user_menu
     within ".topbar__user__logged" do
       find("a", text: user.name).hover
@@ -16,18 +22,12 @@ module Decidim::FeatureTestHelpers
     end
   end
 
-  def click_icon(name = nil)
-    classes = ["icon"]
-    classes << ["icon--#{name}"] if name
-    find(".#{classes.join(".")}").click
-  end
-
   def stripped(text)
     Nokogiri::HTML(text).text
   end
 
   def within_flash_messages
-    within ".flash.callout" do
+    within ".flash" do
       yield
     end
   end
@@ -35,10 +35,6 @@ module Decidim::FeatureTestHelpers
   def expect_user_logged
     expect(page).to have_css(".topbar__user__logged")
   end
-end
-
-def stripped(text)
-  Nokogiri::HTML(text).text
 end
 
 RSpec.configure do |config|

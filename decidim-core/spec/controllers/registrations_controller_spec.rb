@@ -1,11 +1,15 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 module Decidim
   describe Decidim::Devise::RegistrationsController, type: :controller do
+    routes { Decidim::Core::Engine.routes }
+
     let(:organization) { create(:organization) }
 
     before do
+      @request.env["devise.mapping"] = ::Devise.mappings[:user]
       @request.env["decidim.current_organization"] = organization
     end
 
@@ -29,8 +33,8 @@ module Decidim
         before do
           expect_any_instance_of(Decidim::User)
             .to receive(:active_for_authentication?)
-              .at_least(:once)
-              .and_return(true)
+            .at_least(:once)
+            .and_return(true)
           expect(controller).to receive(:sign_up).and_call_original
         end
 

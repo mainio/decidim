@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Decidim
   module Comments
     # A command with all the business logic to create a new comment
@@ -22,7 +23,7 @@ module Decidim
         return broadcast(:invalid) if form.invalid?
 
         create_comment
-        send_notification_to_author if has_author? && !same_author?
+        send_notification if @commentable.notifiable?(author: @author)
 
         broadcast(:ok, @comment)
       end
@@ -34,27 +35,27 @@ module Decidim
       def create_comment
         @comment = Comment.create!(author: @author,
                                    commentable: @commentable,
+                                   root_commentable: root_commentable(@commentable),
                                    body: form.body,
                                    alignment: form.alignment,
                                    decidim_user_group_id: form.user_group_id)
       end
 
-      def send_notification_to_author
-        if @commentable.author
-          if @comment.depth > 0 && @commentable.author.replies_notifications?
-            CommentNotificationMailer.reply_created(@author, @comment, @commentable, @comment.root_commentable).deliver_later
-          elsif @comment.depth == 0 && @commentable.author.comments_notifications?
-            CommentNotificationMailer.comment_created(@author, @comment, @commentable).deliver_later
+      def send_notification
+        if @comment.depth.positive?
+          @commentable.users_to_notify.each do |user|
+            CommentNotificationMailer.reply_created(user, @comment, @commentable, @comment.root_commentable).deliver_later
+          end
+        elsif @comment.depth.zero?
+          @commentable.users_to_notify.each do |user|
+            CommentNotificationMailer.comment_created(user, @comment, @commentable).deliver_later
           end
         end
       end
 
-      def has_author?
-        @commentable.respond_to?(:author) && @commentable.author.present?
-      end
-
-      def same_author?
-        @author == @commentable.author
+      def root_commentable(commentable)
+        return commentable.root_commentable if commentable.is_a? Decidim::Comments::Comment
+        commentable
       end
     end
   end

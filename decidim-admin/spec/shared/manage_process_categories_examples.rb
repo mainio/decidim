@@ -1,42 +1,27 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
-RSpec.shared_examples "manage process categories examples" do
+
+shared_examples "manage process categories examples" do
   before do
     switch_to_host(organization.host)
     login_as user, scope: :user
-    visit decidim_admin.participatory_process_path(participatory_process)
+    visit decidim_admin.edit_participatory_process_path(participatory_process)
     click_link "Categories"
   end
 
-  it "displays all fields from a single category" do
-    within "#categories table" do
-      click_link translated(category.name)
-    end
-
-    within "dl" do
-      expect(page).to have_i18n_content(category.name, locale: :en)
-      expect(page).to have_i18n_content(category.name, locale: :es)
-      expect(page).to have_i18n_content(category.name, locale: :ca)
-      expect(page).to have_i18n_content(category.description, locale: :en)
-      expect(page).to have_i18n_content(category.description, locale: :es)
-      expect(page).to have_i18n_content(category.description, locale: :ca)
-    end
-  end
-
   it "creates a new category" do
-    find("#categories .actions .new").click
+    find(".card-title a.new").click
 
-    within ".new_category" do
+    within ".new_participatory_process_category" do
       fill_in_i18n(
         :category_name,
-        "#name-tabs",
+        "#category-name-tabs",
         en: "My category",
         es: "Mi categoría",
         ca: "La meva categoria"
       )
       fill_in_i18n_editor(
         :category_description,
-        "#description-tabs",
+        "#category-description-tabs",
         en: "Description",
         es: "Descripción",
         ca: "Descripció"
@@ -45,7 +30,7 @@ RSpec.shared_examples "manage process categories examples" do
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
@@ -57,14 +42,14 @@ RSpec.shared_examples "manage process categories examples" do
   it "updates a category" do
     within "#categories" do
       within find("tr", text: translated(category.name)) do
-        click_link "Edit"
+        page.find("a.action-icon--edit").click
       end
     end
 
-    within ".edit_category" do
+    within ".edit_participatory_process_category" do
       fill_in_i18n(
         :category_name,
-        "#name-tabs",
+        "#category-name-tabs",
         en: "My new name",
         es: "Mi nuevo nombre",
         ca: "El meu nou nom"
@@ -73,7 +58,7 @@ RSpec.shared_examples "manage process categories examples" do
       find("*[type=submit]").click
     end
 
-    within ".flash" do
+    within ".callout-wrapper" do
       expect(page).to have_content("successfully")
     end
 
@@ -85,44 +70,59 @@ RSpec.shared_examples "manage process categories examples" do
   context "deleting a category" do
     let!(:category2) { create(:category, participatory_process: participatory_process) }
 
-    context "when the category has no subcategories" do
-      before do
-        visit current_path
+    context "when the category has no associated content" do
+      context "when the category has no subcategories" do
+        before do
+          visit current_path
+        end
+
+        it "deletes a category" do
+          within find("tr", text: translated(category2.name)) do
+            page.find("a.action-icon--remove").click
+          end
+
+          within ".callout-wrapper" do
+            expect(page).to have_content("successfully")
+          end
+
+          within "#categories table" do
+            expect(page).to have_no_content(translated(category2.name))
+          end
+        end
       end
 
-      it "deletes a category" do
-        within find("tr", text: translated(category2.name)) do
-          click_link "Destroy"
+      context "when the category has some subcategories" do
+        let!(:subcategory) { create(:subcategory, parent: category2) }
+
+        before do
+          visit current_path
         end
 
-        within ".flash" do
-          expect(page).to have_content("successfully")
-        end
+        it "deletes a category" do
+          within find("tr", text: translated(category2.name)) do
+            page.find("a.action-icon--remove").click
+          end
 
-        within "#categories table" do
-          expect(page).not_to have_content(translated(category2.name))
+          within ".callout-wrapper" do
+            expect(page).to have_content("error deleting")
+          end
+
+          within "#categories table" do
+            expect(page).to have_content(translated(category2.name))
+          end
         end
       end
     end
 
-    context "when the category has some subcategories" do
-      let!(:subcategory) { create(:subcategory, parent: category2) }
+    context "when the category has associated content" do
+      let!(:feature) { create(:feature, participatory_process: participatory_process) }
+      let!(:dummy_resource) { create(:dummy_resource, feature: feature, category: category) }
 
-      before do
+      it "cannot delete it" do
         visit current_path
-      end
 
-      it "deletes a category" do
-        within find("tr", text: translated(category2.name)) do
-          click_link "Destroy"
-        end
-
-        within ".flash" do
-          expect(page).to have_content("error deleting")
-        end
-
-        within "#categories table" do
-          expect(page).to have_content(translated(category2.name))
+        within find("tr", text: translated(category.name)) do
+          expect(page).to have_no_selector("a.action-icon--remove")
         end
       end
     end

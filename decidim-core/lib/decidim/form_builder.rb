@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "foundation_rails_helper/form_builder"
 
 module Decidim
@@ -20,6 +21,7 @@ module Decidim
     # html_options - a Hash with options
     #
     # Renders a collection of check boxes.
+    # rubocop:disable Metrics/ParameterLists
     def collection_check_boxes(attribute, collection, value_attribute, text_attribute, options = {}, html_options = {})
       super + error_and_help_text(attribute, options)
     end
@@ -40,31 +42,39 @@ module Decidim
         )
       end
 
-      field_label = label_i18n(name, options[:label] || label_for(name))
+      tabs_id = options[:tabs_id] || "#{object_name}-#{name}-tabs"
 
-      tabs_panels = "".html_safe
-      if options[:label] != false
-        tabs_panels = content_tag(:ul, class: "tabs", id: "#{name}-tabs", data: { tabs: true }) do
-          locales.each_with_index.inject("".html_safe) do |string, (locale, index)|
-            string + content_tag(:li, class: tab_element_class_for("title", index)) do
-              title = I18n.with_locale(locale) { I18n.t("name", scope: "locale") }
-              element_class = ""
-              element_class += "alert" if error?(name_with_locale(name, locale))
-              content_tag(:a, title, href: "##{name}-panel-#{index}", class: element_class)
+      label_tabs = content_tag(:div, class: "label--tabs") do
+        field_label = label_i18n(name, options[:label] || label_for(name))
+
+        tabs_panels = "".html_safe
+        if options[:label] != false
+          tabs_panels = content_tag(:ul, class: "tabs tabs--lang", id: tabs_id, data: { tabs: true }) do
+            locales.each_with_index.inject("".html_safe) do |string, (locale, index)|
+              string + content_tag(:li, class: tab_element_class_for("title", index)) do
+                title = I18n.with_locale(locale) { I18n.t("name", scope: "locale") }
+                element_class = nil
+                element_class = "is-tab-error" if error?(name_with_locale(name, locale))
+                tab_content_id = "#{tabs_id}-#{name}-panel-#{index}"
+                content_tag(:a, title, href: "##{tab_content_id}", class: element_class)
+              end
             end
           end
         end
+
+        safe_join [field_label, tabs_panels]
       end
 
-      tabs_content = content_tag(:div, class: "tabs-content", data: { tabs_content: "#{name}-tabs" }) do
+      tabs_content = content_tag(:div, class: "tabs-content", data: { tabs_content: tabs_id }) do
         locales.each_with_index.inject("".html_safe) do |string, (locale, index)|
-          string + content_tag(:div, class: tab_element_class_for("panel", index), id: "#{name}-panel-#{index}") do
+          tab_content_id = "#{tabs_id}-#{name}-panel-#{index}"
+          string + content_tag(:div, class: tab_element_class_for("panel", index), id: tab_content_id) do
             send(type, name_with_locale(name, locale), options.merge(label: false))
           end
         end
       end
 
-      safe_join [field_label, tabs_panels, tabs_content]
+      safe_join [label_tabs, tabs_content]
     end
 
     # Public: generates a hidden field and a container for WYSIWYG editor
@@ -83,7 +93,7 @@ module Decidim
 
       content_tag(:div, class: "editor") do
         template = ""
-        template += label(name) if options[:label] != false
+        template += label(name, options[:label].to_s || name) if options[:label] != false
         template += hidden_field(name, options)
         template += content_tag(:div, nil, class: "editor-container", data: {
                                   toolbar: options[:toolbar]
@@ -116,8 +126,33 @@ module Decidim
                  else
                    []
                  end
+      html_options = {}
 
-      select(name, @template.options_for_select(categories, selected: selected, disabled: disabled), options)
+      select(name, @template.options_for_select(categories, selected: selected, disabled: disabled), options, html_options)
+    end
+
+    # Public: Generates a select field with the scopes.
+    #
+    # name       - The name of the field (usually scope_id)
+    # collection - A collection of scopes.
+    # options    - An optional Hash with options:
+    # - prompt   - An optional String with the text to display as prompt.
+    #
+    # Returns a String.
+    def scopes_select(name, options = {})
+      selected = object.send(name)
+      if selected.present?
+        selected = [selected] unless selected.is_a?(Array)
+        scopes = Decidim::Scope.where(id: selected.map(&:to_i)).map { |scope| [scope.name[I18n.locale.to_s], scope.id] }
+      else
+        scopes = []
+      end
+      prompt = options.delete(:prompt)
+      remote_path = options.delete(:remote_path) || false
+      multiple = options.delete(:multiple) || false
+      html_options = { multiple: multiple, class: "select2", "data-remote-path" => remote_path, "data-placeholder" => prompt }
+
+      select(name, @template.options_for_select(scopes, selected: selected), options, html_options)
     end
 
     # Public: Override so checkboxes are rendered before the label.
@@ -127,6 +162,94 @@ module Decidim
         options.delete(:label_options)
         @template.check_box(@object_name, attribute, objectify_options(options), checked_value, unchecked_value)
       end + error_and_help_text(attribute, options)
+    end
+
+    # Public: Override so the date fields are rendered using foundation
+    # datepicker library
+    def date_field(attribute, options = {})
+      value = object.send(attribute)
+      data = { datepicker: "" }
+      data[:startdate] = I18n.localize(value, format: :datepicker) if value.present?
+      iso_value = value.present? ? value.strftime("%Y-%m-%d") : ""
+
+      template = ""
+      template += label(attribute, label_for(attribute) + required_for_attribute(attribute))
+      template += @template.text_field(
+        @object_name,
+        attribute,
+        options.merge(name: nil,
+                      id: "date_field_#{@object_name}_#{attribute}",
+                      data: data)
+      )
+      template += @template.hidden_field(@object_name, attribute, value: iso_value)
+      template += error_and_help_text(attribute, options)
+      template.html_safe
+    end
+
+    # Public: Generates a timepicker field using foundation
+    # datepicker library
+    def datetime_field(attribute, options = {})
+      value = object.send(attribute)
+      if value.present?
+        iso_value = value.strftime("%Y-%m-%dT%H:%M:%S")
+        formatted_value = I18n.localize(value, format: :timepicker)
+      end
+      template = ""
+      template += label(attribute, label_for(attribute) + required_for_attribute(attribute))
+      template += @template.text_field(
+        @object_name,
+        attribute,
+        options.merge(value: formatted_value,
+                      name: nil,
+                      id: "datetime_field_#{@object_name}_#{attribute}",
+                      data: { datepicker: "", timepicker: "" })
+      )
+      template += @template.hidden_field(@object_name, attribute, value: iso_value)
+      template += error_and_help_text(attribute, options)
+      template.html_safe
+    end
+
+    # Public: Generates a file upload field and sets the form as multipart.
+    # If the file is an image it displays the default image if present or the current one.
+    # By default it also generates a checkbox to delete the file. This checkbox can
+    # be hidden if `options[:optional]` is passed as `false`.
+    #
+    # attribute    - The String name of the attribute to buidl the field.
+    # options      - A Hash with options to build the field.
+    #              * optional: Whether the file can be optional or not.
+    def upload(attribute, options = {})
+      self.multipart = true
+      options[:optional] = options[:optional].nil? ? true : options[:optional]
+
+      file = object.send attribute
+      template = ""
+      template += label(attribute, label_for(attribute) + required_for_attribute(attribute))
+      template += @template.file_field @object_name, attribute
+
+      if file_is_image?(file)
+        template += if file.present?
+                      @template.label_tag I18n.t("current_image", scope: "decidim.forms")
+                    else
+                      @template.label_tag I18n.t("default_image", scope: "decidim.forms")
+                    end
+        template += @template.link_to @template.image_tag(file.url), file.url, target: "_blank"
+      elsif file_is_present?(file)
+        template += @template.label_tag I18n.t("current_file", scope: "decidim.forms")
+        template += @template.link_to file.file.filename, file.url, target: "_blank"
+      end
+
+      if file_is_present?(file)
+        if options[:optional]
+          template += content_tag :div, class: "field" do
+            safe_join([
+                        @template.check_box(@object_name, "remove_#{attribute}"),
+                        label("remove_#{attribute}", label_for("remove_#{attribute}"))
+                      ])
+          end
+        end
+      end
+
+      template.html_safe
     end
 
     private
@@ -190,8 +313,9 @@ module Decidim
       max_length = options.delete(:maxlength) || length_for_attribute(attribute, :maximum)
 
       validation_options = {}
-      validation_options[:pattern] = "^(.){#{min_length},#{max_length}}$" if min_length.to_i.positive? || max_length.to_i.positive?
+      validation_options[:pattern] = "^(.|[\n\r]){#{min_length},#{max_length}}$" if min_length.to_i.positive? || max_length.to_i.positive?
       validation_options[:required] = options[:required] || attribute_required?(attribute)
+      validation_options[:maxlength] ||= max_length if max_length.to_i.positive?
       validation_options
     end
 
@@ -199,9 +323,26 @@ module Decidim
     #
     # Returns Boolean.
     def attribute_required?(attribute)
-      validator = find_validator(attribute, ActiveModel::Validations::PresenceValidator)
+      validator = find_validator(attribute, ActiveModel::Validations::PresenceValidator) ||
+                  find_validator(attribute, TranslatablePresenceValidator)
 
-      validator && validator.options.blank?
+      return unless validator
+
+      # Check if the if condition is present and it evaluates to true
+      if_condition = validator.options[:if]
+      validator_if_condition = if_condition.nil? ||
+                               (string_or_symbol?(if_condition) ? object.send(if_condition) : if_condition.call(object))
+
+      # Check if the unless condition is present and it evaluates to false
+      unless_condition = validator.options[:unless]
+      validator_unless_condition = unless_condition.nil? ||
+                                   (string_or_symbol?(unless_condition) ? !object.send(unless_condition) : !unless_condition.call(object))
+
+      validator_if_condition && validator_unless_condition
+    end
+
+    def string_or_symbol?(obj)
+      obj.is_a?(String) || obj.is_a?(Symbol)
     end
 
     # Private: Tries to find a length validator in the form object.
@@ -241,6 +382,7 @@ module Decidim
 
       text = default_label_text(object, attribute) if text.nil? || text == true
 
+      text += required_for_attribute(attribute)
       text = if field_before_label && block_given?
                safe_join([yield, text.html_safe])
              elsif block_given?
@@ -327,8 +469,31 @@ module Decidim
         options[:class] ||= ""
         options[:class] += " is-invalid-label"
       end
+      text += required_for_attribute(attribute)
 
       label(attribute, (text || "").html_safe, options)
+    end
+
+    # Private: Returns whether the file is an image or not.
+    def file_is_image?(file)
+      return unless file && file.respond_to?(:url)
+      return file.content_type.start_with? "image" if file.content_type.present?
+      Mime::Type.lookup_by_extension(File.extname(file.url)[1..-1]).to_s.start_with? "image" if file.url.present?
+    end
+
+    # Private: Returns whether the file exists or not.
+    def file_is_present?(file)
+      return unless file && file.respond_to?(:url)
+      file.present?
+    end
+
+    def required_for_attribute(attribute)
+      if attribute_required?(attribute)
+        return content_tag(:abbr, "*", title: I18n.t("required", scope: "forms"),
+                                       data: { tooltip: true, disable_hover: false }, 'aria-haspopup': true,
+                                       class: "label-required").html_safe
+      end
+      "".html_safe
     end
   end
 end

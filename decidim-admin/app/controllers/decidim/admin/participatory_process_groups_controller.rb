@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-require_dependency "decidim/admin/application_controller"
 
 module Decidim
   module Admin
     # Controller that allows managing participatory process groups.
     #
-    class ParticipatoryProcessGroupsController < ApplicationController
+    class ParticipatoryProcessGroupsController < Decidim::Admin::ApplicationController
       helper_method :collection, :participatory_process_group
 
       def index
@@ -79,7 +78,8 @@ module Decidim
       end
 
       def collection
-        @collection ||= current_user.organization.participatory_process_groups
+        @collection ||=
+          Decidim::OrganizationParticipatoryProcessGroups.new(current_user.organization).query
       end
     end
   end

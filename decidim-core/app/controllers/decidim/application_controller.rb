@@ -1,11 +1,13 @@
 # frozen_string_literal: true
+
 module Decidim
   # The main application controller that inherits from Rails.
   class ApplicationController < ::DecidimController
-    include Decidim::NeedsOrganization
-    include Decidim::LocaleSwitcher
+    include NeedsOrganization
+    include LocaleSwitcher
     include NeedsAuthorization
     include PayloadInfo
+    include ImpersonateUsers
 
     helper Decidim::MetaTagsHelper
     helper Decidim::DecidimFormHelper
@@ -14,6 +16,8 @@ module Decidim
     helper Decidim::TranslationsHelper
     helper Decidim::CookiesHelper
     helper Decidim::AriaSelectedLinkToHelper
+    helper Decidim::MenuHelper
+    helper Decidim::FeaturePathHelper
 
     # Saves the location before loading each page so we can return to the
     # right page. If we're on a devise page, we don't want to store that as the
@@ -25,8 +29,6 @@ module Decidim
     after_action :add_vary_header
 
     layout "layouts/decidim/application"
-
-    rescue_from ActiveRecord::RecordNotFound, with: :redirect_to_404
 
     private
 
@@ -45,8 +47,10 @@ module Decidim
       response.headers["Vary"] = "Accept"
     end
 
-    def redirect_to_404
-      raise ActionController::RoutingError, "Not Found"
+    # Overwrites `cancancan`'s method to point to the correct ability class,
+    # since the gem expects the ability class to be in the root namespace.
+    def current_ability_klass
+      Decidim::Abilities::BaseAbility
     end
   end
 end

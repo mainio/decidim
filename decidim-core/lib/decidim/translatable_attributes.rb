@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "active_support/concern"
 
 module Decidim
@@ -28,7 +29,6 @@ module Decidim
 
         locales.each do |locale|
           attribute_name = "#{name}_#{locale}".gsub("-", "__")
-
           attribute attribute_name, type, *options
 
           define_method attribute_name do

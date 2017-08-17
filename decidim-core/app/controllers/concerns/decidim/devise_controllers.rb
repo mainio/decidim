@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "active_support/concern"
 
 module Decidim
@@ -19,8 +20,17 @@ module Decidim
       helper Decidim::LanguageChooserHelper
       helper Decidim::CookiesHelper
       helper Decidim::ReplaceButtonsHelper
+      helper Decidim::LayoutHelper
+      helper Decidim::MenuHelper
+      helper Decidim::OmniauthHelper
 
       layout "layouts/decidim/application"
+    end
+
+    # Overwrites `cancancan`'s method to point to the correct ability class,
+    # since the gem expects the ability class to be in the root namespace.
+    def current_ability_klass
+      Decidim::Abilities::BaseAbility
     end
   end
 end

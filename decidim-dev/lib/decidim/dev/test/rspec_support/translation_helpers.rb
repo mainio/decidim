@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # A collection of methods to help dealing with translated attributes.
 module TranslationHelpers
   # Gives the localized version of the attribute for the given locale. The
@@ -15,15 +16,26 @@ module TranslationHelpers
   #
   # field - the field that holds the translations
   # locale - the ID of the locale to check
-  def have_i18n_content(field, locale: I18n.locale)
-    have_content(stripped(translated(field, locale: locale)))
+  # upcase - a boolean to indicate whether the string must be checked upcased or not.
+  def have_i18n_content(field, locale: I18n.locale, upcase: false)
+    have_content(i18n_content(field, locale: locale, upcase: upcase))
+  end
+
+  # Checks that the current page doesn't have some translated content. It strips
+  # the HTML tags from the field (in case there are any).
+  #
+  # field - the field that holds the translations
+  # locale - the ID of the locale to check
+  # upcase - a boolean to indicate whether the string must be checked upcased or not.
+  def have_no_i18n_content(field, locale: I18n.locale, upcase: false)
+    have_no_content(i18n_content(field, locale: locale, upcase: upcase))
   end
 
   # Handles how to fill in i18n form fields.
   #
   # field - the name of the field that should be filled, without the
   #   locale-related part (e.g. `:participatory_process_title`)
-  # tab_slector - a String representing the ID of the HTML element that holds
+  # tab_selector - a String representing the ID of the HTML element that holds
   #   the tabs for this input. It ususally is `"#<attribute_name>-tabs" (e.g.
   #   "#title-tabs")
   # localized_values - a Hash where the keys are the locales IDs and the values
@@ -71,5 +83,15 @@ module TranslationHelpers
       end
       yield "#{field}_#{locale}", value
     end
+  end
+
+  # Gives a specific language version of a field and (optionally) upcases it
+  #
+  # field - the field that holds the translations
+  # locale - the ID of the locale to check
+  # upcase - a boolean to indicate whether the string must be checked upcased or not.
+  def i18n_content(field, locale: I18n.locale, upcase: false)
+    content = stripped(translated(field, locale: locale))
+    upcase ? content.upcase : content
   end
 end

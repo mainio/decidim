@@ -8,17 +8,7 @@
 <div class="row column view-header">
   <h2 class="heading2"><%= @proposal.title %></h2>
   <div class="author-data">
-    <div class="author-data__main">
-      <div class="author author--inline">
-        <span class="author__avatar">
-          <%= image_tag @proposal.author_avatar_url %>
-        </span>
-        <%= l @proposal.created_at, format: :long %>
-        <span class="author__name">
-          <%= @proposal.author_name %>
-        </span>
-      </div>
-    </div>
+    <%= render partial: "author", locals: { proposal: @proposal } %>
     <div class="author-data__extra">
       <button type="button" data-open="<%= current_user.present? ? 'flagModal' : 'loginModal' %>" title="<%= t('.report') %>" aria-controls="<%= current_user.present? ? 'flagModal' : 'loginModal' %>" aria-haspopup="true" tabindex="0">
         <%= icon "flag", aria_label: t('.report'), class: 'icon--small' %>
@@ -31,40 +21,37 @@
     <% if current_settings.votes_enabled? %>
       <div class="card extra">
         <div class="card__content">
-            <div id="proposal-<%= @proposal.id %>-votes-count">
-              <%= render partial: "votes_count", locals: { proposal: @proposal, from_proposals_list: false } %>
-            </div>
-            <div id="proposal-<%= @proposal.id %>-vote-button">
-              <%= render partial: "vote_button", locals: { proposal: @proposal, from_proposals_list: false } %>
-            </div>
+          <%= render partial: "votes_count", locals: { proposal: @proposal, from_proposals_list: false } %>
+          <%= render partial: "vote_button", locals: { proposal: @proposal, from_proposals_list: false } %>
         </div>
       </div>
     <% end %>
     <%= feature_reference(@proposal) %>
     <%= render partial: "decidim/shared/share_modal" %>
+    <%= embed_modal_for proposal_proposal_widget_url(@proposal, format: :js) %>
   </div>
   <div class="columns mediumlarge-8 mediumlarge-pull-4">
     <div class="section">
       <%= render partial: "proposal_badge", locals: { proposal: @proposal } %>
-      <p><%= @proposal.body %></p>
+      <%= simple_format @proposal.body %>
       <% if feature_settings.geocoding_enabled? %>
         <%= render partial: "decidim/shared/static_map", locals: { icon_name: "proposals", geolocalizable: @proposal } %>
       <% end %>
-      <%= render partial: "tags", locals: { proposal: @proposal } %>
+      <%= render partial: "decidim/shared/tags", locals: { resource: @proposal, tags_class_extra: "tags--proposal" } %>
     </div>
     <% if @proposal.answered? && translated_attribute(@proposal.answer).present? %>
       <% if @proposal.accepted? %>
         <div class="section">
           <div class="callout success">
             <h5><%= t(".proposal_accepted_reason") %></h5>
-            <p><%= translated_attribute @proposal.answer %></p>
+            <p><%== translated_attribute @proposal.answer %></p>
           </div>
         </div>
       <% else %>
         <div class="section">
           <div class="callout warning">
             <h5><%= t(".proposal_rejected_reason") %></h5>
-            <p><%= translated_attribute @proposal.answer %></p>
+            <p><%== translated_attribute @proposal.answer %></p>
           </div>
         </div>
       <% end %>
@@ -74,6 +61,7 @@
     <%= linked_resources_for @proposal, :meetings, "proposals_from_meeting" %>
   </div>
 </div>
+<%= attachments_for @proposal %>
 
 <%= comments_for @proposal %>
 

@@ -1,34 +1,10 @@
 # Common configuration.
 AllCops:
-  # Include common Ruby source files.
-  Include:
-    - '**/*.gemspec'
-    - '**/*.podspec'
-    - '**/*.jbuilder'
-    - '**/*.rake'
-    - '**/*.opal'
-    - '**/config.ru'
-    - '**/Rakefile'
-    - '**/Capfile'
-    - '**/Guardfile'
-    - '**/Podfile'
-    - '**/Thorfile'
-    - '**/Vagrantfile'
-    - '**/Berksfile'
-    - '**/Cheffile'
-    - '**/Vagabondfile'
-    - '**/Fastfile'
-    - '**/*Fastfile'
   Exclude:
-    - '**/Gemfile'
-    - '**/*.gemspec'
-    - 'vendor/**/*'
-    - 'spec/*'
-    - 'decidim-*/spec/**/*'
-    - 'decidim-*/test/**/*'
-    - 'decidim-*/db/**/*'
+    - '**/vendor/**/*'
     - 'development_app/**/*'
-    - 'node_modules/**/*'
+    - 'docker_development_app/**/*'
+    - 'spec/decidim_dummy_app/**/*'
   # Default formatter will be used if no -f/--format option is given.
   DefaultFormatter: progress
   # Cop names are not displayed in offense messages by default. Change behavior
@@ -78,7 +54,7 @@ AllCops:
   # If a value is specified for TargetRubyVersion then it is used.
   # Else if .ruby-version exists and it contains an MRI version it is used.
   # Otherwise we fallback to the oldest officially supported Ruby version (2.0).
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.4
 
 # Indent private/protected/public as deep as method definitions
 Style/AccessModifierIndentation:
@@ -95,10 +71,6 @@ Style/Alias:
   SupportedStyles:
     - prefer_alias
     - prefer_alias_method
-
-Style/AccessorMethodName:
-  Exclude:
-    - "lib/generators/decidim/app_generator.rb"
 
 # Align the elements of a hash literal if they span more than one line.
 Style/AlignHash:
@@ -194,6 +166,8 @@ Style/AndOr:
     - always
     - conditionals
 
+Style/AsciiComments:
+  Enabled: false
 
 # Checks if usage of %() or %Q() matches configuration.
 Style/BarePercentLiterals:
@@ -449,6 +423,7 @@ Style/EmptyLinesAroundModuleBody:
 # AutoCorrectEncodingComment must match the regex
 # /#.*coding\s?[:=]\s?(?:UTF|utf)-8/
 Style/Encoding:
+  Enabled: true
   EnforcedStyle: never
   SupportedStyles:
     - when_needed
@@ -460,7 +435,7 @@ Style/ExtraSpacing:
   # When true, allows most uses of extra spacing if the intent is to align
   # things with the previous or next line, not counting empty lines or comment
   # lines.
-  AllowForAlignment: true
+  AllowForAlignment: false
   # When true, forces the alignment of = in assignments on consecutive lines.
   ForceEqualSignAlignment: false
 
@@ -535,7 +510,7 @@ Style/GlobalVars:
 # `MinBodyLength` defines the number of lines of the a body of an if / unless
 # needs to have to trigger this cop
 Style/GuardClause:
-  MinBodyLength: 1
+  MinBodyLength: 6
 
 Style/HashSyntax:
   EnforcedStyle: ruby19
@@ -628,10 +603,6 @@ Style/Lambda:
     - line_count_dependent
     - lambda
     - literal
-  Exclude:
-    - 'decidim-api/lib/decidim/api/schema.rb'
-    - 'decidim-api/lib/decidim/api/types/**/*'
-    - 'decidim-core/lib/decidim/query_extensions.rb'
 
 Style/LambdaCall:
   EnforcedStyle: call
@@ -665,10 +636,6 @@ Style/NumericPredicate:
   SupportedStyles:
     - predicate
     - comparison
-  # Exclude RSpec specs because assertions like `expect(1).to be > 0` cause
-  # false positives.
-  Exclude:
-    - 'spec/**/*'
 
 Style/MethodDefParentheses:
   EnforcedStyle: require_parentheses
@@ -815,7 +782,6 @@ Style/PredicateName:
   # Predicate name prefixes that should be removed.
   NamePrefixBlacklist:
     - is_
-    - has_
     - have_
   # Predicate names which, despite having a blacklisted prefix, or no ?,
   # should still be accepted
@@ -824,12 +790,15 @@ Style/PredicateName:
   # Exclude Rspec specs because there is a strong convetion to write spec
   # helpers in the form of `have_something` or `be_something`.
   Exclude:
-    - 'spec/**/*'
-    - 'test/**/*'
+    - '**/spec/**/*'
+    - '**/test/**/*'
+
+Style/PreferredHashMethods:
+  Enabled: true
+  EnforcedStyle: verbose
 
 Style/Documentation:
-  Exclude:
-    - '**/*/spec/**/*_spec.rb'
+  Enabled: false
 
 Style/RaiseArgs:
   EnforcedStyle: exploded
@@ -969,7 +938,7 @@ Style/SpaceInsideStringInterpolation:
     - no_space
 
 Style/SymbolArray:
-  EnforcedStyle: percent
+  EnforcedStyle: brackets
   SupportedStyles:
     - percent
     - brackets
@@ -1104,7 +1073,7 @@ Metrics/ModuleLength:
 
 # Avoid complex methods.
 Metrics/CyclomaticComplexity:
-  Max: 6
+  Max: 9
 
 Metrics/LineLength:
   Max: 180
@@ -1126,9 +1095,13 @@ Metrics/ParameterLists:
   CountKeywordArgs: true
 
 Metrics/PerceivedComplexity:
-  Max: 7
+  Max: 10
 
 ##################### Lint ##################################
+
+# TODO: This cop was buggy in 0.48.1. Reenable when upgrading to 0.49.0
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
 
 # Allow safe assignment in conditions.
 Lint/AssignmentInCondition:
@@ -1212,8 +1185,6 @@ Rails/Exit:
     - app/**/*.rb
     - config/**/*.rb
     - lib/**/*.rb
-  Exclude:
-    - lib/**/*.rake
 
 Rails/FindBy:
   Include:
@@ -1277,11 +1248,18 @@ Rails/Validation:
 
 Metrics/BlockLength:
   Exclude:
+    - 'decidim-admin/app/controllers/decidim/admin/concerns/has_attachments.rb'
+    - 'decidim-admin/lib/decidim/admin/engine.rb'
     - 'decidim-api/lib/decidim/api/schema.rb'
+    - 'decidim-core/config/initializers/devise.rb'
+    - 'decidim-core/lib/decidim/core/api/translated_field_type.rb'
+    - 'decidim-core/lib/decidim/resourceable.rb'
+    - 'decidim-comments/lib/decidim/comments/api/comment_type.rb'
+    - 'decidim-*/app/controllers/concerns/**/*'
+    - 'decidim-*/**/routes.rb'
     - 'decidim-*/**/*/types/**/*'
     - 'decidim-*/lib/**/*/test/**/*'
     - 'decidim-*/lib/**/*/feature.rb'
-
-Lint/HandleExceptions:
-  Exclude:
-    - "**/*/Rakefile"
+    - 'decidim-*/db/seeds.rb'
+    - 'decidim-*/spec/**/*.rb'
+    - '**/*.gemspec'
