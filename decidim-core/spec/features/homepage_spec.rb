@@ -28,6 +28,26 @@ describe "Homepage", type: :feature do
       expect(page).to have_selector("a.main-footer__badge[href='#{official_url}']")
     end
 
+    context "with header snippets" do
+      let(:snippet) { "<meta data-hello=\"This is the organization header_snippet field\">" }
+      let(:organization) { create(:organization, official_url: official_url, header_snippets: snippet) }
+
+      it "does not include the header snippets" do
+        expect(page).to_not have_selector("meta[data-hello]", visible: false)
+      end
+
+      context "when header snippets are enabled" do
+        before do
+          allow(Decidim).to receive(:enable_html_header_snippets).and_return(true)
+          visit decidim.root_path
+        end
+
+        it "includes the header snippets" do
+          expect(page).to have_selector("meta[data-hello]", visible: false)
+        end
+      end
+    end
+
     it "welcomes the user" do
       expect(page).to have_content(organization.name)
     end
@@ -89,9 +109,9 @@ describe "Homepage", type: :feature do
 
         it "should show promoted first and ordered by active step end_date" do
           processes = [participatory_process_3, participatory_process_1, participatory_process_2]
-          participatory_process_1.active_step.update_attribute(:end_date, 5.days.from_now)
-          participatory_process_2.active_step.update_attribute(:end_date, 3.days.from_now)
-          participatory_process_3.active_step.update_attribute(:end_date, 2.days.from_now)
+          participatory_process_1.active_step.update_attributes!(end_date: 5.days.from_now)
+          participatory_process_2.active_step.update_attributes!(end_date: 3.days.from_now)
+          participatory_process_3.active_step.update_attributes!(end_date: 2.days.from_now)
 
           visit current_path
           all("article.card .card__title").each_with_index do |node, index|

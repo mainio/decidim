@@ -5,9 +5,9 @@ fr:
         name: Page
         settings:
           global:
-            comments_enabled: Commentaires activés
+            announcement: Annonce
           step:
-            comments_blocked: Commentaires bloqués
+            announcement: Annonce
     pages:
       admin:
         models:

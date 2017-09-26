@@ -126,6 +126,14 @@ es:
         back_home: Volver al inicio
         content_doesnt_exist: Esta dirección es incorrecta o ha sido eliminada.
         title: No se ha encontrado la página que buscas
+    events:
+      email_event:
+        email_greeting: Hola %{user_name},
+        email_intro: 'Ha habido una actualización de "%{resource_title}". Se puede ver en esta página:'
+        email_outro: Has recibido esta notificación porque sigues "%{resource_title}". Puedes dejar de seguirlo en el enlace anterior.
+        email_subject: Una actualización de %{resource_title}
+      notification_event:
+        notification_title: Un evento ha ocurrido en <a href="%{resource_path}">%{resource_title}</a>.
     export_mailer:
       export:
         ready: Adjunto encontrará una versión comprimida de su exportación.
@@ -152,26 +160,32 @@ es:
         project: Proyectos
         proposal: Propuestas
         result: Resultados
+    follows:
+      create:
+        button: Seguir
+        error: Ha habido un error siguiendo este recurso.
+      destroy:
+        button: Dejar de seguir
+        error: Ha habido un error dejando de seguir este recurso.
     forms:
       current_file: Archivo actual
       current_image: Imagen actual
       default_image: Imagen predeterminada
       errors:
         error: Hay un error en este campo.
+      remove_this_file: Eliminar este archivo
     managed_users:
       expired_session: La sesión de suplantación actual ha caducado.
     menu:
       home: Inicio
       more_information: Más información
-      processes: Procesos
     newsletter_mailer:
       newsletter:
         note: Has recibido este mensaje porque estás suscrito a boletines de noticias en %{organization_name}. Puedes cambiar la configuración en tu <a href="%{link}">página de notificaciones</a>.
     notifications_settings:
       show:
-        comments_notifications: Quiero recibir notificaciones cuando alguien comenta en mis publicaciones.
+        email_on_notification: Quiero recibir un correo electrónico cada vez que recibo una notificación.
         newsletter_notifications: Quiero recibir información acerca de actividad relevante
-        replies_notifications: Quiero recibir notificaciones por correo electrónico cuando alguien responde a mis comentarios.
         update_notifications_settings: Guardar cambios
       update:
         error: Ha habido un error al actualizar la configuración de las notificaciones.
@@ -184,43 +198,6 @@ es:
     pages:
       index:
         title: Más información
-    participatory_process_groups:
-      show:
-        group_participatory_processes: Procesos para %{group}
-        title: Grupo de procesos participativos
-    participatory_process_steps:
-      index:
-        process_steps: Las fases de proceso
-        title: Fases del proceso participativo
-    participatory_processes:
-      index:
-        title: Procesos participativos
-      participatory_process_groups:
-        none: Ninguno
-      scopes:
-        global: Ámbito global
-      show:
-        developer_group: Grupo promotor
-        end_date: Fecha de finalización
-        local_area: Áreas municipales
-        participatory_scope: Ámbito participativo
-        participatory_structure: Estructura participativa
-        scope: Ámbito
-        target: '¿A quién va dirigido?'
-      statistics:
-        answers_count: Respuestas
-        comments_count: Comentarios
-        headline: Actividad
-        meetings_count: Encuentros
-        orders_count: Votos
-        pages_count: Páginas
-        processes_count: Procesos
-        projects_count: Proyectos
-        proposals_count: Propuestas
-        results_count: Resultados
-        surveys_count: Encuestas
-        users_count: Participantes
-        votes_count: Soportes
     reported_mailer:
       hide:
         hello: Hola %{name},
@@ -236,8 +213,6 @@ es:
       create:
         error: Se ha producido un error al denunciar el contenido. Por favor, inténtalo otra vez.
         success: La denuncia se ha creado correctament y será revisada por un administrador.
-    scopes:
-      global: Ámbito global
     shared:
       action_authorization_modal:
         incomplete:
@@ -267,6 +242,8 @@ es:
         report: Denunciar
         spam: Contiene clickbait, publicidad o estafas.
         title: Denunciar un problema
+      follow_button:
+        sign_in_before_follow: Inicia sesión antes de realizar esta acción
       login_modal:
         please_sign_in: Por favor, regístrate
         sign_up: Regístrate
@@ -291,8 +268,9 @@ es:
         ignore: |-
           Si no quieres aceptar la invitación ignora este correo.<br />
           Tu cuenta no se creará hasta que accedas al enlance de abajo y escojas tu contraseña.
-        invited_you_as_admin: "%{invited_by} te ha invitado como administrador de %{application}, puedes aceptar a través del siguiente enlace."
-        someone_invited_you: Alguien te ha invitado a %{application}, puedes aceptar la invitación con el enlace a continuación.
+        invited_you_as_admin: "%{invited_by} te ha invitado como administrador de %{application}. Puede aceptarlo a través del siguiente enlace."
+        someone_invited_you: Alguien te ha invitado a %{application}. Puede aceptarlo a través del siguiente enlace.
+        you_are_now_admin: Ahora eres un administrador
       invite_admin:
         subject: Has sido invitado para gestionar %{organization}
       invite_collaborator:
@@ -338,37 +316,13 @@ es:
         close_session: Cerrar la sesión
         description_html: Te estás haciendo pasar por el usuario <b>%{user_name}</b>.
         expire_time_html: Su sesión expirará en <b><span class="minutes">%{minutes}</span> minutos</b>.
-      participatory_process_groups:
-        participatory_process_group:
-          browse: Explorar
-      participatory_process_widgets:
-        show:
-          active_step: Fase activa
-          take_part: Participa
-      participatory_processes:
-        index:
-          promoted_processes: Procesos destacados
-        no_processes_yet:
-          no_processes_yet: No hay procesos participativos todavía!
-        order_by_processes:
-          processes:
-            one: "%{count} proceso"
-            other: "%{count} procesos"
-        participatory_process:
-          active_step: 'Fase actual:'
-          take_part: Participa
-        promoted_process:
-          active_step: 'Fase actual:'
-          more_info: Más información
-          take_part: Participa
-      process_header:
-        process_menu_item: El proceso
-        unfold: Desplegar
-      process_header_steps:
-        step: Fase %{current} de %{total}
-        view_steps: Ver las fases
+      notifications_dashboard:
+        mark_all_as_read: Marcar todo como leído
+        no_notifications: No hay notificaciones aún.
+        title: Notificaciones
       user_menu:
         admin_dashboard: Tablero de administración
+        notifications: Notificaciones
         profile: Mi cuenta
         sign_out: Sal
       user_profile:

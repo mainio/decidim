@@ -5,9 +5,9 @@ es:
         name: Página
         settings:
           global:
-            comments_enabled: Comentarios habilitados
+            announcement: Aviso
           step:
-            comments_blocked: Comentarios bloqueados
+            announcement: Aviso
     pages:
       admin:
         models:

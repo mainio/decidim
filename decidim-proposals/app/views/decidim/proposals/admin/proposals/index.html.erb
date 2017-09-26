@@ -5,7 +5,7 @@
 
       <div class="button--title">
 
-        <% if feature_settings.official_proposals_enabled %>
+        <% if can? :create, Decidim::Proposals::Proposal %>
           <%= link_to t("actions.new", scope: "decidim.proposals", name: t("models.proposal.name", scope: "decidim.proposals.admin")), new_proposal_path, class: 'button tiny button--simple' if can? :manage, current_feature %>
         <% end %>
 
@@ -19,9 +19,10 @@
       <table class="table-list">
         <thead>
           <tr>
+            <th><%= t("models.proposal.fields.id", scope: "decidim.proposals") %></th>
             <th><%= t("models.proposal.fields.title", scope: "decidim.proposals") %></th>
             <th><%= t("models.proposal.fields.category", scope: "decidim.proposals") %></th>
-            <% if scopes_enabled?(current_participatory_process) %>
+            <% if scopes_enabled?(current_participatory_space) %>
               <th><%= t("models.proposal.fields.scope", scope: "decidim.proposals") %></th>
             <% end %>
             <th><%= t("models.proposal.fields.state", scope: "decidim.proposals") %></th>
@@ -32,6 +33,9 @@
           <% proposals.each do |proposal| %>
             <tr data-id="<%= proposal.id %>">
               <td>
+                <%= proposal.id %><br />
+              </td>
+              <td>
                 <%= proposal.title %><br />
               </td>
               <td>
@@ -39,7 +43,7 @@
                   <%= translated_attribute proposal.category.name %>
                 <% end %>
               </td>
-              <% if scopes_enabled?(current_participatory_process) %>
+              <% if scopes_enabled?(current_participatory_space) %>
                 <td>
                   <% if proposal.scope %>
                     <%= translated_attribute proposal.scope.name %>

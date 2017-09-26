@@ -5,9 +5,9 @@ ca:
         name: Pàgina
         settings:
           global:
-            comments_enabled: Comentaris habilitats
+            announcement: Avís
           step:
-            comments_blocked: Comentaris bloquejats
+            announcement: Avís
     pages:
       admin:
         models:

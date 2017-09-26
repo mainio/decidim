@@ -126,6 +126,14 @@ ca:
         back_home: Tornar a l'inici
         content_doesnt_exist: Aquesta adreça és incorrecta o ha estat eliminada.
         title: No s'ha trobat la pàgina que busques
+    events:
+      email_event:
+        email_greeting: Hola %{user_name},
+        email_intro: 'Hi ha hagut una actualització a "%{resource_title}". Es pot veure en aquesta pàgina:'
+        email_outro: Has rebut aquesta notificació perquè que segueixes "%{resource_title}". El pots deixar de seguir al link anterior.
+        email_subject: Una actualització a %{resource_title}
+      notification_event:
+        notification_title: S'ha produït un esdeveniment a <a href="%{resource_path}">%{resource_title}</a>.
     export_mailer:
       export:
         ready: S'adjunta una versió comprimida de l'exportació.
@@ -152,26 +160,32 @@ ca:
         project: Projectes
         proposal: propostes
         result: Resultats
+    follows:
+      create:
+        button: Seguir
+        error: Hi ha hagut un error seguint aquest recurs.
+      destroy:
+        button: Deixar de seguir
+        error: Hi ha hagut un error deixar seguint aquest recurs.
     forms:
       current_file: Fitxer actual
       current_image: Imatge actual
       default_image: Imatge predeterminada
       errors:
         error: Hi ha un error en aquest camp.
+      remove_this_file: Eliminar aquest arxiu
     managed_users:
       expired_session: La sessió de suplantació actual ha caducat.
     menu:
       home: Inici
       more_information: Més informació
-      processes: Processos
     newsletter_mailer:
       newsletter:
         note: Has rebut aquest missatge perquè estàs subscrit a butlletins de notícies a %{organization_name}. Pots canviar la configuració a la teva <a href="%{link}">pàgina de notificacions</a>.
     notifications_settings:
       show:
-        comments_notifications: Vull rebre notificacions quan algú comenta a les meves publicacions.
+        email_on_notification: Vull rebre un correu electrònic cada vegada que rebi una notificació.
         newsletter_notifications: Vull rebre informació sobre activitat rellevant
-        replies_notifications: Vull rebre notificacions per correu electrònic quan algú respon als meus comentaris.
         update_notifications_settings: Guardar canvis
       update:
         error: Hi ha hagut un error en actualitzar la configuració de les notificacions.
@@ -184,43 +198,6 @@ ca:
     pages:
       index:
         title: Més informació
-    participatory_process_groups:
-      show:
-        group_participatory_processes: Processos per a %{group}
-        title: Grup de processos participatius
-    participatory_process_steps:
-      index:
-        process_steps: Fases del procés
-        title: Fases del procés participatiu
-    participatory_processes:
-      index:
-        title: Processos participatius
-      participatory_process_groups:
-        none: cap
-      scopes:
-        global: Àmbit global
-      show:
-        developer_group: Grup promotor
-        end_date: Data de finalització
-        local_area: Àrees municipals
-        participatory_scope: Àmbit participatiu
-        participatory_structure: Estructura participativa
-        scope: Àmbit
-        target: A qui va dirigit?
-      statistics:
-        answers_count: Respostes
-        comments_count: Comentaris
-        headline: Activitat
-        meetings_count: Trobades
-        orders_count: Vots
-        pages_count: Pàgines
-        processes_count: Processos
-        projects_count: Projectes
-        proposals_count: Propostes
-        results_count: Resultats
-        surveys_count: Enquestes
-        users_count: Participants
-        votes_count: Suports
     reported_mailer:
       hide:
         hello: Hola %{name},
@@ -236,8 +213,6 @@ ca:
       create:
         error: S'ha produït un error en denunciar. Torna-ho a intentar.
         success: La denúncia s'ha creat amb èxit i serà revisada per un administrador.
-    scopes:
-      global: Àmbit global
     shared:
       action_authorization_modal:
         incomplete:
@@ -267,6 +242,8 @@ ca:
         report: Denuncia
         spam: Conté "clickbait", publicitat o estafes.
         title: Denuncia un problema
+      follow_button:
+        sign_in_before_follow: Inicia sessió abans de realitzar aquesta acció
       login_modal:
         please_sign_in: Si us plau, inicia sessió
         sign_up: Donar-se d'alta
@@ -291,8 +268,9 @@ ca:
         ignore: |-
           Si no vols acceptar la invitació, ignora aquest correu.<br />
           El teu compte no es crearà fins que no accedeixis a l'enllaç de sota i triïs la teva contrasenya.
-        invited_you_as_admin: "%{invited_by} t'ha convidat com un administrador de %{application}, pots acceptar-ho mitjançant el següent enllaç."
-        someone_invited_you: Algú t'ha convidat a %{application}, pots acceptar la invitació amb l'enllaç a continuació.
+        invited_you_as_admin: "%{invited_by} t'ha convidat com a administrador de %{application}. Podeu acceptar-lo a través de l'enllaç següent."
+        someone_invited_you: Algú t'ha convidat a %{application}. Podeu acceptar-lo a través de l'enllaç següent.
+        you_are_now_admin: Ara ets administrador
       invite_admin:
         subject: Has estat convidat a gestionar %{organization}
       invite_collaborator:
@@ -338,37 +316,13 @@ ca:
         close_session: Tanca la sessió
         description_html: Esteu suplantant l'usuari <b>%{user_name}</b>.
         expire_time_html: La vostra sessió caducarà en <b><span class="minutes">%{minutes}</span> minutes</b>.
-      participatory_process_groups:
-        participatory_process_group:
-          browse: Explorar
-      participatory_process_widgets:
-        show:
-          active_step: Fase activa
-          take_part: Participa
-      participatory_processes:
-        index:
-          promoted_processes: Processos destacats
-        no_processes_yet:
-          no_processes_yet: Encara no hi ha cap procés participatiu!
-        order_by_processes:
-          processes:
-            one: "%{count} procés"
-            other: "%{count} processos"
-        participatory_process:
-          active_step: 'Fase actual:'
-          take_part: Participa
-        promoted_process:
-          active_step: 'Fase actual:'
-          more_info: Més informació
-          take_part: Participa
-      process_header:
-        process_menu_item: El procés
-        unfold: Desplegar
-      process_header_steps:
-        step: Fase %{current} de %{total}
-        view_steps: Veure les fases
+      notifications_dashboard:
+        mark_all_as_read: Marca tots com a llegits
+        no_notifications: Encara no hi ha notificacions.
+        title: Notificacions
       user_menu:
         admin_dashboard: Tauler d'administració
+        notifications: Notificacions
         profile: El meu compte
         sign_out: Surt
       user_profile:

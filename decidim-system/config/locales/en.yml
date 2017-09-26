@@ -28,7 +28,7 @@ en:
           success: Admin updated successfully
       default_pages:
         placeholders:
-          content: Please add meaningful content to this page on the admin dashboard.
+          content: Please add meaningful content to the %{page} static page on the admin dashboard.
           title: Default title for %{page}
       menu:
         admins: Admins
@@ -49,8 +49,6 @@ en:
             created_at: Created at
             name: Name
           name: Organization
-        page:
-          name: Page
       organizations:
         create:
           error: There was an error when creating a new organization.
@@ -60,6 +58,7 @@ en:
         index:
           title: Organizations
         new:
+          reference_prefix_hint: The reference prefix is used to uniquely identify resources across all organizations
           secondary_hosts_hint: Enter each one of them in a new line
           title: New organization
         update:

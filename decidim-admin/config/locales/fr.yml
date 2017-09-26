@@ -1,6 +1,4 @@
 fr:
-  actions:
-    confirm_destroy: Confirmer la suppression
   activemodel:
     attributes:
       attachment:
@@ -21,6 +19,7 @@ fr:
         default_locale: Langue par défaut
         description: Description
         favicon: Icône
+        header_snippets: Elements à rajouter entre les balises <head></head>
         homepage_image: Image de la page d'accueil
         logo: Logo
         name: Nom
@@ -30,44 +29,6 @@ fr:
         reference_prefix: Préfixe de référence
         show_statistics: Afficher les statistiques
         welcome_text: Texte de bienvenue
-      participatory_process:
-        banner_image: Image d'en-tête
-        copy_categories: Copier les catégories
-        copy_features: Copier les fonctionnalités
-        copy_steps: Copier les étapes
-        description: Description
-        developer_group: Groupe promoteur
-        domain: Domaine
-        end_date: Date de fin
-        hashtag: Hashtag
-        hero_image: Image de la page d'accueil
-        local_area: Quartier
-        meta_scope: Metadonnée du domaine d'application
-        participatory_process_group_id: Groupe de processus
-        participatory_scope: Objectif du processus participatif
-        participatory_structure: Organisations concernées
-        promoted: Mis en avant
-        scope_id: Zone d’application
-        short_description: Résumé
-        slug: Identifiant
-        subtitle: Sous-titre
-        target: Public visé
-        title: Titre
-      participatory_process_group:
-        description: Description
-        hero_image: Image
-        name: Nom
-        participatory_process_ids: Processus participatifs liés
-      participatory_process_step:
-        description: Description
-        end_date: Date de fin
-        short_description: Résumé
-        start_date: Date de commencement
-        title: Titre
-      participatory_process_user_role:
-        email: Courriel
-        name: Nom
-        role: Rôle
       scope:
         code: Code
         name: Nom
@@ -82,9 +43,6 @@ fr:
         organization: Organisation
         slug: Identifiant
         title: Titre
-    errors:
-      messages:
-        invalid_json: JSON non valide
   activerecord:
     attributes:
       decidim/participatory_process:
@@ -103,9 +61,15 @@ fr:
         scope: Zone d’application
         short_description: Résumé
         slug: Identifiant
+        start_date: Date de début
         subtitle: Sous-titre
         target: Public visé
         title: Titre
+      decidim/participatory_process_group:
+        description: Description
+        hero_image: Image de la page d'accueil
+        name: Nom
+        participatory_processes: Processus participatifs
       decidim/participatory_process_step:
         end_date: Date de fin
         start_date: Date de début
@@ -119,22 +83,12 @@ fr:
   decidim:
     admin:
       actions:
-        activate: Activer
         add: Ajouter
-        configure: Configurer
-        confirm_destroy: Confirmez-vous la suppression ?
-        destroy: Supprimer
-        duplicate: Dupliquer
-        edit: Modifier
+        browse: Parcourir
         export: Exporter
         manage: Gérer
-        new: Nouveau
         permissions: Autorisations
-        preview: Aperçu
-        publish: Publier
         reject: Rejeter
-        resend_invitation: Renvoyer l'invitation
-        unpublish: Dépublier
         verify: Vérifier
       attachments:
         create:
@@ -217,22 +171,44 @@ fr:
           error: Une erreur s'est produite lors de la mise à jour de cette fonctionnalité.
           success: La fonctionnalité a été mise à jour avec succès.
       managed_users:
+        close_session:
+          error: Une erreur s'est produite lors de la fermeture de la session de l'utilisateur que vous représentez.
+          success: La session de l'utilisateur que vous représentiez a été fermée avec succès.
+        create:
+          error: Une erreur s'est produite lors de la création de l'utilisateur à représenter.
+          success: L'utilisateur à représenter a été créé avec succès.
         form:
           name: Nom
+        impersonate:
+          error: Une erreur s'est produite lors avec la session de l'utilisateur que vous représenté.
+        impersonations:
+          new:
+            impersonate: Représenter
+            new_managed_user_impersonation: Nouvel utilisateur à représenter
+        index:
+          impersonate: Représenter
+          needs_authoriation_warning: Vous avez besoin d'au moins une autorisation activée pour cette organisation.
+          promote: Promouvoir
+          view_logs: Consultez les logs
+        new:
+          create: Créer
+          new_managed_user: Nouvel utilisateur à représenter
+          select_authorization_method: Sélectionnez une méthode d'autorisation
+          step: Étape %{current} sur %{total}
+        promotion:
+          error: Une erreur s'est produite lors de la transformation de l'utilisateur représenté.
+          success: L'utilisateur représenté a été promu avec succès.
+        promotions:
+          new:
+            explanation: Les utilisateurs représentés peuvent être promu utilisateurs standard. Cela signifie qu'ils seront invités à l'application et vous ne pourrez plus agir à leur place. L'utilisateur recevra un courriel pour accepter votre invitation.
+            new_managed_user_promotion: Transformer un utilisateur représenté en utilisateur standard
+            promote: Transformer
       menu:
         admins: Administrateurs
         dashboard: Tableau de bord
+        managed_users: Utilisateurs représentés
         newsletters: Bulletins d'information (newsletter)
-        participatory_process_groups: Groupes de processus participatifs
-        participatory_processes: Processus participatifs
-        participatory_processes_submenu:
-          attachments: Documents liés
-          categories: Catégories
-          features: Fonctionnalités
-          info: Information
-          moderations: Modérations
-          process_admins: Administrateurs du processus participatifs
-          steps: Etapes
+        scope_types: Types de zone d'application
         scopes: Zones d’application
         settings: Paramètres
         static_pages: Pages
@@ -246,6 +222,15 @@ fr:
           name: Document lié
         category:
           name: Catégorie
+        impersonation_log:
+          fields:
+            admin: Administrateur
+            ended_at: Terminé le
+            expired_at: Expiré le
+            started_at: Commencé le
+            user: Utilisateur
+        managed_user:
+          name: Utilisateur représenté
         newsletter:
           fields:
             created_at: Crée le
@@ -253,35 +238,14 @@ fr:
             sent_at: Envoyé à
             subject: Objet
           name: Bulletin d'information (newsletter)
-        participatory_process:
-          fields:
-            created_at: Crée le
-            promoted: Mis en évidence
-            published: Publié
-            title: Titre
-          name: Processus participatif
-        participatory_process_group:
-          fields:
-            name: Nom
-          name: Groupes de processus participatifs
-        participatory_process_step:
-          fields:
-            end_date: Date de fin
-            start_date: Date de début
-            title: Titre
-          name: Etape du processus participatif
-        participatory_process_user_role:
-          fields:
-            email: Email
-            name: Nom
-            role: Rôle
-          name: Role utilisateur du processus participatif
-          roles:
-            admin: Administrateur
-            collaborator: Rédacteur
         scope:
           fields:
             name: Nom
+            scope_type: Type de zone d'application
+        scope_type:
+          fields:
+            name: Nom
+            plural: Pluriel
         static_page:
           fields:
             created_at: Crée le
@@ -290,21 +254,30 @@ fr:
           fields:
             created_at: Date de création
             email: Email
-            invitation_accepted_at: Date d'acceptation de l'invitation
-            invitation_sent_at: Date d'envoi de l'invitation
             last_sign_in_at: Date de la dernière connexion
             name: Nom
+            role: Rôle
+            roles:
+              admin: Administrateur
+              user_manager: Représentant de l'utilisateur
           name: Utilisateur
         user_group:
           fields:
+            actions: Actions
             created_at: Crée le
             document_number: Numéro de document
             name: Nom
             phone: Téléphone
+            state: État
             users_count: Nombre d'utilisateurs
       moderations:
         index:
           title: Modérations
+        report:
+          reasons:
+            does_not_belong: N'appartient pas
+            offensive: Agressif
+            spam: Spam
       newsletters:
         create:
           error: Il y a eu une erreur lors de la création de ce bulletin d'information.
@@ -342,96 +315,30 @@ fr:
           current_image: Image actuelle
           facebook: Facebook
           github: GitHub
+          header_snippets_help: Utilisez ce champ pour ajouter des éléments entre les balises <head> </head> HTML. L'utilisation la plus courante de champs consiste à intégrer des services tiers nécessitant du JavaScript ou du CSS supplémentaire. Vous pouvez aussi l'utiliser pour ajouter des méta-tags supplémentaires au code HTML. Notez que cela ne fonctionnera que dans sur les pages publiques, et non dans la section admin.
           instagram: Instagram
           social_handlers: Social
-          twitter: Twitter
+          twitter: Gazouillement
           url: Url
           youtube: YouTube
         update:
           error: Erreur lors de la mise à jour de cette organisation.
           success: Organisation mise à jour avec succès.
-      participatory_process_groups:
+      scope_types:
+        create:
+          error: Une erreur s'est produite lors de la création d'un nouveau type de zone d'application.
+          success: Type de zone d'application créé avec succès.
         destroy:
-          success: Le groupe de processus participatif a été détruit avec succès.
+          success: Le type de zone d'application a été détruit avec succès
         edit:
-          title: Modifier le groupe de processus
+          title: Modifier le type de zone d'application
           update: Mettre à jour
         new:
-          create: Créer
-          title: Nouveau groupe de processus participatifs
+          create: Créer un type de zone d'application
+          title: Nouvelle zone d'application
         update:
-          error: Il y a eu une erreur lors de la mise à jour de ce groupe de processus participatif.
-          success: Groupe de processus participatif mis à jour avec succès.
-      participatory_process_publications:
-        create:
-          error: Il y a eu une erreur lors de la publication de ce processus participatif.
-          success: Processus participatif publié avec succès.
-        destroy:
-          error: Il y a eu une erreur lors de la publication de ce processus participatif.
-          success: Processus participatif dépublié avec succès.
-      participatory_process_step_activations:
-        create:
-          error: Une erreur s'est produite lors de l'activation de cette étape du processus participatif.
-          success: Etape du processus participatif activée avec succès.
-      participatory_process_steps:
-        create:
-          error: Une erreur s'est produite lors de la création d'une nouvelle étape du processus participatif.
-          success: Etape de processus participatif créée avec succès.
-        default_title: Introduction
-        destroy:
-          error:
-            active_step: Vous ne pouvez pas supprimer l'étape active du processus.
-            last_step: Vous ne pouvez pas supprimer la dernière étape d'un processus.
-          success: L'étape du processus participatif a été détruite avec succès.
-        edit:
-          title: Modifier l'étape du processus participatif
-          update: Mettre à jour
-        new:
-          create: Créer
-          title: Nouvelle étape du processus participatif
-        ordering:
-          error: Une erreur s'est produite lors de la réorganisation des étapes du processus participatif.
-        update:
-          error: Une erreur s'est produite lors de la mise à jour de cette étape du processus participatif.
-          success: Etape du processus participatif mise à jour avec succès.
-      participatory_process_user_roles:
-        create:
-          error: Une erreur s'est produite lors de l'ajout d'un utilisateur pour ce processus participatif.
-          success: Utilisateur créé avec succès pour ce processus participatif.
-        destroy:
-          success: L'utilisateur a été détruit avec succès pour ce processus participatif.
-        edit:
-          title: Mettre à jour l'utilisateur du processus participatif.
-          update: Mettre à jour
-        new:
-          create: Créer
-          title: Nouvel utilisateur de processus participatif.
-        update:
-          error: Il y a eu une erreur lors de la mise à jour d'un utilisateur pour ce processus participatif.
-          success: L'utilisateur a été mis à jour avec succès pour ce processus participatif.
-      participatory_processes:
-        create:
-          error: Une erreur s'est produite lors de la création d'un nouveau processus participatif.
-          success: Processus participatif créé avec succès. Configurez maintenant ses étapes.
-        destroy:
-          success: Processus participatif détruit avec succès.
-        edit:
-          update: Mettre à jour
-        form:
-          title: Informations générales
-        index:
-          not_published: Non publié
-          published: Publié
-        new:
-          create: Créer
-          title: Nouveau processus participatif
-        update:
-          error: Une erreur s'est produite lors de la mise à jour de ce processus participatif.
-          success: Processus participatif mis à jour avec succès.
-      participatory_processes_group:
-        create:
-          error: Une erreur s'est produite lors de la création d'un nouveau groupe de processus participatif.
-          success: Groupe de processus participatif créé avec succès.
+          error: Une erreur s'est produite lors de la mise à jour de cette zone d'application.
+          success: Type de zone d'application mis à jour avec succès
       scopes:
         create:
           error: Une erreur s'est produite lors de la création d'une nouvelle zone d’application.
@@ -444,6 +351,7 @@ fr:
         new:
           create: Créer une zone d'application
           title: Nouvelle zone d'application
+        no_scopes: Pas de zone d'application à ce niveau.
         update:
           error: Une erreur s'est produite lors de la mise à jour de cette zone d'application.
           success: Zone d'applicaiton mise à jour avec succès
@@ -466,12 +374,33 @@ fr:
           success: Page mise à jour avec succès
       titles:
         dashboard: Tableau de bord
-        participatory_process_groups: Groupes de processus participatifs
-        participatory_processes: Processus participatifs
+        impersonations: Représentations d'utilisateurs
+        managed_users: Utilisateurs représentés
+        scope_types: Types de zone d'application
         scopes: Zones d'application
         static_pages: Pages
         user_groups: Groupes d'utilisateurs
         users: Utilisateurs
+      user_group:
+        reject:
+          invalid: Une erreur s'est produite lors du rejet de ce groupe d'utilisateurs.
+          success: Groupe d'utilisateurs refusé avec succès
+        verify:
+          invalid: Une erreur s'est produite lors de la vérification de ce groupe d'utilisateurs.
+          success: Groupe d'utilisateurs vérifié avec succès
+      user_groups:
+        index:
+          filter:
+            all: Tous
+            pending: En attente
+            rejected: Refusé
+            verified: Vérifié
+          filter_by: Filtrer par
+          search: Rechercher
+          state:
+            pending: En attente
+            rejected: Refusé
+            verified: Vérifié
       users:
         create:
           error: Une erreur s'est produite lors de l'invitation de cet utilisateur.
@@ -482,12 +411,10 @@ fr:
         form:
           email: Email
           name: Nom
+          role: Rôle
         new:
           create: Inviter
           title: Inviter l'utilisateur en tant qu'administrateur
-        resend_invitation:
-          error: Une erreur s'est produite lors de l'envoi de l'email d'invitation.
-          success: Email d'invitation envoyé avec succès.
     moderations:
       actions:
         hidden: Masqués
@@ -509,10 +436,11 @@ fr:
             hidden_at: Masqué le
             report_count: Compter
             reportable: Signalable
+            reported_content_url: Contenu d'une URL
             reports: Signalements
-    participatory_processes:
-      participatory_process_groups:
-        none: Aucun
+  errors:
+    messages:
+      invalid_json: JSON non valide
   layouts:
     decidim:
       admin:

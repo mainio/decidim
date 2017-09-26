@@ -6,7 +6,7 @@ describe Decidim::Meetings::MeetingSearch do
   let(:current_feature) { create :feature, manifest_name: "meetings" }
   let(:scope1) { create :scope, organization: current_feature.organization }
   let(:scope2) { create :scope, organization: current_feature.organization }
-  let(:parent_category) { create :category, participatory_process: current_feature.participatory_process }
+  let(:parent_category) { create :category, participatory_space: current_feature.participatory_space }
   let(:subcategory) { create :subcategory, parent: parent_category }
   let!(:meeting1) do
     create(
@@ -22,7 +22,7 @@ describe Decidim::Meetings::MeetingSearch do
     create(
       :meeting,
       feature: current_feature,
-      start_time: 2.day.from_now,
+      start_time: 2.days.from_now,
       category: subcategory,
       scope: scope2,
       description: Decidim::Faker::Localized.literal("Curabitur arcu erat, accumsan id imperdiet et.")

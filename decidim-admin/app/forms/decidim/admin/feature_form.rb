@@ -19,13 +19,7 @@ module Decidim
       attribute :weight, Integer, default: 0
 
       attribute :step_settings, Hash[String => Object]
-      attribute :participatory_process
-
-      def map_model(model)
-        self.attributes = model.attributes
-        self.settings = model.settings
-        self.default_step_settings = model.default_step_settings
-      end
+      attribute :participatory_space
 
       def settings?
         settings.manifest.attributes.any?
@@ -33,17 +27,6 @@ module Decidim
 
       def default_step_settings?
         default_step_settings.manifest.attributes.any?
-      end
-
-      def step_settings?
-        return false unless participatory_process.steps.any?
-
-        step_settings
-          .values
-          .map(&:manifest)
-          .flat_map(&:attributes)
-          .flat_map(&:keys)
-          .any?
       end
     end
   end

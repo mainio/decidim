@@ -1,7 +1,93 @@
 # Change Log
 
 ## [Unreleased](https://github.com/decidim/decidim/tree/HEAD)
-[Full Changelog](https://github.com/decidim/decidim/compare/v0.4.4...HEAD)
+
+**Added**
+
+- **decidim-core**: Show a disabled "Follow" button to anonymous users (not logged in) with a prompt to sign in [\#1903](https://github.com/decidim/decidim/pull/1903)
+- **decidim-meetings**: Participatory admins can invite users to join a meeting. [\#1879](https://github.com/decidim/decidim/pull/1879)
+
+**Changed**
+
+- **decidim**: URLs now use the participatory space slug instead of the ID, both in the public pages and in the admin. Old routes using the space IDs now redirect to the ones using the slug. [\#1842](https://github.com/decidim/decidim/pull/1842)
+
+## [v0.6.4](https://github.com/decidim/decidim/tree/v0.6.4) (2017-09-21)
+[Full Changelog](https://github.com/decidim/decidim/compare/v0.6.3...v0.6.4)
+
+**Fixed**
+
+- **decidim-core**: Some AJAX requests were not updating the DOM properly [\#1906](https://github.com/decidim/decidim/pull/1906)
+- **decidim-core**: Fixes proposals filter when filtering by scopes [\#1907](https://github.com/decidim/decidim/pull/1907)
+
+## [v0.6.3](https://github.com/decidim/decidim/tree/v0.6.3) (2017-09-20)
+[Full Changelog](https://github.com/decidim/decidim/compare/v0.6.2...v0.6.3)
+
+**Fixed**
+
+- **decidim-assemblies**: When visiting the assembly page on a multiple language organization and the URL had the default locale as a param, link to the resource itself was not being properly highlighted [\#1892](https://github.com/decidim/decidim/pull/1892)
+- **decidim-core**: On certain cases, authorizations controller was trying to redirect to an unexisting path. Fixed now. [\#1882](https://github.com/decidim/decidim/pull/1882)
+- **decidim-participatory-processes**: When visiting the process page on a multiple language organization and the URL had the deafult locale as a param, link to the resource itself was not being properly highlighted [\#1892](https://github.com/decidim/decidim/pull/1892)
+
+## [v0.6.2](https://github.com/decidim/decidim/tree/v0.6.2) (2017-09-19)
+[Full Changelog](https://github.com/decidim/decidim/compare/v0.6.1...v0.6.2)
+
+**Added**
+
+- **decidim-proposals**: Hide proposal vote button when proposal is answered and rejected. [\#1861](https://github.com/decidim/decidim/pull/1861)
+
+**Fixed**
+
+- **decidim-proposals**: Fix proposal vote button visibility problem when votes were disabled and the user logged in. [\#1862](https://github.com/decidim/decidim/pull/1862)
+- **decidim-core**: Incompatible `puma` dependencies on `gemspec` and development app's Gemfile preventing the development application from being properly generated. [\#1862](https://github.com/decidim/decidim/pull/1862)
+- **decidim-core**: Problem in development app's Gemfile resolution caused because the initial `bundle install` would not consider `decidim` dependency specifications. [\#1862](https://github.com/decidim/decidim/pull/1862)
+
+## [v0.6.1](https://github.com/decidim/decidim/tree/v0.6.1) (2017-09-15)
+[Full Changelog](https://github.com/decidim/decidim/compare/v0.6.0...v0.6.1)
+
+**Fixed**
+
+- **decidim**: Use the same set of dependencies for the generated applications. [\#1845](https://github.com/decidim/decidim/pull/1845)
+- **decidim-core**: Remove `distinct` from `Resourcable` concern which was causing the wrong behaviour computing some data in `decidim-results`.  [\#1845](https://github.com/decidim/decidim/pull/1845)
+
+## [v0.6.0](https://github.com/decidim/decidim/tree/v0.6.0) (2017-09-15)
+[Full Changelog](https://github.com/decidim/decidim/compare/v0.5.1...v0.6.0)
+
+**Fixed**
+
+- **decidim**: `decidim:check_locales` task not working properly. [\#1740]((https://https://github.com/decidim/decidim/pull/1740)
+- **decidim-admin**: Crash in feature edition when using Rails 5.1.4 [\#1848](https://https://github.com/decidim/decidim/pull/1848)
+- **decidim-core**: Disable HTML validations which sometimes caused unexpected form behavior. [\#1772](https://https://github.com/decidim/decidim/pull/1772)
+- **decidim-participatory_processes**: Scopes enabled checkbox being ignored in participatory process creation. [\#1762](https://https://github.com/decidim/decidim/pull/1762)
+- **decidim-proposals**: Fix incorrect button displayed when proposal creation not enabled. [\#1847](https://https://github.com/decidim/decidim/pull/1847)
+- **decidim-surveys**: Drag & drop icon incorrectly rendered in form. [\#1761](https://https://github.com/decidim/decidim/pull/1761)
+
+**Added**
+
+- **decidim**: Support for multiple participatory spaces via custom plugins. [\#1659](https://https://github.com/decidim/decidim/pull/1659)
+- **decidim**: Let users follow resources. [\#1784](https://https://github.com/decidim/decidim/pull/1784)
+- **decidim**: Add a notification dashboard with a list of events on resources the user is following. [\#1784](https://https://github.com/decidim/decidim/pull/1784)
+- **decidim**: Add a flag for users so they can enable/disable emails on notifications. [\#1812](https://https://github.com/decidim/decidim/pull/1812)
+- **decidim**: Added Ukrainian language. [\#1804](https://https://github.com/decidim/decidim/pull/1804)
+- **decidim-assemblies**: New optional beta plugin to manage participatory organs A.K.A. assemblies. [\#1659](https://https://github.com/decidim/decidim/pull/1659)
+- **decidim-comments**: Deprecate old comment notifications system in favor of the new one. Read [create_followers_from_resource_authors.md](https://github.com/decidim/decidim/blob/master/docs/create_followers_from_resource_authors.md) and [create_followers_from_comment_authors.md](https://github.com/decidim/decidim/blob/master/docs/create_followers_from_comment_authors.md) to create resource followers so they are notified when a comment is created. [\#1831](https://github.com/decidim/decidim/pull/1831)
+- **decidim-meetings**: Let users follow meetings. Updating or closing a meeting will send a notification and an email to the users following that meeting. [\#1784](https://https://github.com/decidim/decidim/pull/1784)
+- **decidim-meetings**: When joining a meeting the user receives an email with its calendar information. [\#1803](https://https://github.com/decidim/decidim/pull/1803)
+- **decidim-meetings**: Users following a meeting receives a notification 48h before it starts. [\#1811](https://https://github.com/decidim/decidim/pull/1811)
+- **decidim-participatory_processes**: Add participatory processes filters (past, active and upcoming) to the processes home page. [\#1779](https://github.com/decidim/decidim/pull/1779)
+
+## [v0.5.1](https://github.com/decidim/decidim/tree/v0.5.1) (2017-08-21)
+[Full Changelog](https://github.com/decidim/decidim/compare/v0.5.0...v0.5.1)
+
+**Changed**
+
+- **decidim-core**: Prevent creation of a `Organization` with a `default_locale` not present in `available_locales`. [\#1754](https://github.com/decidim/decidim/pull/1754)
+
+**Fixed**
+
+- **decidim**: Fixed `decidim` generator to include the `Decidim.default_locale` in the decidim initializer file. [\#1754](https://github.com/decidim/decidim/pull/1754)
+
+## [v0.5.0](https://github.com/decidim/decidim/tree/v0.5.0) (2017-08-17)
+[Full Changelog](https://github.com/decidim/decidim/compare/v0.4.4...v0.5.0)
 
 **Fixed**
 
@@ -18,6 +104,7 @@
 - **decidim-core**: Scopes system prepared for bigger organizations. Scopes can be hierarchical: each scope can have a parent scope and a scope type that describe it (country, province, district, etc). Scope names can be translated. Each scope must have a string unique identifier that could be used to relate it with external systems. [\#1500](https://github.com/decidim/decidim/pull/1500)
 - **decidim-core**: Added a new endpoint to support scope selection through AJAX searches. [\#1500](https://github.com/decidim/decidim/pull/1500)
 - **decidim-core**: Added `announcement` attribute to `ParticipatoryProcess`. As an admin you can configure a visible callout in the public page of a process. [\#1696](https://github.com/decidim/decidim/pull/1696)
+- **decidim-meetings**: Added `Registrations`. As an admin I can enable registrations for any meeting and set the number of available slots. Users can join a meeting if there is an available slot. [\#1737](https://github.com/decidim/decidim/pull/1737)
 - **decidim-proposals**: Added `new_proposal_help_text` global setting. As an admin you can configure a visible callout in the proposal creation page. [\#1696](https://github.com/decidim/decidim/pull/1696)
 
 **Changed**

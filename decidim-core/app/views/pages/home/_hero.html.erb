@@ -6,14 +6,14 @@
           <% if translated_attribute(current_organization.welcome_text).blank? %>
             <%= t('.welcome', organization: current_organization.name) %>
           <% else %>
-            <%== translated_attribute current_organization.welcome_text %>
+            <%= sanitize translated_attribute current_organization.welcome_text %>
           <% end %>
         </h1>
       </div>
     </div>
     <div class="row">
       <div class="columns small-centered small-6 medium-4 mediumlarge-3">
-        <%= link_to t('.participate'), participatory_processes_path, class: "hero-cta button expanded large button--sc" %>
+        <%= link_to t('.participate'), decidim_participatory_processes.participatory_processes_path, class: "hero-cta button expanded large button--sc" %>
       </div>
     </div>
   </div>

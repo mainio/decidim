@@ -66,7 +66,11 @@ module Decidim
           remove_official_img_footer: form.remove_official_img_footer,
           official_url: form.official_url,
           show_statistics: form.show_statistics
-        }
+        }.tap do |attributes|
+          if Decidim.enable_html_header_snippets
+            attributes[:header_snippets] = form.header_snippets
+          end
+        end
       end
     end
   end

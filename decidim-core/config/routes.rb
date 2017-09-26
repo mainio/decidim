@@ -22,20 +22,8 @@ Decidim::Core::Engine.routes.draw do
 
   resource :locale, only: [:create]
 
-  resources :participatory_process_groups, only: :show, path: "processes_groups"
-  resources :participatory_processes, only: [:index, :show], path: "processes" do
-    resources :participatory_process_steps, only: [:index], path: "steps"
-    resource :participatory_process_widget, only: :show, path: "embed"
-  end
-
-  scope "/processes/:participatory_process_id/f/:feature_id" do
-    Decidim.feature_manifests.each do |manifest|
-      next unless manifest.engine
-
-      constraints Decidim::CurrentFeature.new(manifest) do
-        mount manifest.engine, at: "/", as: "decidim_#{manifest.name}"
-      end
-    end
+  Decidim.participatory_space_manifests.each do |manifest|
+    mount manifest.engine, at: "/", as: "decidim_#{manifest.name}"
   end
 
   authenticate(:user) do
@@ -47,6 +35,11 @@ Decidim::Core::Engine.routes.draw do
     resource :account, only: [:show, :update, :destroy], controller: "account" do
       member do
         get :delete
+      end
+    end
+    resources :notifications, only: [:index, :destroy] do
+      collection do
+        delete :read_all
       end
     end
     resource :notifications_settings, only: [:show, :update], controller: "notifications_settings"
@@ -63,6 +56,7 @@ Decidim::Core::Engine.routes.draw do
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_server_error", via: :all
 
+  resource :follow, only: [:create, :destroy]
   resource :report, only: [:create]
 
   root to: "pages#show", id: "home"

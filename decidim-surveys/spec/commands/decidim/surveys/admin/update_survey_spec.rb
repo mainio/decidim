@@ -8,11 +8,16 @@ module Decidim
       describe UpdateSurvey do
         let(:current_organization) { create(:organization) }
         let(:participatory_process) { create(:participatory_process, organization: current_organization) }
-        let(:feature) { create(:feature, manifest_name: "surveys", participatory_process: participatory_process) }
+        let(:feature) { create(:feature, manifest_name: "surveys", participatory_space: participatory_process) }
         let(:survey) { create(:survey, feature: feature) }
         let(:published_at) { nil }
         let(:form_params) do
           {
+            "title" => {
+              "en" => "Title",
+              "ca" => "Title",
+              "es" => "Title"
+            },
             "description" => {
               "en" => "<p>Content</p>",
               "ca" => "<p>Contingut</p>",
@@ -121,6 +126,16 @@ module Decidim
           context "and the question should be removed" do
             let(:form_params) do
               {
+                "title" => {
+                  "en" => "Title",
+                  "ca" => "Title",
+                  "es" => "Title"
+                },
+                "description" => {
+                  "en" => "<p>Content</p>",
+                  "ca" => "<p>Contingut</p>",
+                  "es" => "<p>Contenido</p>"
+                },
                 "questions" => [
                   {
                     "id" => survey_question.id,

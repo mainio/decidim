@@ -13,14 +13,14 @@ fr:
         name: Résultats
         settings:
           global:
+            announcement: Annonce
             comments_enabled: Commentaires activés
           step:
+            announcement: Annonce
             comments_blocked: Commentaires bloqués
     resource_links:
       included_proposals:
         result_proposals: Propositions incluses dans ce résultat
-      meetings_through_proposals:
-        result_meetings: Rencontres connexes
     results:
       actions:
         confirm_destroy: Êtes-vous sûr de vouloir supprimer ce résultat?
@@ -62,6 +62,7 @@ fr:
         filters:
           category: Catégorie
           category_prompt: Sélectionner une catégorie
+          scope_prompt: Sélectionnez une portée
           scopes: Zones d'application
           search: Rechercher
         filters_small_view:

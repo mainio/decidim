@@ -8,7 +8,7 @@ require "decidim/dev"
 
 load "decidim-dev/lib/tasks/test_app.rake"
 
-DECIDIM_GEMS = %w(core system admin api pages meetings proposals comments results budgets surveys dev).freeze
+DECIDIM_GEMS = %w(core system admin api participatory_processes assemblies pages meetings proposals comments results budgets surveys dev).freeze
 
 RSpec::Core::RakeTask.new(:spec)
 
@@ -16,13 +16,15 @@ task default: :spec
 
 desc "Runs all tests in all Decidim engines"
 task :test_all do
-  DECIDIM_GEMS.each do |gem_name|
-    next if gem_name == "dev"
+  tested_gems = DECIDIM_GEMS - ["dev"]
 
-    Dir.chdir("#{__dir__}/decidim-#{gem_name}") do
-      puts "Running #{gem_name}'s tests..."
+  dirs = [__dir__] + tested_gems.map { |name| "#{__dir__}/decidim-#{name}" }
+
+  dirs.each do |dir|
+    Dir.chdir(dir) do
+      puts "Running #{File.basename(dir)}'s tests..."
       status = system "rake"
-      exit 1 unless status || ENV["FAIL_FAST"] == "false"
+      abort unless status || ENV["FAIL_FAST"] == "false"
     end
   end
 end
@@ -39,27 +41,23 @@ end
 
 desc "Makes sure all official locales are complete and clean."
 task :check_locale_completeness do
-  DECIDIM_GEMS.each do |gem_name|
-    Dir.chdir("#{__dir__}/decidim-#{gem_name}") do
-      system({ "ENFORCED_LOCALES" => "en,ca,es" }, "rspec spec/i18n_spec.rb")
-    end
-  end
+  system({ "ENFORCED_LOCALES" => "en,ca,es" }, "rspec spec/i18n_spec.rb")
 end
 
 desc "Generates a development app."
 task :development_app do
   Dir.chdir(__dir__) do
-    sh "rm -fR development_app"
+    sh "rm -fR development_app", verbose: false
   end
 
   Decidim::Generators::AppGenerator.start(
-    ["development_app", "--path", "..", "--recreate_db"]
+    ["development_app", "--path", "..", "--recreate_db", "--seed_db"]
   )
 
   Dir.chdir("#{__dir__}/development_app") do
     Bundler.with_clean_env do
-      sh "bundle exec rails db:seed"
-      sh "bundle exec rails generate decidim:demo"
+      sh "bundle exec spring stop", verbose: false
+      sh "bundle exec rails generate decidim:demo", verbose: false
     end
   end
 end

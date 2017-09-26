@@ -13,6 +13,10 @@ module Decidim
     def decidim_form_for(record, options = {}, &block)
       options[:data] ||= {}
       options[:data].update(abide: true, "live-validate" => true, "validate-on-blur" => true)
+
+      options[:html] ||= {}
+      options[:html].update(novalidate: true)
+
       form_for(record, options, &block)
     end
 
@@ -79,8 +83,10 @@ module Decidim
             locales.each_with_index.inject("".html_safe) do |string, (locale, index)|
               string + content_tag(:li, class: tab_element_class_for("title", index)) do
                 title = I18n.with_locale(locale) { I18n.t("name", scope: "locale") }
+                element_class = nil
+                element_class = "is-tab-error" if form_field_has_error?(options[:object], name_with_locale(name, locale))
                 tab_content_id = "#{tabs_id}-#{name}-panel-#{index}"
-                content_tag(:a, title, href: "##{tab_content_id}")
+                content_tag(:a, title, href: "##{tab_content_id}", class: element_class)
               end
             end
           end
@@ -111,6 +117,32 @@ module Decidim
     # Helper method used by `translated_field_tag`
     def name_with_locale(name, locale)
       "#{name}_#{locale.to_s.gsub("-", "__")}"
+    end
+
+    def form_field_has_error?(object, attribute)
+      object.respond_to?(:errors) && object.errors[attribute].present?
+    end
+
+    # Helper method that generates the URL of a participatory space with a
+    # span surrounding the space slug. This is only intended to be used in
+    # help text for the slug input, so that we can update the span contents
+    # via JS with the input value.
+    #
+    # space_name - the name, in plural, of the space (eg. "processes" or "assemblies")
+    # value - the initial value of the slug field, so  that edit forms have a value
+    #
+    # Returns an HTML-safe String.
+    def decidim_form_slug_url(space_name, value = "")
+      content_tag(:span, class: "slug-url") do
+        [
+          request.protocol,
+          request.host_with_port,
+          "/",
+          space_name,
+          "/"
+        ].join("").html_safe +
+          content_tag(:span, value, class: "slug-url-value")
+      end
     end
   end
 end

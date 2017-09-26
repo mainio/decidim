@@ -12,6 +12,7 @@ module Decidim
       include Decidim::HasCategory
       include Decidim::Reportable
       include Decidim::HasAttachments
+      include Decidim::Followable
       include Decidim::Comments::Commentable
 
       feature_manifest_name "proposals"
@@ -60,21 +61,21 @@ module Decidim
       #
       # Returns Boolean.
       def accepted?
-        state == "accepted"
+        answered? && state == "accepted"
       end
 
       # Public: Checks if the organization has rejected a proposal.
       #
       # Returns Boolean.
       def rejected?
-        state == "rejected"
+        answered? && state == "rejected"
       end
 
       # Public: Checks if the organization has marked the proposal as evaluating it.
       #
       # Returns Boolean.
       def evaluating?
-        state == "evaluating"
+        answered? && state == "evaluating"
       end
 
       # Public: Overrides the `commentable?` Commentable concern method.
@@ -84,7 +85,7 @@ module Decidim
 
       # Public: Overrides the `accepts_new_comments?` Commentable concern method.
       def accepts_new_comments?
-        commentable? && !feature.active_step_settings.comments_blocked
+        commentable? && !feature.current_settings.comments_blocked
       end
 
       # Public: Overrides the `comments_have_alignment?` Commentable concern method.
@@ -97,6 +98,12 @@ module Decidim
         true
       end
 
+      # Public: Override Commentable concern method `users_to_notify_on_comment_created`
+      def users_to_notify_on_comment_created
+        return (followers | feature.participatory_space.admins).uniq if official?
+        followers
+      end
+
       # Public: Overrides the `reported_content_url` Reportable concern method.
       def reported_content_url
         ResourceLocatorPresenter.new(self).url
@@ -105,20 +112,6 @@ module Decidim
       # Public: Whether the proposal is official or not.
       def official?
         author.nil?
-      end
-
-      # Public: Overrides the `notifiable?` Notifiable concern method.
-      # When a proposal is commented the proposal's author is notified if it is not the same
-      # who has commented the proposal and if the proposal's author has comment notifications enabled.
-      def notifiable?(context)
-        return true if official?
-        context[:author] != author && author.comments_notifications?
-      end
-
-      # Public: Overrides the `users_to_notify` Notifiable concern method.
-      def users_to_notify
-        return Decidim::Admin::ProcessAdmins.for(feature.participatory_process) if official?
-        [author]
       end
     end
   end

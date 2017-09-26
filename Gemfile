@@ -2,7 +2,8 @@
 
 source "https://rubygems.org"
 
-ruby "2.4.1"
+ruby RUBY_VERSION
 
-gem "decidim", path: "."
+gemspec
+
 gem "decidim-dev", path: "decidim-dev"

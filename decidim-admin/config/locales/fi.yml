@@ -8,6 +8,7 @@ fi:
       category:
         description: Kuvaus
         name: Nimi
+        parent_id: Isäntä
       feature:
         name: Nimi
         weight: Painoarvo
@@ -18,51 +19,30 @@ fi:
         default_locale: Oletuskieli
         description: Kuvaus
         favicon: Ikoni
+        header_snippets: Yläotsikot
         homepage_image: Kotisivun kuva
         logo: Logo
         name: Nimi
         official_img_footer: Virallinen alapalkin logo
         official_img_header: Virallinen yläpalkin logo
         official_url: Virallinen organisaation URL-osoite
+        reference_prefix: Viitteen etuliite
         show_statistics: Näytä tilastot
         welcome_text: Tervetuloa-teksti
-      participatory_process:
-        banner_image: Bannerikuva
-        description: Kuvaus
-        developer_group: Kehitysryhmä
-        domain: Toimintaympäristö
-        end_date: Lopetusaika
-        hashtag: Hashtag
-        hero_image: Kotisivun kuva
-        local_area: Paikallisalue
-        meta_scope: Kontekstin metadata
-        participatory_scope: Osallistumiskonteksti
-        participatory_structure: Osallistumisen rakenne
-        promoted: Korostettu
-        short_description: Lyhyt kuvaus
-        slug: URL-tunniste
-        subtitle: Alaotsikko
-        target: Kohde
-        title: Otsikko
-      participatory_process_step:
-        description: Kuvaus
-        end_date: Lopetusaika
-        short_description: Lyhyt kuvaus
-        start_date: Aloitusaika
-        title: Otsikko
-      participatory_process_user_role:
-        email: Sähköposti
       scope:
+        code: Koodi
         name: Nimi
         organization: Organisaatio
+        scope_type: Kontekstin tyyppi
+      scope_type:
+        name: Nimi
+        organization: Organisaatio
+        plural: Monikko
       static_page:
         content: Sisältö
         organization: Organisaatio
         slug: URL-tunniste
         title: Otsikko
-    errors:
-      messages:
-        invalid_json: Virheellinen JSON
   activerecord:
     attributes:
       decidim/participatory_process:
@@ -74,34 +54,41 @@ fi:
         hashtag: Hashtag
         hero_image: Etusivun kuva
         local_area: Paikallisalue
-        meta_scope: Kontekstin metadata
+        meta_scope: Kontekstin metatiedot
         participatory_scope: Osallistumisprosessi
         participatory_structure: Osallistumisprosessin rakenne
-        promoted: Korostettu
+        promoted: Oikeudet korotettu
         scope: Konteksti
         short_description: Lyhyt kuvaus
         slug: URL-tunniste
+        start_date: Aloitusaika
         subtitle: Alaotsikko
         target: Kohde
         title: Otsikko
+      decidim/participatory_process_group:
+        description: Kuvaus
+        hero_image: Etusivun kuva
+        name: Nimi
+        participatory_processes: Osallistumisprosessit
+      decidim/participatory_process_step:
+        end_date: Päättymisaika
+        start_date: Aloitusaika
       decidim/static_page:
         content: Sisältö
         slug: URL-tunniste
         title: Otsikko
+  date:
+    formats:
+      datepicker: "%d. %m. %Y"
   decidim:
     admin:
       actions:
-        activate: Aktivoi
-        configure: Asetukset
-        confirm_destroy: Haluatko varmasti poistaa tämän?
-        destroy: Tuhoa
-        edit: Muokkaa
+        add: Lisää
+        browse: Selaa
+        export: Vie
         manage: Hallitse
         permissions: Oikeudet
-        preview: Esikatsele
-        publish: Julkaise
-        resend_invitation: Lähetä kutsu uudelleen
-        unpublish: Lopeta julkaisu
+        reject: Hylkää
         verify: Vahvista
       attachments:
         create:
@@ -111,6 +98,9 @@ fi:
           success: Liite tuhottu onnistuneesti.
         edit:
           title: Muokkaa liitettä
+          update: Päivitä
+        index:
+          attachments_title: Liitteet
         new:
           create: Luo liite
           title: Uusi liite
@@ -126,12 +116,22 @@ fi:
           success: Kategoria poistettu onnistuneesti.
         edit:
           title: Muokkaa kategoriaa
+          update: Päivitä
+        index:
+          categories_title: Kategoriat
+          category_used: Tätä kategoriaa ei voida poistaa, koska se on käytössä.
         new:
           create: Luo kategoria
           title: Uusi kategoria
         update:
           error: Tämän kategorian luonnissa tapahtui virhe.
           success: Kategoria päivitetty onnistuneesti.
+      dashboard:
+        show:
+          welcome: Tervetuloa Decidimin uuteen hallintapaneeliin.
+      exports:
+        export_as: "%{name} muodossa %{export_format}"
+        notice: Tietojen vienti on käynnissä. Saat sähköpostiviestin, kun se valmistuu.
       feature_permissions:
         edit:
           everyone: Kaikki
@@ -150,6 +150,7 @@ fi:
           title: Muokkaa ominaisuutta
           update: Päivitä
         form:
+          default_step_settings: Oletusvaiheen asetukset
           global_settings: Globaalit asetukset
           step_settings: Vaiheen asetukset
         index:
@@ -169,20 +170,50 @@ fi:
         update:
           error: Tämän ominaisuuden päivityksessä tapahtui virhe.
           success: Ominaisuus päivitetty onnistuneesti.
+      managed_users:
+        close_session:
+          error: Toisena käyttäjänä esiintymisen istunnon sulkemisessa tapahtui virhe.
+          success: Toisena käyttäjänä esiintymisen istunto on onnistuneesti päätetty.
+        create:
+          error: Hallitun käyttäjän luonnissa tapahtui virhe.
+          success: Hallittu käyttäjä on luotu onnistuneesti.
+        form:
+          name: Nimi
+        impersonate:
+          error: Hallittuna käyttäjänä esiintymisessä tapahtui virhe.
+        impersonations:
+          new:
+            impersonate: Esiinny käyttäjänä
+            new_managed_user_impersonation: Uusi hallittuna käyttäjänä esiintyminen
+        index:
+          impersonate: Esiinny käyttäjänä
+          needs_authoriation_warning: Tällä organisaatiolla tulee olla vähintään yksi tunnistautumisväylä käytössä.
+          promote: Korota oikeudet
+          view_logs: Näytä lokitiedot
+        new:
+          create: Luo
+          new_managed_user: Uusi hallittu käyttäjä
+          select_authorization_method: Valitse tunnistautumistapa
+          step: Vaihe %{current} / %{total}
+        promotion:
+          error: Hallitun käyttäjän oikeuksien korotuksessa tapahtui virhe.
+          success: Hallitun käyttäjän taso on onnistuneesti korotettu.
+        promotions:
+          new:
+            explanation: Hallituille käyttäjille voidaan myöntää normaalien käyttäjien oikeudet. Tämä tarkoittaa, että heille lähetetään kutsu hakemusprosessiin ja tämän jälkeen kyseisinä tileinä ei voi enää esiintyä. Kutsutulle käyttäjälle lähetetään sähköposti, jonka avulla hän voi hyväksyä kutsusi.
+            new_managed_user_promotion: Uusi käyttäjätason korotus hallinnoidulle käyttäjälle
+            promote: Korota oikeudet
       menu:
+        admins: Ylläpitäjät
         dashboard: Hallintapaneeli
+        managed_users: Hallinnoitavat käyttäjät
         newsletters: Uutiskirjeet
-        participatory_processes_submenu:
-          attachments: Liitteet
-          categories: Kategoriat
-          features: Ominaisuudet
-          info: Tiedot
-          moderations: Moderointi
-          steps: Vaiheet
+        scope_types: Kontekstityypit
         scopes: Kontekstit
         settings: Asetukset
         static_pages: Sivut
         user_groups: Käyttäjäryhmät
+        users: Käyttäjät
       models:
         attachment:
           fields:
@@ -191,6 +222,15 @@ fi:
           name: Liite
         category:
           name: Kategoria
+        impersonation_log:
+          fields:
+            admin: Ylläpitäjä
+            ended_at: Päättynyt
+            expired_at: Vanhentunut
+            started_at: Aloitettu
+            user: Käyttäjä
+        managed_user:
+          name: Hallittu käyttäjä
         newsletter:
           fields:
             created_at: Luonnin ajankohta
@@ -198,28 +238,14 @@ fi:
             sent_at: Lähetyksen ajankohta
             subject: Otsikko
           name: Uutiskirje
-        participatory_process:
-          fields:
-            created_at: Luonnin ajankohta
-            promoted: Korostettu
-            published: Julkaistu
-            title: Otsikko
-          name: Osallistumisprosessi
-        participatory_process_group:
-          fields:
-            name: Nimi
-        participatory_process_step:
-          fields:
-            end_date: Lopetusaika
-            start_date: Aloitusaika
-            title: Otsikko
-          name: Osallistumisprosessin vaihe
-        participatory_process_user_role:
-          fields:
-            email: Sähköposti
         scope:
           fields:
             name: Nimi
+            scope_type: Kontekstin tyyppi
+        scope_type:
+          fields:
+            name: Nimi
+            plural: Monikko
         static_page:
           fields:
             created_at: Luonnin ajankohta
@@ -228,18 +254,30 @@ fi:
           fields:
             created_at: Luontipäivämäärä
             email: Sähköposti
-            invitation_accepted_at: Kutsun hyväksymispäivämäärä
-            invitation_sent_at: Kutsun lähetyspäivämäärä
             last_sign_in_at: Viimeisen kirjautumisen päivämäärä
             name: Nimi
+            role: Rooli
+            roles:
+              admin: Ylläpitäjä
+              user_manager: Käyttäjien hallinnoija
           name: Käyttäjä
         user_group:
           fields:
+            actions: Toiminnot
             created_at: Luonnin ajankohta
             document_number: Dokumentin numero
             name: Nimi
             phone: Puhelinnumero
+            state: Tila
             users_count: Käyttäjämäärä
+      moderations:
+        index:
+          title: Moderoinnit
+        report:
+          reasons:
+            does_not_belong: Ei kuulu
+            offensive: Loukkaava
+            spam: Roskaposti
       newsletters:
         create:
           error: Tämän uutiskirjeen luonnissa tapahtui virhe.
@@ -272,62 +310,35 @@ fi:
       organization:
         edit:
           title: Muokkaa organisaatiota
+          update: Päivitä
+        form:
+          current_image: Nykyinen kuva
+          facebook: Facebook
+          github: GitHub
+          header_snippets_help: Lisää kenttä tähän HTML-päähän. Yleisin käyttö on integroida kolmannen osapuolen palveluita, jotka edellyttävät ylimääräistä JavaScript- tai CSS-tekniikkaa. Voit myös käyttää sitä lisäämällä ylimääräisiä metakoodeja HTML-muotoon. Huomaa, että tämä tehdään vain julkisilla sivuilla, ei admin-osiossa.
+          instagram: Instagram
+          social_handlers: Sosiaalinen media
+          twitter: Twitter
+          url: URL
+          youtube: YouTube
         update:
           error: Tämän organisaation päivityksessä tapahtui virhe.
           success: Organisaatio päivitetty onnistuneesti.
-      participatory_process_groups:
+      scope_types:
+        create:
+          error: Uuden kontekstityypin luomisessa tapahtui virhe.
+          success: Kontekstin tyyppi luotu onnistuneesti.
         destroy:
-          success: Osallistumisprosessien ryhmä poistettu onnistuneesti.
+          success: Kontekstin tyyppi tuhottu onnistuneesti
         edit:
+          title: Muokkaa kontekstityyppiä
           update: Päivitä
         new:
-          create: Luo
+          create: Luo kontekstityyppi
+          title: Uusi konteksti
         update:
-          error: Tämän osallistumisprosessien ryhmän päivityksessä tapahtui virhe.
-          success: Osallistumisprosessien ryhmä päivitetty onnistuneesti.
-      participatory_process_publications:
-        create:
-          error: Tämän osallistumisprosessin julkaisussa tapahtui virhe.
-          success: Osallistumisprosessi julkaistu onnistuneesti.
-        destroy:
-          error: Tämän osallistumisprosessin julkaisun perumisessa tapahtui virhe.
-          success: Osallistumisprosessin julkaisu lopetettu onnistuneesti.
-      participatory_process_step_activations:
-        create:
-          error: Tämän osallistumisprosessin vaiheen aktivoinnissa tapahtui virhe.
-          success: Osallistumisprosessin vaihe aktivoitu onnistuneesti.
-      participatory_process_steps:
-        create:
-          error: Uuden osallistumisprosessin vaiheen luonnissa tapahtui virhe.
-          success: Osallistumisprosessin vaihe luotu onnistuneesti.
-        default_title: Johdanto
-        destroy:
-          error:
-            active_step: Aktiivista vaihetta ei voi poistaa.
-            last_step: Prosessin viimeistä vaihetta ei voi poistaa.
-          success: Osallistumisprosessin vaihe tuhottu onnistuneesti.
-        edit:
-          title: Muokkaa osallistumisprosessin vaihetta
-        new:
-          title: Uusi osallistumisprosessin vaihe
-        ordering:
-          error: Tämän osallistumisprosessin vaiheiden järjestämisessä tapahtui virhe.
-        update:
-          error: Tämän osallistumisprosessin vaiheen päivityksessä tapahtui virhe.
-          success: Osallistumisprosessin vaihe päivitetty onnistuneesti.
-      participatory_processes:
-        create:
-          error: Uuden osallistumisprosessin luonnissa tapahtui virhe.
-          success: Osallistumisprosessi luotu onnistuneesti. Määritä nyt sen vaiheet.
-        destroy:
-          success: Osallistumisprosessi tuhottu onnistuneesti.
-        update:
-          error: Tämän osallistumisprosessin päivityksessä tapahtui virhe.
-          success: Osallistumisprosessi päivitetty onnistuneesti.
-      participatory_processes_group:
-        create:
-          error: Uuden osallistumisprosessien ryhmän luonnissa tapahtui virhe.
-          success: Osallistumisprosessien ryhmä luotu onnistuneesti.
+          error: Kontekstityypin päivityksessä tapahtui virhe.
+          success: Kontekstityyppi päivitetty onnistuneesti
       scopes:
         create:
           error: Uuden kontekstin luonnissa tapahtui virhe.
@@ -336,9 +347,11 @@ fi:
           success: Konteksti tuhottu onnistuneesti
         edit:
           title: Muokkaa kontekstia
+          update: Päivitä
         new:
           create: Luo konteksti
           title: Uusi konteksti
+        no_scopes: Tällä tasolla ei ole konteksteja.
         update:
           error: Tämän kontekstin päivityksessä tapahtui virhe.
           success: Konteksti päivitetty onnistuneesti
@@ -352,19 +365,42 @@ fi:
           success: Sivu tuhottu onnistuneesti
         edit:
           title: Muokkaa sivua
+          update: Päivitä
         new:
+          create: Uusi
           title: Uusi sivu
         update:
           error: Tämän sivun päivityksessä tapahtui virhe.
           success: Sivu päivitetty onnistuneesti
       titles:
         dashboard: Hallintapaneeli
-        participatory_process_groups: Osallistumisprosessien ryhmät
-        participatory_processes: Osallistumisprosessit
+        impersonations: Esiintymiset käyttäjinä
+        managed_users: Hallinnoitavat käyttäjät
+        scope_types: Kontekstityypit
         scopes: Kontekstit
         static_pages: Sivut
         user_groups: Käyttäjäryhmät
         users: Käyttäjät
+      user_group:
+        reject:
+          invalid: Käyttäjäryhmän hylkäämisessä tapahtui virhe.
+          success: Käyttäjäryhmä hylätty onnistuneesti
+        verify:
+          invalid: Käyttäjäryhmän vahvistuksessa tapahtui virhe.
+          success: Käyttäjäryhmä vahvistaminen onnistui
+      user_groups:
+        index:
+          filter:
+            all: Kaikki
+            pending: Odottaa
+            rejected: Hylätty
+            verified: Vahvistettu
+          filter_by: Suodata
+          search: Etsi
+          state:
+            pending: Odottaa
+            rejected: Hylätty
+            verified: Vahvistettu
       users:
         create:
           error: Tämän käyttäjän kutsumisessa tapahtui virhe.
@@ -372,17 +408,19 @@ fi:
         destroy:
           error: Tämän käyttäjän poistamisessa tapahtui virhe.
           success: Käyttäjä ei ole enää hallinnoija.
+        form:
+          email: Sähköposti
+          name: Nimi
+          role: Rooli
         new:
           create: Kutsu
           title: Kutsu käyttäjä hallinnoijaksi
-        resend_invitation:
-          error: Kutsuviestin lähettämisessä tapahtui virhe.
-          success: Kutsuviesti lähetetty onnistuneesti.
     moderations:
       actions:
         hidden: Piilotettu
         hide: Piilota
         not_hidden: Näkyvillä
+        title: Toiminnot
         unreport: Poista raportointi
       admin:
         reportable:
@@ -396,11 +434,23 @@ fi:
         moderation:
           fields:
             hidden_at: Piilotuksen ajankohta
+            report_count: Määrä
             reportable: Raportoitava
+            reported_content_url: Raportoidun sisällön URL
             reports: Raportit
-    participatory_processes:
-      participatory_process_groups:
-        none: Ei ryhmää
+  errors:
+    messages:
+      invalid_json: Virheellinen JSON
+  layouts:
+    decidim:
+      admin:
+        newsletters:
+          title: Uutiskirjeet
+        settings:
+          title: Asetukset
+        users:
+          title: Käyttäjät
   time:
     formats:
+      datepicker: "%d. %m. %Y"
       timepicker: "%d/%m/%Y %H:%M"

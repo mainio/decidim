@@ -127,6 +127,14 @@ en:
         back_home: Back home
         content_doesnt_exist: This address is incorrect or has been removed.
         title: The page you're looking for can't be found
+    events:
+      email_event:
+        email_greeting: Hello %{user_name},
+        email_intro: 'There has been an update to "%{resource_title}". You can see it from this page:'
+        email_outro: You have received this notification because you are following "%{resource_title}". You can unfollow it from the previous link.
+        email_subject: An update to %{resource_title}
+      notification_event:
+        notification_title: An event occured to <a href="%{resource_path}">%{resource_title}</a>.
     export_mailer:
       export:
         ready: Please find attached a zipped version of your export.
@@ -153,26 +161,32 @@ en:
         project: Projects
         proposal: Proposals
         result: Results
+    follows:
+      create:
+        button: Follow
+        error: There has been an error following this resource.
+      destroy:
+        button: Stop following
+        error: There has been an error unfollowing this resource.
     forms:
       current_file: Current file
       current_image: Current image
       default_image: Default image
       errors:
         error: There's an error in this field.
+      remove_this_file: Remove this file
     managed_users:
       expired_session: The current impersonation session has expired.
     menu:
       home: Home
       more_information: More information
-      processes: Processes
     newsletter_mailer:
       newsletter:
         note: You received this email because you're subscribed to newsletters on %{organization_name}. You can change your settings on your <a href="%{link}">notifications page</a>.
     notifications_settings:
       show:
-        comments_notifications: I want to receive email notifications when someone comments in my publications.
+        email_on_notification: I want to receive an email every time I receive a notification.
         newsletter_notifications: I want to receive information about relevant activity
-        replies_notifications: I want to receive email notifications when someone replies my comments.
         update_notifications_settings: Save changes
       update:
         error: There's been an error updating your notifications settings.
@@ -185,43 +199,6 @@ en:
     pages:
       index:
         title: More information
-    participatory_process_groups:
-      show:
-        group_participatory_processes: Processes for %{group}
-        title: Title
-    participatory_process_steps:
-      index:
-        process_steps: Process steps
-        title: Participatory process steps
-    participatory_processes:
-      index:
-        title: Participatory processes
-      participatory_process_groups:
-        none: None
-      scopes:
-        global: Global scope
-      show:
-        developer_group: Developer group
-        end_date: End date
-        local_area: Local area
-        participatory_scope: Participatory scope
-        participatory_structure: Participatory structure
-        scope: Scope
-        target: Target
-      statistics:
-        answers_count: Answers
-        comments_count: Comments
-        headline: Activity
-        meetings_count: Meetings
-        orders_count: Orders
-        pages_count: Pages
-        processes_count: Processes
-        projects_count: Projects
-        proposals_count: Proposals
-        results_count: Results
-        surveys_count: Surveys
-        users_count: Participants
-        votes_count: Votes
     reported_mailer:
       hide:
         hello: Hello %{name},
@@ -237,8 +214,6 @@ en:
       create:
         error: An error ocurred while creating the report. Please, try it again.
         success: The report has been created successfully and it will be reviewed by an admin.
-    scopes:
-      global: Global scope
     shared:
       action_authorization_modal:
         incomplete:
@@ -268,6 +243,8 @@ en:
         report: Report
         spam: Contains clickbait, advertising, scams or script bots.
         title: Report a problem
+      follow_button:
+        sign_in_before_follow: Please sign in before performing this action
       login_modal:
         please_sign_in: Please sign in
         sign_up: Sign up
@@ -292,8 +269,9 @@ en:
         ignore: |-
           If you don't want to accept the invitation, please ignore this email.<br />
           Your account won't be created until you access the link above and set your password.
-        invited_you_as_admin: "%{invited_by} has invited you as an admin of %{application}, you can accept it through the link below."
-        someone_invited_you: Someone has invited you to %{application}, you can accept it through the link below.
+        invited_you_as_admin: "%{invited_by} has invited you as an admin of %{application}. You can accept it through the link below."
+        someone_invited_you: Someone has invited you to %{application}. You can accept it through the link below.
+        you_are_now_admin: You are now an admin
       invite_admin:
         subject: You've been invited to manage %{organization}
       invite_collaborator:
@@ -339,37 +317,13 @@ en:
         close_session: Close session
         description_html: You are impersonating the user <b>%{user_name}</b>.
         expire_time_html: Your session will expire in <b><span class="minutes">%{minutes}</span> minutes</b>.
-      participatory_process_groups:
-        participatory_process_group:
-          browse: Browse
-      participatory_process_widgets:
-        show:
-          active_step: Active step
-          take_part: Take part
-      participatory_processes:
-        index:
-          promoted_processes: Highlighted processes
-        no_processes_yet:
-          no_processes_yet: No participatory processes yet!
-        order_by_processes:
-          processes:
-            one: "%{count} process"
-            other: "%{count} processes"
-        participatory_process:
-          active_step: 'Current step:'
-          take_part: Take part
-        promoted_process:
-          active_step: 'Current step:'
-          more_info: More info
-          take_part: Take part
-      process_header:
-        process_menu_item: The process
-        unfold: Unfold
-      process_header_steps:
-        step: Step %{current} of %{total}
-        view_steps: View steps
+      notifications_dashboard:
+        mark_all_as_read: Mark all as read
+        no_notifications: No notifications yet.
+        title: Notifications
       user_menu:
         admin_dashboard: Admin dashboard
+        notifications: Notifications
         profile: My account
         sign_out: Sign out
       user_profile:

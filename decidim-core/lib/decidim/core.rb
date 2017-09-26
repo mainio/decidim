@@ -12,11 +12,12 @@ module Decidim
   autoload :FilterFormBuilder, "decidim/filter_form_builder"
   autoload :DeviseFailureApp, "decidim/devise_failure_app"
   autoload :FeatureManifest, "decidim/feature_manifest"
+  autoload :ParticipatorySpaceManifest, "decidim/participatory_space_manifest"
   autoload :ResourceManifest, "decidim/resource_manifest"
   autoload :Resourceable, "decidim/resourceable"
   autoload :Reportable, "decidim/reportable"
   autoload :Authorable, "decidim/authorable"
-  autoload :Notifiable, "decidim/notifiable"
+  autoload :Participable, "decidim/participable"
   autoload :Publicable, "decidim/publicable"
   autoload :Scopable, "decidim/scopable"
   autoload :Features, "decidim/features"
@@ -26,6 +27,7 @@ module Decidim
   autoload :HasFeature, "decidim/has_feature"
   autoload :HasScope, "decidim/has_scope"
   autoload :HasCategory, "decidim/has_category"
+  autoload :Followable, "decidim/followable"
   autoload :HasReference, "decidim/has_reference"
   autoload :Attributes, "decidim/attributes"
   autoload :StatsRegistry, "decidim/stats_registry"
@@ -36,6 +38,8 @@ module Decidim
   autoload :MenuRegistry, "decidim/menu_registry"
   autoload :ManifestRegistry, "decidim/manifest_registry"
   autoload :Abilities, "decidim/abilities"
+  autoload :EngineRouter, "decidim/engine_router"
+  autoload :Events, "decidim/events"
 
   include ActiveSupport::Configurable
 
@@ -52,11 +56,7 @@ module Decidim
       railtie.load_seed
     end
 
-    Decidim::ParticipatoryProcess.find_each do |process|
-      Decidim.feature_manifests.each do |feature|
-        feature.seed!(process)
-      end
-    end
+    Decidim.participatory_space_manifests.each(&:seed!)
 
     I18n.available_locales = original_locale
   end
@@ -90,7 +90,7 @@ module Decidim
 
   # Exposes a configuration option: The application available locales.
   config_accessor :available_locales do
-    %w(en ca es eu it fi fr nl)
+    %w(en ca es eu it fi fr nl uk)
   end
 
   # Exposes a configuration option: The application default locale.
@@ -113,7 +113,7 @@ module Decidim
   # 6589: ID of the resource
   config_accessor :resource_reference_generator do
     lambda do |resource, feature|
-      ref = feature.participatory_process.organization.reference_prefix
+      ref = feature.participatory_space.organization.reference_prefix
       class_identifier = resource.class.name.demodulize[0..3].upcase
       year_month = (resource.created_at || Time.current).strftime("%Y-%m")
 
@@ -136,6 +136,11 @@ module Decidim
     3
   end
 
+  # Allow organization's administrators to inject custom HTML into the frontend
+  config_accessor :enable_html_header_snippets do
+    true
+  end
+
   # A base path for the uploads. If set, make sure it ends in a slash.
   # Uploads will be set to `<base_path>/uploads/`. This can be useful if you
   # want to use the same uploads place for both staging and production
@@ -156,12 +161,35 @@ module Decidim
     feature_registry.register(name, &block)
   end
 
+  # Public: Registers a participatory space, usually held in an external library
+  # or in a separate folder in the main repository. Exposes a DSL defined by
+  # `Decidim::ParticipatorySpaceManifest`.
+  #
+  # Participatory space manifests are held in a global registry and are used in
+  # all kinds of places to figure out what new components or functionalities the
+  # participatory space provides.
+  #
+  # name - A Symbol with the participatory space's unique name.
+  #
+  # Returns nothing.
+  def self.register_participatory_space(name, &block)
+    participatory_space_registry.register(name, &block)
+  end
+
   # Public: Finds all registered feature manifest's via the `register_feature`
   # method.
   #
   # Returns an Array[FeatureManifest].
   def self.feature_manifests
     feature_registry.manifests
+  end
+
+  # Public: Finds all registered participatory space manifest's via the
+  # `register_participatory_space` method.
+  #
+  # Returns an Array[ParticipatorySpaceManifest].
+  def self.participatory_space_manifests
+    participatory_space_registry.manifests
   end
 
   # Public: Finds a feature manifest by the feature's name.
@@ -171,6 +199,16 @@ module Decidim
   # Returns a FeatureManifest if found, nil otherwise.
   def self.find_feature_manifest(name)
     feature_registry.find(name.to_sym)
+  end
+
+  # Public: Finds a participatory space manifest by the participatory space's
+  # name.
+  #
+  # name - The name of the ParticipatorySpaceManifest to find.
+  #
+  # Returns a ParticipatorySpaceManifest if found, nil otherwise.
+  def self.find_participatory_space_manifest(name)
+    participatory_space_registry.find(name.to_sym)
   end
 
   # Public: Finds a resource manifest by the resource's name.
@@ -186,6 +224,11 @@ module Decidim
   # Public: Stores the registry of features
   def self.feature_registry
     @feature_registry ||= ManifestRegistry.new(:features)
+  end
+
+  # Public: Stores the registry of participatory spaces
+  def self.participatory_space_registry
+    @participatory_space_registry ||= ManifestRegistry.new(:participatory_spaces)
   end
 
   # Public: Stores an instance of StatsRegistry

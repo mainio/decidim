@@ -33,7 +33,7 @@ describe "Explore results", type: :feature do
 
       context "when the process has a linked scope" do
         before do
-          participatory_process.update_attributes(scope: scope)
+          participatory_process.update_attributes!(scope: scope)
         end
 
         it "enables filtering by scope" do
@@ -47,7 +47,7 @@ describe "Explore results", type: :feature do
 
       context "when the process has no linked scope" do
         before do
-          participatory_process.update_attributes(scope: nil)
+          participatory_process.update_attributes!(scope: nil)
         end
 
         it "enables filtering by scope" do
@@ -117,7 +117,7 @@ describe "Explore results", type: :feature do
     context "with a category" do
       let(:result) do
         result = results.first
-        result.category = create :category, participatory_process: participatory_process
+        result.category = create :category, participatory_space: participatory_process
         result.save
         result
       end
@@ -184,7 +184,7 @@ describe "Explore results", type: :feature do
 
     context "with linked proposals" do
       let(:proposal_feature) do
-        create(:feature, manifest_name: :proposals, participatory_process: result.feature.participatory_process)
+        create(:feature, manifest_name: :proposals, participatory_space: result.feature.participatory_space)
       end
       let(:proposals) { create_list(:proposal, 3, feature: proposal_feature) }
 
@@ -205,7 +205,7 @@ describe "Explore results", type: :feature do
 
     context "with linked proposals" do
       let(:meeting_feature) do
-        create(:feature, manifest_name: :meetings, participatory_process: result.feature.participatory_process)
+        create(:feature, manifest_name: :meetings, participatory_space: result.feature.participatory_space)
       end
       let(:meetings) { create_list(:meeting, 3, feature: meeting_feature) }
 

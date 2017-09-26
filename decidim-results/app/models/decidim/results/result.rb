@@ -10,6 +10,7 @@ module Decidim
       include Decidim::HasScope
       include Decidim::HasCategory
       include Decidim::HasReference
+      include Decidim::Followable
       include Decidim::Comments::Commentable
 
       feature_manifest_name "results"
@@ -21,7 +22,7 @@ module Decidim
 
       # Public: Overrides the `accepts_new_comments?` Commentable concern method.
       def accepts_new_comments?
-        commentable? && !feature.active_step_settings.comments_blocked
+        commentable? && !feature.current_settings.comments_blocked
       end
 
       # Public: Overrides the `comments_have_alignment?` Commentable concern method.
@@ -34,14 +35,9 @@ module Decidim
         true
       end
 
-      # Public: Overrides the `notifiable?` Notifiable concern method.
-      def notifiable?(_context)
-        true
-      end
-
-      # Public: Overrides the `users_to_notify` Notifiable concern method.
-      def users_to_notify
-        Decidim::Admin::ProcessAdmins.for(feature.participatory_process)
+      # Public: Override Commentable concern method `users_to_notify_on_comment_created`
+      def users_to_notify_on_comment_created
+        (followers | feature.participatory_space.admins).uniq
       end
     end
   end

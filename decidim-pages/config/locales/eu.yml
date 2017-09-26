@@ -5,14 +5,14 @@ eu:
         name: Orria
         settings:
           global:
-            comments_enabled: Iruzkinak gaituta
+            announcement: Oharra
           step:
-            comments_blocked: Iruzkinak blokeatuta
+            announcement: Oharra
     pages:
       admin:
         models:
           components:
-            body: Testu-gorputza
+            body: Testua
         pages:
           edit:
             save: Eguneratu

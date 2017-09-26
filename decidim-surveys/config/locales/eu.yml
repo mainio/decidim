@@ -17,11 +17,9 @@ eu:
             announcement: Oharra
           step:
             allow_answers: Baimendu erantzunak
+            announcement: Oharra
     surveys:
       admin:
-        application_helper:
-          label_for_question:
-            question: Galdera
         exports:
           survey_user_answers: Inkesta erabiltzaile erantzunak
         models:

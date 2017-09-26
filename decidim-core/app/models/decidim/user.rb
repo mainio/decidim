@@ -18,9 +18,11 @@ module Decidim
     has_many :identities, foreign_key: "decidim_user_id", class_name: "Decidim::Identity"
     has_many :memberships, class_name: "Decidim::UserGroupMembership", foreign_key: :decidim_user_id
     has_many :user_groups, through: :memberships, class_name: "Decidim::UserGroup", foreign_key: :decidim_user_group_id
+    has_many :follows, foreign_key: "decidim_user_id", class_name: "Decidim::Follow", dependent: :destroy
+    has_many :notifications, foreign_key: "decidim_user_id", class_name: "Decidim::Notification", dependent: :destroy
 
     validates :name, presence: true, unless: -> { deleted? }
-    validates :locale, inclusion: { in: Decidim.available_locales.map(&:to_s) }, allow_blank: true
+    validates :locale, inclusion: { in: :available_locales }, allow_blank: true
     validates :tos_agreement, acceptance: true, allow_nil: false, on: :create
     validates :avatar, file_size: { less_than_or_equal_to: MAXIMUM_AVATAR_FILE_SIZE }
     validates :email, uniqueness: { scope: :organization }, unless: -> { deleted? || managed? }
@@ -62,6 +64,10 @@ module Decidim
       deleted_at.present?
     end
 
+    def follows?(followable)
+      Decidim::Follow.where(user: self, followable: followable).any?
+    end
+
     # Check if the user exists with the given email and the current organization
     #
     # warden_conditions - A hash with the authentication conditions
@@ -101,6 +107,10 @@ module Decidim
 
     def all_roles_are_valid
       errors.add(:roles, :invalid) unless roles.all? { |role| ROLES.include?(role) }
+    end
+
+    def available_locales
+      Decidim.available_locales.map(&:to_s)
     end
   end
 end

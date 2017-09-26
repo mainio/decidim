@@ -1,27 +1,24 @@
 fr:
-  activerecord:
-    errors:
-      messages:
-        cannot_have_comments: ne peut pas être commenté
   decidim:
     comments:
-      comment_notification_mailer:
+      events:
         comment_created:
-          new_comment_html: Un nouveau commentaire a été publié par <b>%{commenter}</b> dans <b>%{commentable_link}</b>
-        hello: Bonjour %{name},
-        manage_email_subscriptions_html: Vous pouvez arrêter de recevoir ces emails en modifiant vos paramètres dans %{link}.
-        notifications_settings_link: la page de configuration des notifications
-        reply_created:
-          new_reply_html: Il y a une nouvelle réponse à votre commentaire de <b>%{commenter}</b> dans <b>%{commentable_link}</b>
-      mailer:
-        comment_notification:
-          comment_created:
-            subject: Vous avez un nouveau commentaire
-          reply_created:
-            subject: Vous avez une nouvelle réponse à votre commentaire
+          comment:
+            email_intro: '"%{resource_title}" a reçu un commentaire'
+            email_outro: Vous recevez cet notification car vous suivez « %{resource_title} ». Vous pouvez cesser de le suivre en allant sur le lien précédent.
+            email_subject: Nouveau commentaire de %{author_name} dans <a href="%{resource_url}">%{resource_title}</a>
+            notification_title: Nouveau commentaire de %{author_name} dans <a href="%{resource_path}">%{resource_title}</a>
+          reply:
+            email_intro: '"%{resource_title}" a reçu un commentaire'
+            email_outro: Vous recevez cet notification car vous suivez « %{resource_title} ». Vous pouvez cesser de le suivre en allant sur le lien précédent.
+            email_subject: Votre commentaire a reçu une réponse de %{author_name} dans <a href="%{resource_url}">%{resource_title}</a>
+            notification_title: Votre commentaire a reçu une réponse de %{author_name} dans <a href="%{resource_path}">%{resource_title}</a>
+      votes:
+        create:
+          error: Une erreur s'est produite lors du vote sur le commentaire.
     components:
       add_comment_form:
-        account_message: 'Pour ajouter votre commentaire <a href="%{sign_in_url}"> identifiez vous avec votre compte</a> ou <a href="%{sign_up_url}">inscrivez-vous</a>. '
+        account_message: Pour ajouter votre commentaire <a href="%{sign_in_url}"> connectez-vous avec votre compte</a> ou <a href="%{sign_up_url}">inscrivez-vous</a>.
         form:
           body:
             label: Commentaire
@@ -32,11 +29,14 @@ fr:
             label: Commenter en tant que
         opinion:
           neutral: Neutre
+        remaining_characters: "%{count} caractères restants"
+        remaining_characters_1: "%{count} caractères restants"
         title: Ajoutez votre commentaire
       comment:
         alignment:
           against: Contre
           in_favor: Pour
+        deleted_user: Utilisateur supprimé
         reply: Répondre
         report:
           action: Signaler
@@ -49,6 +49,7 @@ fr:
             offensive: Contient des propos racistes, sexistes, des insultes, des attaques personnelles, des menaces de mort, des incitations au suicide ou toute forme de discours de haine.
             spam: Contient des piège-à-clic (clickbait), des publicités, des escroqueries ou des robots fonctionnant au script (script bots).
           title: Signaler un problème
+        verified_user_group: Organisation vérifiée
       comment_order_selector:
         order:
           best_rated: Les mieux notés
@@ -64,3 +65,6 @@ fr:
         title: "%{count} commentaires"
       featured_comment:
         title: Commentaire vedette
+  errors:
+    messages:
+      cannot_have_comments: ne peut pas être commenté

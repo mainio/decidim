@@ -1,30 +1,24 @@
 es:
-  activerecord:
-    errors:
-      messages:
-        cannot_have_comments: no puede tener comentarios
   decidim:
     comments:
-      comment_notification_mailer:
+      events:
         comment_created:
-          new_comment_html: Hay un nuevo comentario de <b>%{commenter}</b> en <b>%{commentable_link}</b>
-        hello: Hola %{name},
-        manage_email_subscriptions_html: Puedes dejar de recibir estos correos electrónicos cambiando la configuración en %{link}.
-        notifications_settings_link: la página de configuración de las notificaciones
-        reply_created:
-          new_reply_html: Hay una nueva respuesta de tu comentario de <b>%{commenter}</b> en <b>%{commentable_link}</b>
-      mailer:
-        comment_notification:
-          comment_created:
-            subject: Tienes un nuevo comentario
-          reply_created:
-            subject: Uno de tus comentarios ha recibido respuesta
+          comment:
+            email_intro: Se ha comentado en "%{resource_title}"
+            email_outro: Has recibido esta notificación porque sigues "%{resource_title}". Puedes dejar de seguirlo en el enlace anterior.
+            email_subject: Hay un nuevo comentario de %{author_name} en <a href="%{resource_url}">%{resource_title}</a>
+            notification_title: Hay un nuevo comentario de %{author_name} en <a href="%{resource_path}">%{resource_title}</a>
+          reply:
+            email_intro: Se ha comentado en "%{resource_title}"
+            email_outro: Has recibido esta notificación porque sigues "%{resource_title}". Puedes dejar de seguirlo en el enlace anterior.
+            email_subject: Hay una nueva respuesta a tu comentario de %{author_name} en <a href="%{resource_url}">%{resource_title}</a>
+            notification_title: Hay una nueva respuesta a su comentario de %{author_name} en <a href="%{resource_path}">%{resource_title}</a>
       votes:
         create:
           error: Ha habido errores al votar el comentario.
     components:
       add_comment_form:
-        account_message: "<a href=\"%{sign_in_url}\">Entra con tu cuenta</a> o <a href=\"%{sign_up_url}\">regístrate</a> para dejar tu comentario.\n"
+        account_message: <a href="%{sign_in_url}">Inicia sesión con tu cuenta</a> o <a href="%{sign_up_url}">regístrate</a> para añadir tu comentario.
         form:
           body:
             label: Comentario
@@ -71,3 +65,6 @@ es:
         title: "%{count} comentarios"
       featured_comment:
         title: Comentario destacado
+  errors:
+    messages:
+      cannot_have_comments: no puede tener comentarios

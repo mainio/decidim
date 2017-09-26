@@ -27,11 +27,14 @@ FactoryGirl.define do
   factory :category, class: Decidim::Category do
     name { Decidim::Faker::Localized.sentence(3) }
     description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(2) } }
-    participatory_process
+
+    association :participatory_space, factory: :participatory_process
   end
 
   factory :subcategory, parent: :category do
     parent { build(:category) }
+
+    participatory_space { parent.participatory_space }
   end
 
   factory :organization, class: Decidim::Organization do
@@ -54,76 +57,6 @@ FactoryGirl.define do
     official_url { Faker::Internet.url }
   end
 
-  factory :participatory_process, class: Decidim::ParticipatoryProcess do
-    title { Decidim::Faker::Localized.sentence(3) }
-    slug { generate(:slug) }
-    subtitle { Decidim::Faker::Localized.sentence(1) }
-    short_description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(2) } }
-    description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(4) } }
-    hero_image { Decidim::Dev.test_file("city.jpeg", "image/jpeg") }
-    banner_image { Decidim::Dev.test_file("city2.jpeg", "image/jpeg") }
-    published_at { Time.current }
-    organization
-    meta_scope { Decidim::Faker::Localized.word }
-    developer_group { Decidim::Faker::Localized.sentence(1) }
-    local_area { Decidim::Faker::Localized.sentence(2) }
-    target { Decidim::Faker::Localized.sentence(3) }
-    participatory_scope { Decidim::Faker::Localized.sentence(1) }
-    participatory_structure { Decidim::Faker::Localized.sentence(2) }
-    end_date 2.month.from_now.at_midnight
-    show_statistics true
-
-    trait :promoted do
-      promoted true
-    end
-
-    trait :unpublished do
-      published_at nil
-    end
-
-    trait :published do
-      published_at { Time.current }
-    end
-
-    trait :with_steps do
-      transient { current_step_ends 1.month.from_now }
-
-      after(:create) do |participatory_process, evaluator|
-        create(:participatory_process_step,
-               active: true,
-               end_date: evaluator.current_step_ends,
-               participatory_process: participatory_process)
-        participatory_process.reload
-        participatory_process.steps.reload
-      end
-    end
-  end
-
-  factory :participatory_process_group, class: Decidim::ParticipatoryProcessGroup do
-    name { Decidim::Faker::Localized.sentence(3) }
-    description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(4) } }
-    hero_image { Decidim::Dev.test_file("city.jpeg", "image/jpeg") }
-    organization
-  end
-
-  factory :participatory_process_step, class: Decidim::ParticipatoryProcessStep do
-    title { Decidim::Faker::Localized.sentence(3) }
-    description { Decidim::Faker::Localized.wrapped("<p>", "</p>") { Decidim::Faker::Localized.sentence(4) } }
-    start_date 1.month.ago.at_midnight
-    end_date 2.month.from_now.at_midnight
-    position nil
-    participatory_process
-
-    after(:create) do |step, _evaluator|
-      step.participatory_process.reload
-      step.participatory_process.steps.reload
-    end
-
-    trait :active do
-      active true
-    end
-  end
-
   factory :user, class: Decidim::User do
     email { generate(:email) }
     password "password1234"
@@ -133,8 +66,6 @@ FactoryGirl.define do
     locale { organization.default_locale }
     tos_agreement "1"
     avatar { Decidim::Dev.test_file("avatar.jpg", "image/jpeg") }
-    comments_notifications true
-    replies_notifications true
 
     trait :confirmed do
       confirmed_at { Time.current }
@@ -286,10 +217,14 @@ FactoryGirl.define do
   end
 
   factory :feature, class: Decidim::Feature do
+    transient do
+      organization { create(:organization) }
+    end
+
     name { Decidim::Faker::Localized.sentence(3) }
-    participatory_process
+    participatory_space { create(:participatory_process, organization: organization) }
     manifest_name "dummy"
-    published_at { Time.now }
+    published_at { Time.current }
 
     trait :unpublished do
       published_at { nil }
@@ -321,7 +256,7 @@ FactoryGirl.define do
     end
   end
 
-  factory :dummy_resource, class: Decidim::DummyResource do
+  factory :dummy_resource, class: Decidim::DummyResources::DummyResource do
     title { generate(:name) }
     feature { create(:feature, manifest_name: "dummy") }
     author { create(:user, :confirmed, organization: feature.organization) }
@@ -343,7 +278,7 @@ FactoryGirl.define do
 
   factory :moderation, class: Decidim::Moderation do
     reportable { build(:dummy_resource) }
-    participatory_process { reportable.feature.participatory_process }
+    participatory_space { reportable.feature.participatory_space }
   end
 
   factory :report, class: Decidim::Report do
@@ -356,5 +291,32 @@ FactoryGirl.define do
     admin { build(:user, :admin) }
     user { build(:user, :managed, organization: admin.organization) }
     started_at Time.current
+  end
+
+  factory :follow, class: "Decidim::Follow" do
+    user do
+      build(
+        :user,
+        organization: followable.try(:organization) || build(:organization)
+      )
+    end
+    followable { build(:dummy_resource) }
+  end
+
+  factory :notification, class: "Decidim::Notification" do
+    user do
+      build(
+        :user,
+        organization: resource.try(:organization) || build(:organization)
+      )
+    end
+    resource { build(:dummy_resource) }
+    event_name { resource.class.name.underscore.tr("/", ".") }
+    event_class { "Decidim::DummyResourceEvent" }
+    extra do
+      {
+        some_extra_data: "1"
+      }
+    end
   end
 end

@@ -27,7 +27,7 @@ ca:
           success: L'administrador s'ha actualitzat correctament
       default_pages:
         placeholders:
-          content: Si us plau, afegeix contingut significatiu a aquesta pàgina des del tauler de control.
+          content: Si us plau, afegeix contingut significatiu a la pàgina estàtica de %{page} dins el panell d'administració.
           title: Títol predeterminat per %{page}
       menu:
         admins: Administradors
@@ -48,8 +48,6 @@ ca:
             created_at: Data de creació
             name: Nom
           name: Organització
-        page:
-          name: pàgina
       organizations:
         create:
           error: S'ha produït un error en crear una nova organització.
@@ -59,6 +57,7 @@ ca:
         index:
           title: Organitzacions
         new:
+          reference_prefix_hint: El prefix de la referència s'utilitza per identificar de manera única recursos a totes les organitzacions
           secondary_hosts_hint: Introdueix cada un d'ells en una nova línia
           title: Nova organització
         update:

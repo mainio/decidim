@@ -1,27 +1,24 @@
 it:
-  activerecord:
-    errors:
-      messages:
-        cannot_have_comments: non si possono fare commenti
   decidim:
     comments:
-      comment_notification_mailer:
+      events:
         comment_created:
-          new_comment_html: C'è un nuovo commento da parte di <b>%{commenter}</b> al link <b>%{commentable_link}</b>
-        hello: Ciao %{name},
-        manage_email_subscriptions_html: Puoi bloccare la ricezione di questo tipo di email variando le impostazioni su %{link}.
-        notifications_settings_link: pagina per le impostazioni delle notifiche
-        reply_created:
-          new_reply_html: C'è una nuova risposta al tuo commento da parte di <b>%{commenter}</b> in <b>%{commentable_link}</b>
-      mailer:
-        comment_notification:
-          comment_created:
-            subject: C'è un nuovo commento
-          reply_created:
-            subject: Hai ricevuto una nuova risposta ad un tuo commento
+          comment:
+            email_intro: Il "%{resource_title}" è stato commentato
+            email_outro: Hai ricevuto questa notifica perché state seguendo "%{resource_title}". Puoi disconnetterlo dal link precedente.
+            email_subject: C'è un nuovo commento da %{author_name} in <a href="%{resource_url}">%{resource_title}</a>
+            notification_title: C'è un nuovo commento da %{author_name} in <a href="%{resource_path}">%{resource_title}</a>
+          reply:
+            email_intro: Il "%{resource_title}" è stato commentato
+            email_outro: Hai ricevuto questa notifica perché state seguendo "%{resource_title}". Puoi disconnetterlo dal link precedente.
+            email_subject: Vi è una nuova risposta del tuo commento da %{author_name} in <a href="%{resource_url}">%{resource_title}</a>
+            notification_title: Vi è una nuova risposta del tuo commento da %{author_name} in <a href="%{resource_path}">%{resource_title}</a>
+      votes:
+        create:
+          error: Ci sono stati errori durante la votazione del commento.
     components:
       add_comment_form:
-        account_message: '<a href="%{sign_in_url}">Entra col tuo account</a> or <a href="%{sign_up_url}">Registrati</a> per poter commentare. '
+        account_message: <a href="%{sign_in_url}">Connessione con il tuo account</a> o <a href="%{sign_up_url}">Sign up</a> per aggiungere il tuo commento.
         form:
           body:
             label: Commenta
@@ -32,13 +29,17 @@ it:
             label: Commenta come
         opinion:
           neutral: Neutro
+        remaining_characters: "%{count} caratteri rimasti"
+        remaining_characters_1: "%{count} carattere sinistro"
         title: Aggiungi il tuo commento
       comment:
         alignment:
           against: Contro
           in_favor: A favore
+        deleted_user: Utente cancellato
         reply: Rispondi
         report:
+          action: Report
           already_reported: Questo contenuto è già stato indicato e sarà revisionato da un utente Admnistrator.
           close: Chiudi
           description: Trovi questo contenuto inappropriato?
@@ -48,6 +49,7 @@ it:
             offensive: Vi sono contenuti razzisti, sessisti, offensivi, attacchi di carattere personale, minacce di morte o altro tipo di minacci, istigazioni al suicidio o altre forme d'odio verbale.
             spam: Contiene pubblicità, truffe, clickbait ("esca da click") o altro contenuto mirato ad attrarre traffico internet.
           title: Segnala un problema
+        verified_user_group: Organizzazione verificata
       comment_order_selector:
         order:
           best_rated: Favoriti
@@ -63,3 +65,6 @@ it:
         title: "%{count} commenti"
       featured_comment:
         title: Commento in primo piano
+  errors:
+    messages:
+      cannot_have_comments: non si possono fare commenti

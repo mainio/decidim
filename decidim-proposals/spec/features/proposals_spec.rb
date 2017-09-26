@@ -6,7 +6,7 @@ describe "Proposals", type: :feature do
   include_context "feature"
   let(:manifest_name) { "proposals" }
 
-  let!(:category) { create :category, participatory_process: participatory_process }
+  let!(:category) { create :category, participatory_space: participatory_process }
   let!(:scope) { create :scope, organization: participatory_process.organization }
   let!(:user) { create :user, :confirmed, organization: participatory_process.organization }
 
@@ -32,12 +32,12 @@ describe "Proposals", type: :feature do
           create(:proposal_feature,
                  :with_creation_enabled,
                  manifest: manifest,
-                 participatory_process: participatory_process)
+                 participatory_space: participatory_process)
         end
 
         context "when process is not related to any scope" do
           before do
-            participatory_process.update_attributes(scope: nil)
+            participatory_process.update_attributes!(scope: nil)
           end
 
           it "can be related to a scope" do
@@ -52,7 +52,7 @@ describe "Proposals", type: :feature do
 
         context "when process is related to any scope" do
           before do
-            participatory_process.update_attributes(scope: scope)
+            participatory_process.update_attributes!(scope: scope)
           end
 
           it "cannot be related to a scope" do
@@ -93,7 +93,7 @@ describe "Proposals", type: :feature do
                    :with_creation_enabled,
                    :with_geocoding_enabled,
                    manifest: manifest,
-                   participatory_process: participatory_process)
+                   participatory_space: participatory_process)
           end
 
           it "creates a new proposal" do
@@ -158,7 +158,7 @@ describe "Proposals", type: :feature do
                      :with_creation_enabled,
                      :with_geocoding_enabled,
                      manifest: manifest,
-                     participatory_process: participatory_process)
+                     participatory_space: participatory_process)
             end
 
             it "creates a new proposal as a user group" do
@@ -192,7 +192,13 @@ describe "Proposals", type: :feature do
 
         context "when the user isn't authorized" do
           before do
-            feature.update_attribute(:permissions, create: { authorization_handler_name: "decidim/dummy_authorization_handler" })
+            permissions = {
+              create: {
+                authorization_handler_name: "decidim/dummy_authorization_handler"
+              }
+            }
+
+            feature.update_attributes!(permissions: permissions)
           end
 
           it "should show a modal dialog" do
@@ -208,7 +214,7 @@ describe "Proposals", type: :feature do
                    :with_creation_enabled,
                    :with_attachments_allowed,
                    manifest: manifest,
-                   participatory_process: participatory_process)
+                   participatory_space: participatory_process)
           end
 
           it "creates a new proposal with attachments" do
@@ -246,7 +252,7 @@ describe "Proposals", type: :feature do
     let!(:feature) do
       create(:proposal_feature,
              manifest: manifest,
-             participatory_process: participatory_process)
+             participatory_space: participatory_process)
     end
 
     let!(:proposals) { create_list(:proposal, 3, feature: feature) }
@@ -268,7 +274,7 @@ describe "Proposals", type: :feature do
       let!(:proposal) { create(:proposal, feature: feature, scope: scope) }
 
       before do
-        participatory_process.update_attributes(scope: nil)
+        participatory_process.update_attributes!(scope: nil)
       end
 
       it "can be filtered by scope" do
@@ -282,7 +288,7 @@ describe "Proposals", type: :feature do
       let!(:proposal) { create(:proposal, feature: feature, scope: scope) }
 
       before do
-        participatory_process.update_attributes(scope: scope)
+        participatory_process.update_attributes!(scope: scope)
       end
 
       it "does not show the scope name" do
@@ -320,7 +326,7 @@ describe "Proposals", type: :feature do
     context "when a proposal has been linked in a meeting" do
       let(:proposal) { create(:proposal, feature: feature) }
       let(:meeting_feature) do
-        create(:feature, manifest_name: :meetings, participatory_process: proposal.feature.participatory_process)
+        create(:feature, manifest_name: :meetings, participatory_space: proposal.feature.participatory_space)
       end
       let(:meeting) { create(:meeting, feature: meeting_feature) }
 
@@ -339,7 +345,7 @@ describe "Proposals", type: :feature do
     context "when a proposal has been linked in a result" do
       let(:proposal) { create(:proposal, feature: feature) }
       let(:result_feature) do
-        create(:feature, manifest_name: :results, participatory_process: proposal.feature.participatory_process)
+        create(:feature, manifest_name: :results, participatory_space: proposal.feature.participatory_space)
       end
       let(:result) { create(:result, feature: result_feature) }
 
@@ -412,11 +418,11 @@ describe "Proposals", type: :feature do
     let(:feature) do
       create(:proposal_feature,
              manifest: manifest,
-             participatory_process: participatory_process)
+             participatory_space: participatory_process)
     end
     let(:proposal) { create(:proposal, feature: feature) }
     let(:budget_feature) do
-      create(:feature, manifest_name: :budgets, participatory_process: proposal.feature.participatory_process)
+      create(:feature, manifest_name: :budgets, participatory_space: proposal.feature.participatory_space)
     end
     let(:project) { create(:project, feature: budget_feature) }
 
@@ -450,7 +456,7 @@ describe "Proposals", type: :feature do
     it "lists all the proposals" do
       create(:proposal_feature,
              manifest: manifest,
-             participatory_process: participatory_process)
+             participatory_space: participatory_process)
 
       create_list(:proposal, 3, feature: feature)
 
@@ -467,7 +473,7 @@ describe "Proposals", type: :feature do
         create(:proposal_feature,
                :with_votes_blocked,
                manifest: manifest,
-               participatory_process: participatory_process)
+               participatory_space: participatory_process)
       end
 
       let!(:most_voted_proposal) do
@@ -497,7 +503,7 @@ describe "Proposals", type: :feature do
         create(:proposal_feature,
                :with_votes_disabled,
                manifest: manifest,
-               participatory_process: participatory_process)
+               participatory_space: participatory_process)
       end
 
       describe "order" do
@@ -536,7 +542,7 @@ describe "Proposals", type: :feature do
     context "when filtering" do
       context "when official_proposals setting is enabled" do
         before do
-          feature.update_attributes(settings: { official_proposals_enabled: true })
+          feature.update_attributes!(settings: { official_proposals_enabled: true })
         end
 
         it "can be filtered by origin" do
@@ -580,7 +586,7 @@ describe "Proposals", type: :feature do
 
       context "when official_proposals setting is not enabled" do
         before do
-          feature.update_attributes(settings: { official_proposals_enabled: false })
+          feature.update_attributes!(settings: { official_proposals_enabled: false })
         end
 
         it "cannot be filtered by origin" do
@@ -611,7 +617,7 @@ describe "Proposals", type: :feature do
         context "selecting the global scope" do
           it "lists the filtered proposals" do
             within ".filters" do
-              select2("Global scope", xpath: '//select[@id="filter_scope_id"]/..', search: true)
+              select2("Global scope", xpath: '//select[@id="filter_scope_id"]/..', search: false)
             end
 
             expect(page).to have_css(".card--proposal", count: 1)
@@ -634,7 +640,7 @@ describe "Proposals", type: :feature do
           it "lists the filtered proposals" do
             within ".filters" do
               select2(translated(scope.name), xpath: '//select[@id="filter_scope_id"]/..', search: true)
-              select2("Global scope", xpath: '//select[@id="filter_scope_id"]/..', search: true)
+              select2("Global scope", xpath: '//select[@id="filter_scope_id"]/..', search: false)
             end
 
             expect(page).to have_css(".card--proposal", count: 3)
@@ -645,7 +651,7 @@ describe "Proposals", type: :feature do
 
       context "when process is related to a scope" do
         before do
-          participatory_process.update_attributes(scope: scope)
+          participatory_process.update_attributes!(scope: scope)
         end
 
         it "cannot be filtered by scope" do
@@ -659,14 +665,14 @@ describe "Proposals", type: :feature do
 
       context "when proposal_answering feature setting is enabled" do
         before do
-          feature.update_attributes(settings: { proposal_answering_enabled: true })
+          feature.update_attributes!(settings: { proposal_answering_enabled: true })
         end
 
         context "when proposal_answering step setting is enabled" do
           before do
-            feature.update_attributes(
+            feature.update_attributes!(
               step_settings: {
-                feature.participatory_process.active_step.id => {
+                feature.participatory_space.active_step.id => {
                   proposal_answering_enabled: true
                 }
               }
@@ -720,9 +726,9 @@ describe "Proposals", type: :feature do
 
         context "when proposal_answering step setting is disabled" do
           before do
-            feature.update_attributes(
+            feature.update_attributes!(
               step_settings: {
-                feature.participatory_process.active_step.id => {
+                feature.participatory_space.active_step.id => {
                   proposal_answering_enabled: false
                 }
               }
@@ -741,7 +747,7 @@ describe "Proposals", type: :feature do
 
       context "when proposal_answering feature setting is not enabled" do
         before do
-          feature.update_attributes(settings: { proposal_answering_enabled: false })
+          feature.update_attributes!(settings: { proposal_answering_enabled: false })
         end
 
         it "cannot be filtered by state" do
@@ -779,7 +785,7 @@ describe "Proposals", type: :feature do
           create(:proposal_feature,
                  :with_votes_enabled,
                  manifest: manifest,
-                 participatory_process: participatory_process)
+                 participatory_space: participatory_process)
         end
 
         it "lists the proposals ordered by votes" do

@@ -5,9 +5,9 @@ fi:
         name: Sivu
         settings:
           global:
-            comments_enabled: Kommentointi sallittu
+            announcement: Ilmoitus
           step:
-            comments_blocked: Kommentointi estetty
+            announcement: Ilmoitus
     pages:
       admin:
         models:
@@ -15,6 +15,7 @@ fi:
             body: Runko
         pages:
           edit:
+            save: Päivitä
             title: Muokkaa sivua
           update:
             invalid: Sivun tallennuksessa oli virheitä.

@@ -1,27 +1,24 @@
 fi:
-  activerecord:
-    errors:
-      messages:
-        cannot_have_comments: ei voi poistaa kommentteja
   decidim:
     comments:
-      comment_notification_mailer:
+      events:
         comment_created:
-          new_comment_html: Uusi kommentti henkilöltä <b>%{commenter}</b> osoitteessa <b>%{commentable_link}</b>
-        hello: Hei %{name},
-        manage_email_subscriptions_html: 'Voit lopettaa näiden viestien vastaanottamisen vaihtamalla asetuksiasi osoitteessa: %{link}.'
-        notifications_settings_link: ilmoitusten asetussivu
-        reply_created:
-          new_reply_html: Henkilö <b>%{commenter}</b> on vastannut kommenttiisi osoitteessa <b>%{commentable_link}</b>
-      mailer:
-        comment_notification:
-          comment_created:
-            subject: Sinulla on uusi kommentti
-          reply_created:
-            subject: Kommenttiisi on vastattu
+          comment:
+            email_intro: Kommentoi "%{resource_title}"
+            email_outro: Olet saanut tämän ilmoituksen, koska seuraat "%{resource_title}". Voit purkaa sen edellisestä linkistä.
+            email_subject: '%{author_name}: ssa on uusi kommentti <a href="%{resource_url}">%{resource_title}</a>'
+            notification_title: '%{author_name}: ssa on uusi kommentti <a href="%{resource_path}">%{resource_title}</a>'
+          reply:
+            email_intro: Kommentoi "%{resource_title}"
+            email_outro: Olet saanut tämän ilmoituksen, koska seuraat "%{resource_title}". Voit purkaa sen edellisestä linkistä.
+            email_subject: 'Kommenttisi on uusi vastaus %{author_name}: sta <a href="%{resource_url}">%{resource_title}</a>'
+            notification_title: 'Kommenttisi on uusi vastaus %{author_name}: sta <a href="%{resource_path}">%{resource_title}</a>'
+      votes:
+        create:
+          error: Äänestettäessä kommenttia tapahtui virhe.
     components:
       add_comment_form:
-        account_message: "<a href=\"%{sign_in_url}\">Kirjaudu sisään käyttäjätililläsi</a> tai <a href=\"%{sign_up_url}\">luo käyttäjätili</a> kommentoidaksesi.\n"
+        account_message: <a href="%{sign_in_url}">Kirjaudu tilillesi</a> tai <a href="%{sign_up_url}">kirjaudu</a> lisätäksesi kommenttisi.
         form:
           body:
             label: Kommentti
@@ -32,11 +29,14 @@ fi:
             label: Kommentoi käyttäjänä
         opinion:
           neutral: Neutraali
+        remaining_characters: "%{count} merkkiä jäljellä"
+        remaining_characters_1: "%{count} merkki jäljellä"
         title: Lisää kommenttisi
       comment:
         alignment:
           against: Vastaan
           in_favor: Puolesta
+        deleted_user: Poistettu käyttäjä
         reply: Vastaa
         report:
           action: Raportoi
@@ -49,6 +49,7 @@ fi:
             offensive: Sisältää rasismia, seksismiä, haukkumista, henkilökohtaisia hyökkäyksiä, tappouhkauksia, itsemurhapyyntöjä tai muuta vihapuhetta.
             spam: Sisältää klikkihoukutteita, mainostusta, huijauksia tai bottiskriptejä.
           title: Raportoi ongelmasta
+        verified_user_group: Vahvistettu organisaatio
       comment_order_selector:
         order:
           best_rated: Parhaiksi arvioidut
@@ -64,3 +65,6 @@ fi:
         title: "%{count} kommenttia"
       featured_comment:
         title: Esille nostettu kommentti
+  errors:
+    messages:
+      cannot_have_comments: ei voi poistaa kommentteja

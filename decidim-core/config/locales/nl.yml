@@ -1,6 +1,8 @@
 nl:
   activemodel:
     attributes:
+      account:
+        delete_reason: Reden om je account te verwijderen
       report:
         details: Aanvullende opmerkingen
       user:
@@ -8,6 +10,7 @@ nl:
         name: Uw naam
         password: Nieuw wachtwoord
         password_confirmation: Bevestig uw nieuwe wachtwoord
+        remove_avatar: Verwijder avatar
         user_group_document_number: Organisatie documentnummer
         user_group_name: Naam van de organisatie
         user_group_phone: Telefoon organisatie
@@ -31,6 +34,17 @@ nl:
       image_too_big: De afbeelding is te groot
   decidim:
     account:
+      delete:
+        alert: Deze actie kan niet ongedaan gemaakt worden. Als u uw account verwijdert, kunt u zich niet aanmelden.
+        confirm:
+          close: Sluit dit scherm
+          ok: Ja, ik wil mijn account verwijderen
+          question: Weet u zeker dat u uw account wilt verwijderen?
+          title: Verwijder mijn account
+        explanation: Vul alstublieft de reden in waarom u uw account wilt verwijderen (optioneel).
+      destroy:
+        error: Er is een fout opgetreden bij het verwijderen van uw account.
+        success: Uw account is succesvol verwijderd.
       show:
         change_password: Wachtwoord wijzigen
         update_account: Account bijwerken
@@ -104,6 +118,26 @@ nl:
       shared:
         omniauth_buttons:
           or: Of
+    errors:
+      internal_server_error:
+        title: Er was een probleem met de server
+        try_later: Probeer het later opnieuw.
+      not_found:
+        back_home: Terug naar huis
+        content_doesnt_exist: Dit adres is onjuist of is verwijderd.
+        title: De pagina die u zoekt is niet gevonden
+    events:
+      email_event:
+        email_greeting: Hallo %{user_name},
+        email_intro: 'Er is een update aan "%{resource_title}". Je ziet het vanaf deze pagina:'
+        email_outro: U ontvangt dit bericht omdat u "%{resource_title}" volgen. Je kunt het unfollow uit de vorige koppeling.
+        email_subject: Een update aan %{resource_title}
+      notification_event:
+        notification_title: Een gebeurtenis heeft plaatsgevonden om te <a href="%{resource_path}">%{resource_title}</a>.
+    export_mailer:
+      export:
+        ready: Hierbij vindt u een bijgevoegde versie van uw export.
+      subject: Uw export "%{name}" is klaar
     features:
       dummy:
         actions:
@@ -126,60 +160,54 @@ nl:
         project: Projecten
         proposal: Voorstellen
         result: Resultaten
+    follows:
+      create:
+        button: Ga als volgt te
+        error: Er is een fout opgetreden na deze bron.
+      destroy:
+        button: Stop volgende
+        error: Er is een fout opgetreden unfollowing van deze resource.
     forms:
+      current_file: Huidig ​​bestand
+      current_image: Huidig ​​beeld
+      default_image: Standaard afbeelding
       errors:
         error: Er is een fout in dit veld.
+      remove_this_file: Verwijder dit bestand
+    managed_users:
+      expired_session: De huidige impersonatie sessie is verlopen.
     menu:
       home: Home
       more_information: Meer informatie
-      processes: Processen
     newsletter_mailer:
       newsletter:
         note: U ontvangt deze e-mail omdat u bent geabonneerd op nieuwsbrieven van %{organization_name}. U kunt uw instellingen op uw <a href="%{link}">notificatiepagina</a> veranderen.
     notifications_settings:
       show:
-        comments_notifications: Ik wil e-mail ontvangen wanneer iemand reageert in mijn publicaties.
+        email_on_notification: Ik wil ontvangen een e-mail telkens als ik een melding ontvangt.
         newsletter_notifications: Ik wil informatie ontvangen over relevante activiteiten
-        replies_notifications: Ik wil e-mail ontvangen wanneer iemand reageert op mijn reacties.
         update_notifications_settings: Wijzigingen opslaan
       update:
         error: Er is een fout opgetreden bij het bijwerken van uw notificatie instellingen.
         success: Uw notificatie instellingen zijn bijgewerkt.
     own_user_groups:
       index:
+        pending: In afwachting
+        rejected: Verworpen
         verified: Geverifieerd
     pages:
       index:
         title: Meer informatie
-    participatory_process_groups:
-      show:
-        group_participatory_processes: Processen voor %{group}
-        title: Titel
-    participatory_process_steps:
-      index:
-        process_steps: Processtappen
-        title: Participatieve processtappen
-    participatory_processes:
-      index:
-        title: Participatieve processen
-      participatory_process_groups:
-        none: Geen
-      scopes:
-        global: Globaal bereik
-      show:
-        developer_group: Ontwikkelaarsgroep
-        end_date: Einddatum
-        local_area: Lokale buurt
-        participatory_scope: Participatief toepassingsgebied
-        participatory_structure: Participatieve structuur
-        scope: Reikwijdte
-        target: Doel
     reported_mailer:
       hide:
         hello: Hallo %{name},
+        manage_moderations: Beheer moderaties
+        report_html: <p>De volgende <a href="%{url}">content</a> is automatisch verborgen.</p>
         subject: Een bron is automatisch verborgen
       report:
         hello: Hallo %{name},
+        manage_moderations: Beheer moderaties
+        report_html: <p>De volgende <a href="%{url}">content</a> is aangemeld.</p>
         subject: Een bron is gemeld
     reports:
       create:
@@ -201,6 +229,10 @@ nl:
           invalid: "%{field} is niet geldig."
           ok: Ok
           title: Niet geautoriseerd
+      embed_modal:
+        close_window: Sluit dit scherm
+        embed: Plak deze code alstublieft in uw pagina
+        embed_link: insluiten
       flag_modal:
         already_reported: Deze inhoud is al gemeld en zal worden beoordeeld door een beheerder.
         close: Sluit
@@ -210,11 +242,15 @@ nl:
         report: Rapporteren
         spam: Bevat clickbait, reclame, oplichting of script bots.
         title: Meld een probleem
+      follow_button:
+        sign_in_before_follow: Log alstublieft aan voordat u deze actie uitvoert
       login_modal:
         please_sign_in: Log in alstublieft
         sign_up: Registreren
       reference:
         reference: 'Referentie: %{reference}'
+      results_per_page:
+        label: 'Resultaten per pagina:'
       share_modal:
         close_window: Sluit dit scherm
         share: Deel
@@ -231,8 +267,9 @@ nl:
         hello: Hallo %{email},
         ignore: |-
           Negeer deze email als u de uitnodiging niet wilt accepteren.<br /> Uw account wordt niet aangemaakt totdat u via de link hierboven uw wachtwoord instelt.
-        invited_you_as_admin: "%{invited_by} heeft u uitgenodigd als beheerder van %{application}, u kunt deze uitnodiging accepteren via onderstaande link."
-        someone_invited_you: Iemand heeft u uitgenodigd bij %{application}, u kunt deze uitnodiging accepteren via onderstaande link.
+        invited_you_as_admin: "%{invited_by} heeft je uitgenodigd als admin van %{application}. U kunt het accepteren via de onderstaande link."
+        someone_invited_you: Iemand heeft u uitgenodigd voor %{application}. U kunt het accepteren via de onderstaande link.
+        you_are_now_admin: Je bent nu een admin
       invite_admin:
         subject: U bent uitgenodigd om %{organization} te beheren
       invite_collaborator:
@@ -246,6 +283,7 @@ nl:
   errors:
     messages:
       content_type_whitelist_error: Het bestandstype is niet geldig
+      cycle_detected: De ouder van een scope kan niet een van zijn afstammelingen zijn
       file_size_is_less_than_or_equal_to: bestandsgrootte moet kleiner zijn dan %{count}
       invalid_manifest: Ongeldig manifest
       invalid_participatory_process: Ongeldige participatief proces
@@ -255,6 +293,8 @@ nl:
       too_many_marks: Gebruikt te veel markeringen
       too_much_caps: Gebruikt te veel hoofdletters
       too_short: Is te kort
+  forms:
+    required: nodig
   invisible_captcha:
     sentence_for_humans: Als u een mens bent negeert u dit veld
     timestamp_error_message: Sorry, dat was te snel! Gelieve opnieuw in te dienen.
@@ -264,46 +304,35 @@ nl:
         description_html: Deze website maakt gebruik van cookies. Door gebruik te blijven maken van de site gaat u hiermee akkoord. Meer informatie via %{link}.
         link_label: hier
         ok: Ik ga akkoord
+      footer:
+        made_with_open_source: W
       header:
         close_menu: Menu sluiten
         navigation: Navigatie
         sign_in: Aanmelden
         sign_up: Registreren
-      participatory_process_groups:
-        participatory_process_group:
-          browse: Browsen
-      participatory_processes:
-        index:
-          promoted_processes: Gemarkeerde processen
-        no_processes_yet:
-          no_processes_yet: Er zijn nog geen participatieve processen!
-        order_by_processes:
-          processes:
-            one: "%{count} proces"
-            other: "%{count} processen"
-        participatory_process:
-          active_step: 'Huidige stap:'
-          take_part: Deelnemen
-        promoted_process:
-          active_step: 'Huidige stap:'
-          more_info: Meer informatie
-          take_part: Deelnemen
-      process_header:
-        process_menu_item: Het proces
-        unfold: Ontvouwen
-      process_header_steps:
-        step: Stap %{current} van %{total}
-        view_steps: Bekijk stappen
+      impersonation_warning:
+        close_session: Sluit sessie
+        description_html: U veronderstelt de gebruiker <b>%{user_name}</b>.
+        expire_time_html: Uw sessie vervalt in <b><span class="minutes">%{minutes}</span> minuten</b>.
+      notifications_dashboard:
+        mark_all_as_read: Alles als gelezen markeren
+        no_notifications: Nog geen meldingen.
+        title: Meldingen
       user_menu:
         admin_dashboard: Beheer dashboard
+        notifications: Meldingen
         profile: Mijn account
         sign_out: Afmelden
       user_profile:
         account: Account
         authorizations: Bevoegdheden
+        delete_my_account: Verwijder mijn account
         notifications_settings: Notificatie instellingen
         title: Gebruikersinstellingen
         user_groups: Organisaties
+      widget:
+        see_more: B
   locale:
     name: Nederlands
   pages:
@@ -329,7 +358,19 @@ nl:
         active_step: Actieve stap
         see_all_processes: Toon alle processen
       statistics:
+        answers_count: antwoorden
+        comments_count: Reacties
         headline: Huidige stand van %{organization}
+        meetings_count: Vergaderingen
+        orders_count: bestellingen
+        pages_count: Pages
+        processes_count: Processen
+        projects_count: Projecten
+        proposals_count: Voorstellen
+        results_count: Resultaten
+        surveys_count: onderzoeken
+        users_count: Deelnemers
+        votes_count: Stemmen
       sub_hero:
         register: Registeren
   social_share_button:

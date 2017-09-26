@@ -27,7 +27,7 @@ module Decidim
       validates :depth, numericality: { greater_than_or_equal_to: 0 }
       validates :alignment, inclusion: { in: [0, 1, -1] }
 
-      validates :body, length: { maximum: 500 }
+      validates :body, length: { maximum: 1000 }
 
       validate :commentable_can_have_comments
 
@@ -39,6 +39,9 @@ module Decidim
       def accepts_new_comments?
         depth < MAX_DEPTH
       end
+
+      # Public: Override Commentable concern method `users_to_notify_on_comment_created`
+      delegate :users_to_notify_on_comment_created, to: :root_commentable
 
       # Public: Check if the user has upvoted the comment
       #
@@ -57,18 +60,6 @@ module Decidim
       # Public: Overrides the `reported_content_url` Reportable concern method.
       def reported_content_url
         ResourceLocatorPresenter.new(root_commentable).url(anchor: "comment_#{id}")
-      end
-
-      # Public: Overrides the `notifiable?` Notifiable concern method.
-      # When a comment is commented the comment's author is notified if it is not the same
-      # who has replied the comment and if the comment's author has replied notifiations enabled.
-      def notifiable?(context)
-        context[:author] != author && author.replies_notifications?
-      end
-
-      # Public: Overrides the `users_to_notify` Notifiable concern method.
-      def users_to_notify
-        [author]
       end
 
       private

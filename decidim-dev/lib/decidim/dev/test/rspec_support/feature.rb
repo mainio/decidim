@@ -22,27 +22,31 @@ module Decidim
     end
   end
 
-  class DummyResource < ActiveRecord::Base
-    include HasFeature
-    include Resourceable
-    include Reportable
-    include Authorable
-    include HasCategory
-    include HasScope
-    include Decidim::Comments::Commentable
+  class DummyResourceEvent < Events::BaseEvent
+    include Decidim::Events::EmailEvent
+    include Decidim::Events::NotificationEvent
+  end
 
-    feature_manifest_name "dummy"
-
-    def reported_content_url
-      ResourceLocatorPresenter.new(self).url
+  module DummyResources
+    class ApplicationRecord < ActiveRecord::Base
+      self.abstract_class = true
     end
 
-    def notifiable?(_context)
-      true
-    end
+    class DummyResource < ApplicationRecord
+      include HasFeature
+      include Resourceable
+      include Reportable
+      include Authorable
+      include HasCategory
+      include HasScope
+      include Decidim::Comments::Commentable
+      include Followable
 
-    def users_to_notify
-      [author]
+      feature_manifest_name "dummy"
+
+      def reported_content_url
+        ResourceLocatorPresenter.new(self).url
+      end
     end
   end
 
@@ -51,7 +55,7 @@ module Decidim
     skip_authorization_check
 
     def show
-      @commentable = DummyResource.find(params[:id])
+      @commentable = DummyResources::DummyResource.find(params[:id])
       render inline: %{
         <%= csrf_meta_tags %>
         <%= display_flash_messages %>
@@ -96,7 +100,7 @@ Decidim.register_feature(:dummy) do |feature|
 
   feature.register_resource do |resource|
     resource.name = :dummy
-    resource.model_class_name = "Decidim::DummyResource"
+    resource.model_class_name = "Decidim::DummyResources::DummyResource"
     resource.template = "decidim/dummy_resource/linked_dummys"
   end
 

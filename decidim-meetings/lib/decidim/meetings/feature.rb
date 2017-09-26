@@ -23,27 +23,31 @@ Decidim.register_feature(:meetings) do |feature|
     meetings.count
   end
 
+  feature.actions = %w(join)
+
   feature.settings(:global) do |settings|
     settings.attribute :announcement, type: :text, translated: true, editor: true
+    settings.attribute :comments_enabled, type: :boolean, default: true
   end
 
   feature.settings(:step) do |settings|
     settings.attribute :announcement, type: :text, translated: true, editor: true
+    settings.attribute :comments_blocked, type: :boolean, default: false
   end
 
-  feature.seeds do |process|
+  feature.seeds do |participatory_space|
     feature = Decidim::Feature.create!(
-      name: Decidim::Features::Namer.new(process.organization.available_locales, :meetings).i18n_name,
+      name: Decidim::Features::Namer.new(participatory_space.organization.available_locales, :meetings).i18n_name,
       published_at: Time.current,
       manifest_name: :meetings,
-      participatory_process: process
+      participatory_space: participatory_space
     )
 
-    if process.scope
-      scopes = process.scope.descendants
-      global = process.scope
+    if participatory_space.scope
+      scopes = participatory_space.scope.descendants
+      global = participatory_space.scope
     else
-      scopes = process.organization.scopes
+      scopes = participatory_space.organization.scopes
       global = nil
     end
 
@@ -51,7 +55,7 @@ Decidim.register_feature(:meetings) do |feature|
       meeting = Decidim::Meetings::Meeting.create!(
         feature: feature,
         scope: Faker::Boolean.boolean(0.5) ? global : scopes.sample,
-        category: process.categories.sample,
+        category: participatory_space.categories.sample,
         title: Decidim::Faker::Localized.sentence(2),
         description: Decidim::Faker::Localized.wrapped("<p>", "</p>") do
           Decidim::Faker::Localized.paragraph(3)
@@ -62,8 +66,34 @@ Decidim.register_feature(:meetings) do |feature|
         end_time: 3.weeks.from_now + 4.hours,
         address: "#{Faker::Address.street_address} #{Faker::Address.zip} #{Faker::Address.city}",
         latitude: Faker::Address.latitude,
-        longitude: Faker::Address.longitude
+        longitude: Faker::Address.longitude,
+        registrations_enabled: [true, false].sample,
+        available_slots: (10..50).step(10).to_a.sample,
+        registration_terms: Decidim::Faker::Localized.wrapped("<p>", "</p>") do
+          Decidim::Faker::Localized.paragraph(3)
+        end
       )
+
+      10.times do |n|
+        email = "meeting-registered-user-#{meeting.id}-#{n}@example.org"
+        name = "#{Faker::Name.name} #{meeting.id} #{n}"
+        user = Decidim::User.find_or_initialize_by(email: email)
+
+        user.update!(
+          password: "password1234",
+          password_confirmation: "password1234",
+          name: name,
+          organization: feature.organization,
+          tos_agreement: "1",
+          confirmed_at: Time.current
+        )
+
+        Decidim::Meetings::Registration.create!(
+          meeting: meeting,
+          user: user
+        )
+      end
+
       Decidim::Attachment.create!(
         title: Decidim::Faker::Localized.sentence(2),
         description: Decidim::Faker::Localized.sentence(5),

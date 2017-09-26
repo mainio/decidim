@@ -21,12 +21,16 @@ en:
   decidim:
     features:
       meetings:
+        actions:
+          join: Join
         name: Meetings
         settings:
           global:
             announcement: Announcement
+            comments_enabled: Comments enabled
           step:
             announcement: Announcement
+            comments_blocked: Comments blocked
     meetings:
       actions:
         attachments: Attachments
@@ -36,8 +40,23 @@ en:
         edit: Edit
         new: New
         preview: Preview
+        registrations: Registrations
         title: Actions
       admin:
+        exports:
+          registrations: Registrations
+        invite_join_meeting_mailer:
+          invite:
+            invited_you_to_join_a_meeting: "%{invited_by} has invited you to join a meeting at %{application}. You can accept it through the link below."
+            join: Join meeting '%{meeting_title}'
+        invites:
+          create:
+            error: There's been a problem while inviting the user to join the meeting.
+            success: User successfully invited to join the meeting.
+          new:
+            explanation: The user will be invited to join a meeting. If the email is not registered they will be invited to the organization as well.
+            invite: Invite
+            new_invite: Invite user
         meeting_closes:
           edit:
             close: Close
@@ -64,6 +83,52 @@ en:
         models:
           meeting:
             name: Meeting
+        registrations:
+          edit:
+            save: Save
+          form:
+            available_slots_help: Leave it to 0 if you have unlimited slots available.
+            invite_user: Invite user
+            registrations_count:
+              one: There has been 1 registration.
+              other: There has been %{count} registrations.
+              zero: There has not been registrations yet.
+          update:
+            invalid: There's been a problem saving the registration settings.
+            success: Meeting registrations settings successfully saved.
+      events:
+        close_meeting_event:
+          email_intro: 'The "%{resource_title}" meeting was closed. You can read the conclusions from its page:'
+          email_outro: You have received this notification because you are following the "%{resource_title}" meeting. You can unfollow it from the previous link.
+          email_subject: The "%{resource_title}" meeting was closed
+          notification_title: The <a href="%{resource_path}">%{resource_title}</a> meeting was closed.
+        meeting_registrations_enabled:
+          email_intro: 'The "%{resource_title}" meeting has enabled registrations. You can register yourself on its page:'
+          email_outro: You have received this notification because you are following the "%{resource_title}" meeting. You can unfollow it from the previous link.
+          email_subject: The "%{resource_title}" meeting has enabled registrations.
+          notification_title: The <a href="%{resource_path}">%{resource_title}</a> meeting has enabled registrations.
+        meeting_registrations_over_percentage:
+          email_intro: The "%{resource_title}" meeting occupied slots are over %{percentage}%.
+          email_outro: You have received this notification because you are an admin of the meeting's participatory space.
+          email_subject: The "%{resource_title}" meeting occupied slots are over %{percentage}%
+          notification_title: The <a href="%{resource_path}">%{resource_title}</a> meeting occupied slots are over %{percentage}%.
+        upcoming_meeting_event:
+          email_intro: The "%{resource_title}" meeting will start in less than 48h.
+          email_outro: You have received this notification because you are following the "%{resource_title}" meeting. You can unfollow it from the previous link.
+          email_subject: The "%{resource_title}" meeting will start in less than 48h.
+          notification_title: The <a href="%{resource_path}">%{resource_title}</a> meeting will start in less than 48h.
+        update_meeting_event:
+          email_intro: 'The "%{resource_title}" meeting was updated. You can read the new version from its page:'
+          email_outro: You have received this notification because you are following the "%{resource_title}" meeting. You can unfollow it from the previous link.
+          email_subject: The "%{resource_title}" meeting was updated
+          notification_title: The <a href="%{resource_path}">%{resource_title}</a> meeting was updated.
+      mailer:
+        invite_join_meeting_mailer:
+          invite:
+            subject: Subject
+        registration_mailer:
+          confirmation:
+            subject: Your meeting's registration has been confirmed
       meetings:
         filters:
           category: Category
@@ -82,15 +147,23 @@ en:
         index:
           view_meeting: View meeting
         meetings:
-          no_meetings_warning: No meetings match your search criteria or there isn't
-            any meeting scheduled.
-          upcoming_meetings_warning: Currently, there are no scheduled meetings, but
-            here you can find all the past meetings listed.
+          no_meetings_warning: No meetings match your search criteria or there isn't any meeting scheduled.
+          upcoming_meetings_warning: Currently, there are no scheduled meetings, but here you can find all the past meetings listed.
+        registration_confirm:
+          cancel: Cancel
+          confirm: Confirm
         show:
           attendees: Attendees count
           contributions: Contributions count
+          going: Going
+          join: Join meeting
           meeting_report: Meeting report
+          no_slots_available: No slots available
           organizations: Attending organizations
+          remaining_slots:
+            one: 1 slot remaining
+            other: "%{count} slots remaining"
+            zero: No slots remaining
       models:
         meeting:
           fields:
@@ -100,6 +173,17 @@ en:
             start_time: Start date
             title: Title
       read_more: "(read more)"
+      registration_mailer:
+        confirmation:
+          confirmed_html: Your registration for the meeting <a href="%{url}">%{title}</a> has been confirmed.
+          details: You will find the meeting's details in the attachment.
+      registrations:
+        create:
+          invalid: There's been a problem joining this meeting.
+          success: You have joined the meeting successfully.
+        destroy:
+          invalid: There's been a problem leaving this meeting.
+          success: You have left the meeting successfully.
     resource_links:
       meetings_through_proposals:
         meeting_results: 'Related results:'
@@ -107,3 +191,7 @@ en:
       proposals_from_meeting:
         meeting_proposals: 'Related proposals:'
         proposal_meetings: 'Related meetings:'
+  devise:
+    mailer:
+      join_meeting:
+        subject: Subject
