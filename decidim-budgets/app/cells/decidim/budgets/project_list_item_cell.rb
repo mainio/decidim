@@ -37,10 +37,14 @@ module Decidim
         render
       end
 
+      def voting_finished?
+        !current_settings.votes_enabled? && current_settings.show_votes?
+      end
+
       private
 
       def resource_path
-        resource_locator(model).path
+        resource_locator([model.budget, model]).path
       end
 
       def resource_title
