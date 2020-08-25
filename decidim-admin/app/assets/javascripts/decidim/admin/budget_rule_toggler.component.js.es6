@@ -38,7 +38,15 @@
     }
 
     toggleTextInput(target) {
-      let input = $(target).closest("div").next();
+      const container = $(target).closest("div");
+      if (container.length < 1) {
+        return;
+      }
+      const containerClassPrefix = container.attr("class").
+        replace(/^vote_rule_/, "vote_").
+        replace(/_enabled_container$/, "");
+      const input = $(`[class^="${containerClassPrefix}"][class$="_container"]`);
+
       if ($(target).prop("checked")) {
         input.slideDown();
       } else {

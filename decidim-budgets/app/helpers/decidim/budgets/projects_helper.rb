@@ -20,7 +20,11 @@ module Decidim
       def current_order_budget_percent_minimum
         return 0 if current_order.minimum_projects_rule?
 
-        component_settings.vote_threshold_percent
+        if current_order.projects_rule?
+          (current_order.minimum_projects.to_f / current_order.maximum_projects)
+        else
+          component_settings.vote_threshold_percent
+        end
       end
 
       def budget_confirm_disabled_attr

@@ -22,6 +22,12 @@
         <p>
           <% if current_order.minimum_projects_rule? %>
             <%= t(".description_minimum_projects_rule", minimum_number: current_order.minimum_projects) %>
+          <% elsif current_order.projects_rule? %>
+            <%= t(
+              ".description_projects_rule",
+              minimum_number: current_order.minimum_projects,
+              maximum_number: current_order.maximum_projects
+            ) %>
           <% else %>
             <%= t(".description", minimum_budget: budget_to_currency(current_order.minimum_budget)) %>
           <% end %>
@@ -29,8 +35,8 @@
       <% end %>
     <% end %>
 
-    <div class="budget-summary__total" data-total-budget="<%= budget.total_budget %>">
-      <span class="mini-title"><%= t("total_budget") %>
+    <div class="budget-summary__total" data-total-allocation="<%= current_order.available_allocation %>">
+      <span class="mini-title"><%= t(".total_budget") %>
         <strong class="mini-title__strong mini-title__strong--highlight">
           <%= budget_to_currency(budget.total_budget) %>
         </strong>

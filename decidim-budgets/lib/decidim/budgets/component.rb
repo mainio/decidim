@@ -68,6 +68,10 @@ Decidim.register_component(:budgets) do |component|
     settings.attribute :vote_threshold_percent, type: :integer, default: 70
     settings.attribute :vote_rule_minimum_budget_projects_enabled, type: :boolean, default: false
     settings.attribute :vote_minimum_budget_projects_number, type: :integer, default: 1
+    settings.attribute :vote_rule_selected_projects_enabled, type: :boolean, default: false
+    settings.attribute :vote_selected_projects_minimum, type: :integer, default: 0
+    settings.attribute :vote_selected_projects_maximum, type: :integer, default: 1
+    settings.attribute :comments_enabled, type: :boolean, default: true
     settings.attribute :comments_enabled, type: :boolean, default: true
     settings.attribute :comments_max_length, type: :integer, required: false
     settings.attribute :resources_permissions_enabled, type: :boolean, default: true
