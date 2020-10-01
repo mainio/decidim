@@ -8,6 +8,7 @@ module Decidim
     include TranslationsHelper
     include Decidim::Traceable
     include Decidim::Loggable
+    include Decidim::HasUploadValidations
     include Decidim::TranslatableResource
     include Decidim::ActsAsAuthor
 
@@ -31,6 +32,8 @@ module Decidim
     has_many :oauth_applications, foreign_key: "decidim_organization_id", class_name: "Decidim::OAuthApplication", inverse_of: :organization, dependent: :destroy
     has_many :hashtags, foreign_key: "decidim_organization_id", class_name: "Decidim::Hashtag", dependent: :destroy
 
+    has_many :templates, foreign_key: "decidim_organization_id", class_name: "Decidim::Templates::Template", dependent: :destroy if defined? Decidim::Templates
+
     # Users registration mode. Whether users can register or access the system. Doesn't affect users that access through Omniauth integrations.
     #  enabled: Users registration and sign in are enabled (default value).
     #  existing: Users can't be registered in the system. Only existing users can sign in.
@@ -42,14 +45,32 @@ module Decidim
     validates :time_zone, presence: true, time_zone: true
     validates :default_locale, inclusion: { in: :available_locales }
 
+    validates_upload :official_img_header
     mount_uploader :official_img_header, Decidim::OfficialImageHeaderUploader
+
+    validates_upload :official_img_footer
     mount_uploader :official_img_footer, Decidim::OfficialImageFooterUploader
+
+    validates_upload :logo
     mount_uploader :logo, Decidim::OrganizationLogoUploader
+
+    validates_upload :favicon
     mount_uploader :favicon, Decidim::OrganizationFaviconUploader
+
+    validates_upload :highlighted_content_banner_image
     mount_uploader :highlighted_content_banner_image, ImageUploader
 
     def self.log_presenter_class_for(_log)
       Decidim::AdminLog::OrganizationPresenter
+    end
+
+    def settings
+      Decidim::OrganizationSettings.for(self)
+    end
+
+    # This is needed for the upload validations
+    def maximum_upload_size
+      settings.upload_maximum_file_size
     end
 
     def available_authorization_handlers

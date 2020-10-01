@@ -70,7 +70,7 @@ module Decidim
         private
 
         def budgets
-          @budgets ||= Budget.where(component: current_component).order(:weight)
+          @budgets ||= Budget.where(component: current_component).order(weight: :asc)
         end
 
         def budget
