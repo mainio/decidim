@@ -31,15 +31,8 @@ module Decidim
         update_content_block_images
         return broadcast(:invalid) unless content_block.valid?
 
-        # Make sure the images are actually saved when there are no errors.
-        # Otherwise this can cause the newsletter content block images not to
-        # save properly.
-        content_block.save!
-
         transaction do
           update_content_block_settings
-          content_block.save!
-          update_content_block_images
           content_block.save!
         end
 

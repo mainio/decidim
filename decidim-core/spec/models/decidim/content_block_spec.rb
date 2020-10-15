@@ -15,6 +15,16 @@ module Decidim
     end
 
     describe ".images_container" do
+      before do
+        # Enable processing for the test in order to catch validation errors
+        Decidim::HomepageImageUploader.enable_processing = true
+      end
+
+      after do
+        Decidim::HomepageImageUploader.enable_processing = false
+        content_block.images_container.background_image.remove! if content_block.images_container.background_image
+      end
+
       it "responds to the image names" do
         expect(subject.images_container).to respond_to(:background_image)
       end
@@ -38,7 +48,7 @@ module Decidim
           subject.save
         end
 
-        it "returns nil" do
+        it "returns the image" do
           expect(subject.images_container.background_image).not_to be_nil
         end
       end
@@ -58,6 +68,7 @@ module Decidim
         end
 
         it "returns fails to save the image with validation errors" do
+          subject.test = true
           subject.images_container.background_image = original_image
           subject.save
           expect(subject.valid?).to be(false)
