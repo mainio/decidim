@@ -86,6 +86,18 @@ module Decidim::Admin
           end.to(change { content_block.images_container.background_image.url })
         end
 
+        context "with the image being larger in size than the organization allows" do
+          before do
+            content_block.organization.settings.tap do |settings|
+              settings.upload.maximum_file_size.default = 1.kilobyte.to_f / 1.megabyte
+            end
+          end
+
+          it "is not valid" do
+            expect { subject.call }.to broadcast(:invalid)
+          end
+        end
+
         context "when removing the image" do
           let(:images) do
             {
