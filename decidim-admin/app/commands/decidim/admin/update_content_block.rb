@@ -24,6 +24,18 @@ module Decidim
       def call
         return broadcast(:invalid) if form.invalid?
 
+        # First set the images to see if there are any errors with them. This
+        # makes the image file validations according to their uploader settings
+        # and the organization settings. The content block validation will fail
+        # in case there are processing errors on the image files.
+        update_content_block_images
+        return broadcast(:invalid) unless content_block.valid?
+
+        # Make sure the images are actually saved when there are no errors.
+        # Otherwise this can cause the newsletter content block images not to
+        # save properly.
+        content_block.save!
+
         transaction do
           update_content_block_settings
           content_block.save!
