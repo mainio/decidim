@@ -42,6 +42,32 @@ module Decidim
           expect(subject.images_container.background_image).not_to be_nil
         end
       end
+
+      context "when the image is larger in size than the organization allows" do
+        let(:original_image) do
+          Rack::Test::UploadedFile.new(
+            Decidim::Dev.test_file("city.jpeg", "image/jpeg"),
+            "image/jpeg"
+          )
+        end
+
+        before do
+          content_block.organization.settings.tap do |settings|
+            settings.upload.maximum_file_size.default = 1.kilobyte.to_f / 1.megabyte
+          end
+        end
+
+        it "returns fails to save the image with validation errors" do
+          subject.images_container.background_image = original_image
+          subject.save
+          expect(subject.valid?).to be(false)
+          expect(subject.errors[:images_container]).to eq(["is invalid"])
+          expect(subject.images_container.errors.full_messages).to eq(
+            ["Background image The image is too big"]
+          )
+          expect(subject.images).to eq({})
+        end
+      end
     end
   end
 end
