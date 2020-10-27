@@ -58,7 +58,7 @@ module Decidim
       def allocation_for(project)
         return 1 if projects_rule?
 
-        project.budget
+        project.budget_amount
       end
 
       # Public: Returns the sum of project budgets
