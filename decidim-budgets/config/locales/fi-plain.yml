@@ -13,6 +13,7 @@ fi-pl:
         decidim_scope_id: Teema
         description: Kuvaus
         proposal_ids: Liittyvät ehdotukset
+        selected: Valittu toteutukseen
         title: Otsikko
   activerecord:
     models:
@@ -263,4 +264,4 @@ fi-pl:
         project_proposal: 'Tähän suunnitelmaan liittyvät ehdotukset:'
   index:
     confirmed_orders_count: Äänten määrä
-  total_budget: Koko budjetti
+  total_budget: Kokonaisbudjetti
