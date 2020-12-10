@@ -475,6 +475,7 @@ de:
         index:
           choose_an_option: 'Wählen Sie Ihre Registrierungsoption:'
           login_as: Sie sind als %{name} <%{email}> angemeldet
+          no_registrations: Keine Registrierungen
           register: Registrieren
           title: Registrierungsarten
       shared:
@@ -487,7 +488,7 @@ de:
         details: Einzelheiten
         introduction: Einführung
         objectives: Ziele
-        related_assemblies: Ähnliche Assemblies
+        related_assemblies: Ähnliche Gremien
         related_consultations: Verwandte Konsultationen
         related_participatory_processes: Ähnliche Beteiligungsprozesse
       statistics:
