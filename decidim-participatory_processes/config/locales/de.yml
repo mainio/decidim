@@ -110,7 +110,7 @@ de:
         participatory_process:
           fields:
             created_at: Hergestellt in
-            private: Privatgelände
+            private: Privat
             promoted: Hervorgehoben
             published: Veröffentlicht
             title: Titel
@@ -225,8 +225,8 @@ de:
           update: Aktualisieren
         index:
           not_published: Nicht veröffentlicht
-          private: Privatgelände
-          public: Öffentlichkeit
+          private: Privat
+          public: Öffentlich
           published: Veröffentlicht
         new:
           create: Erstellen
@@ -287,7 +287,7 @@ de:
     help:
       participatory_spaces:
         participatory_processes:
-          contextual: "<p>A <strong>Partizipationsprozess</strong> ist eine Folge von Partizipations Aktivitäten (zB zuerst eine Umfrage ausfüllen, dann Vorschläge machen, so dass sie diskutiert in face-to-face oder virtuellen Sitzungen, und sie schließlich die Priorisierung) mit dem Ziel , die Definition und Treffen eine Entscheidung zu einem bestimmten Thema.</p> <p>Beispiele für partizipatorische Prozesse sind: ein Verfahren zur Wahl von Ausschussmitgliedern (bei dem die Kandidaturen zuerst präsentiert, anschließend debattiert und schließlich eine Kandidatur ausgewählt wird), die Bürgerhaushalte (bei denen Vorschläge gemacht, wirtschaftlich bewertet und mit dem verfügbaren Geld abgestimmt werden). ein strategischer Planungsprozess, die gemeinschaftliche Ausarbeitung einer Vorschrift oder Norm, die Gestaltung eines städtischen Raums oder die Erstellung eines öffentlichen Planes.</p>\n"
+          contextual: "<p>Ein <strong>Partizipationsprozess</strong> ist eine Folge von Partizipations Aktivitäten (zB zuerst eine Umfrage ausfüllen, dann Vorschläge machen, so dass sie diskutiert in face-to-face oder virtuellen Sitzungen, und sie schließlich die Priorisierung) mit dem Ziel, die Definition und Treffen eine Entscheidung zu einem bestimmten Thema zu priorisieren.</p> <p>Beispiele für partizipatorische Prozesse sind: ein Verfahren zur Wahl von Ausschussmitgliedern (bei dem die Kandidaturen zuerst präsentiert, anschließend debattiert und schließlich eine Kandidatur ausgewählt wird), die Bürgerhaushalte (bei denen Vorschläge gemacht, wirtschaftlich bewertet und mit dem verfügbaren Geld abgestimmt werden). ein strategischer Planungsprozess, die gemeinschaftliche Ausarbeitung einer Vorschrift oder Norm, die Gestaltung eines städtischen Raums oder die Erstellung eines öffentlichen Planes.</p>\n"
           page: "<p>A <strong>Partizipationsprozess</strong> ist eine Folge von Partizipations Aktivitäten (zB zuerst eine Umfrage ausfüllen, dann Vorschläge machen, so dass sie diskutiert in face-to-face oder virtuellen Sitzungen, und sie schließlich die Priorisierung) mit dem Ziel , die Definition und Treffen eine Entscheidung zu einem bestimmten Thema.</p> <p>Beispiele für partizipatorische Prozesse sind: ein Verfahren zur Wahl von Ausschussmitgliedern (bei dem die Kandidaturen zuerst präsentiert, anschließend debattiert und schließlich eine Kandidatur ausgewählt wird), die Bürgerhaushalte (bei denen Vorschläge gemacht, wirtschaftlich bewertet und mit dem verfügbaren Geld abgestimmt werden). ein strategischer Planungsprozess, die gemeinschaftliche Ausarbeitung einer Vorschrift oder Norm, die Gestaltung eines städtischen Raums oder die Erstellung eines öffentlichen Planes.</p>\n"
           title: Was ist ein partizipativer Prozess?
     menu:
@@ -315,6 +315,9 @@ de:
         content_blocks:
           highlighted_processes:
             max_results: Maximale Anzahl der Elemente, die angezeigt werden sollen
+        new_import:
+          accepted_types:
+            json: JSON
         participatory_process_copies:
           form:
             slug_help: 'URL-Slugs werden zum Generieren der URLs verwendet, die auf diesen Prozess verweisen. Akzeptiert nur Buchstaben, Zahlen und Bindestriche und muss mit einem Buchstaben beginnen. Beispiel: %{url}'
