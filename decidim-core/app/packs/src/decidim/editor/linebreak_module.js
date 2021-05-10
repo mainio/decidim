@@ -69,10 +69,15 @@ Quill.register("modules/linebreak", (quill) => {
     }
   });
 
-  quill.clipboard.addMatcher("BR", (node) => {
-    if (node?.parentNode?.tagName === "A") {
-      return new Delta().insert("\n");
+  // Dont create BR tags inside these tags
+  const brParentBlacklist = ["A", "STRONG", "EM", "U"]
+
+  quill.clipboard.addMatcher("BR", (node, delta) => {
+    if (node && node.parentNode && node.parentNode.tagName &&
+      brParentBlacklist.includes(node.parentNode.tagName)) {
+      return delta;
     }
+
     return new Delta().insert({"break": ""});
   });
 
