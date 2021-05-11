@@ -25,6 +25,7 @@ gl:
       decidim/profile_updated_event: Perfil actualizado
       decidim/promote_to_admin: Ascendido ao administrador do grupo
       decidim/removed_from_group: Eliminouse do grupo
+      decidim/resource_endorsed_event: Adhesión a recurso feita
   activerecord:
     attributes:
       decidim/user:
@@ -63,7 +64,7 @@ gl:
         file_no_exists: O ficheiro non existe
         notice: Os teus datos están en progreso. Recibirás un correo electrónico cando finalice.
       delete:
-        alert: Non se pode desfacer esta acción. Se eliminas a túa conta non poderás iniciar sesión.
+        alert: Esta acción no se pode desfacer. Se eliminas a túa conta non poderás iniciar sesión.
         confirm:
           close: Pechar xanela
           ok: Si, quero eliminar a miña conta
@@ -109,6 +110,7 @@ gl:
         update: "%{user_name} actualizou a configuración da organización"
       participatory_space_private_user:
         create: "%{user_name} invitados %{resource_name} para ser un usuario privado"
+        create_via_csv: "%{user_name} convidou a %{resource_name} vía csv a ser un participante privado"
         delete: "%{user_name} eliminou o usuario %{resource_name} como usuario privado"
       scope:
         create: "O %{user_name} creou o alcance %{resource_name}"
@@ -207,8 +209,6 @@ gl:
         name: Autorización de exemplo
       dummy_authorization_workflow:
         name: Fluxo de traballo de autorización dummy
-      errors:
-        duplicate_authorization: Un usuario xa está autorizado cos mesmos datos.
       expired_at: Caducou en %{timestamp}
       expires_at: Caduca no %{timestamp}
       foo_authorization:
@@ -316,6 +316,7 @@ gl:
           email_already_exists: Outra conta usa o mesmo enderezo de correo electrónico
         new:
           complete_profile: Perfil completo
+          nickname_help: O teu alcume en %{organization}
           sign_up: Completa o teu perfil
           subtitle: Encha o seguinte formulario para completar o rexistro
           username_help: Nome público que aparece nas túas publicacións. Co obxectivo de garantir o anonimato, pode ser calquera nome.
@@ -324,6 +325,7 @@ gl:
           already_have_an_account?: Xa ten unha conta?
           newsletter: Recibir un boletín ocasional con información relevante
           newsletter_title: Permiso de contacto
+          nickname_help: O teu alcume en %{organization}
           sign_in: Iniciar sesión
           sign_up: Rexistrarse
           sign_up_as:
@@ -529,6 +531,7 @@ gl:
       create:
         button: Segue
         error: Produciuse un erro tras este recurso.
+        participatory_space: Xa segues <span class="show-for-sr">%{resource_name}</span>
       destroy:
         button: Deixar de seguir
         error: Houbo un erro ao seguir este recurso.
@@ -538,6 +541,9 @@ gl:
       default_image: Imaxe predeterminada
       errors:
         error: Hai un erro neste campo.
+      file_help:
+        file:
+          message_2: Nas imaxes, emprega preferiblemente as apaisadas, o servizo recorta a imaxe.
       remove_this_file: Elimina este ficheiro
     gamification:
       all_badges_link: Consulta todas as insignias dispoñibles.

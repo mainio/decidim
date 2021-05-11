@@ -356,7 +356,7 @@ fr-CA:
         actions:
           preview: Aperçu
         exports:
-          comments: Commentaires
+          comments: commentaires
           proposals: Propositions
         models:
           proposal:
@@ -423,6 +423,7 @@ fr-CA:
           form:
             attachment_legend: "(Facultatif) Ajouter une pièce jointe"
             created_in_meeting: Cette proposition provient d'une réunion
+            delete_attachment: Supprimer la pièce jointe
             select_a_category: Sélectionner une catégorie
             select_a_meeting: Sélectionnez une réunion
           index:
@@ -652,9 +653,9 @@ fr-CA:
         update:
           error: Il y a eu des erreurs lors de l'enregistrement du brouillon collaboratif.
           success: Brouillon collaboratif mis à jour avec succès.
-          title: Modifier la question collaborative
+          title: Modifier un brouillon collaboratif
         wizard_aside:
-          back: Arrière
+          back: Retour
           back_from_collaborative_draft: Retour aux brouillons collaboratifs
           back_from_step_1: Retour aux brouillons collaboratifs
           back_from_step_2: Retour aux brouillons collaboratifs
@@ -667,7 +668,7 @@ fr-CA:
           step_1: Créez votre projet collaboratif
           step_2: Comparer avec les projets collaboratifs
           step_3: Complétez votre projet collaboratif
-          step_of: Etape %{current_step_num} sur %{total_steps}
+          step_of: Étape %{current_step_num} sur %{total_steps}
           title: Étapes de création du brouillon collaboratif
       create:
         error: Il y a eu des erreurs lors de la sauvegarde de la proposition.
@@ -677,6 +678,7 @@ fr-CA:
         success: Le brouillon de la proposition a bien été supprimé.
       last_activity:
         new_proposal_at_html: "<span>Nouvelle proposition à %{link}</span>"
+        proposal_updated_at_html: "<span>Débat mis à jour à %{link}</span>"
       models:
         collaborative_draft:
           fields:

@@ -248,7 +248,7 @@ it:
       photos:
         related_photos: Immagini relative
     author:
-      avatar: Immagine di profilo
+      avatar: Immagine del profilo
       comments:
         one: commento
         other: Commenti
@@ -273,8 +273,6 @@ it:
         name: Esempio di autorizzazione
       dummy_authorization_workflow:
         name: Flusso di lavoro fittizio di autorizzazione
-      errors:
-        duplicate_authorization: Esiste già un utente autorizzato con questi dati.
       expired_at: Scaduto a %{timestamp}
       expires_at: Scade a %{timestamp}
       foo_authorization:
@@ -1038,14 +1036,14 @@ it:
           headline: Statistiche su %{organization}
           meetings_count: Incontri
           orders_count: Voti
-          pages_count: Pagine
+          pages_count: pagine
           processes_count: Processi
-          projects_count: progetti
+          projects_count: Progetti
           proposals_accepted: Proposte accettate
-          proposals_count: proposte
-          results_count: risultati
+          proposals_count: Proposte
+          results_count: Votazioni
           surveys_count: Questionari
-          users_count: Partecipanti
+          users_count: I partecipanti
           votes_count: Voti
         sub_hero:
           register: Registrati

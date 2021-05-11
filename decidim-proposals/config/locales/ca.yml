@@ -136,7 +136,7 @@ ca:
             participatory_texts_enabled: Texts participatius habilitats
             participatory_texts_enabled_readonly: No es pot interactuar amb aquesta configuració si hi ha propostes existents. Si us plau, crea un nou 'component de propostes' si vols habilitar aquesta característica o descarta totes les propostes importades al menú "textos participatius" si vols deshabilitar-lo.
             proposal_answering_enabled: Resposta a propostes habilitada
-            proposal_edit_before_minutes: Les propostes poden ser editades per les autorrs abans que passin aquests minuts
+            proposal_edit_before_minutes: Les propostes poden ser editades per les autores abans que passin aquests minuts
             proposal_length: Longitud màxima del cos de la proposta
             proposal_limit: Límit de propostes per participant
             proposal_wizard_step_1_help_text: Text d'ajuda pel pas "Crear" de l'assistent de propostes
@@ -423,6 +423,7 @@ ca:
           form:
             attachment_legend: "(Opcional) Afegiu un fitxer adjunt"
             created_in_meeting: Aquesta proposta prové d'una trobada
+            delete_attachment: Suprimeix l'adjunt
             select_a_category: Selecciona una categoria
             select_a_meeting: Selecciona una trobada
           index:
@@ -432,7 +433,7 @@ ca:
             cancel: Cancel·lar
             change_category: Canvia la categoria
             change_scope: Canviar àmbit
-            merge: Uneix-te a un de nou
+            merge: Fusionar a una nova
             merge_button: Fusionar
             publish: Publica
             publish_answers: Publica respostes
@@ -522,7 +523,7 @@ ca:
           create: "%{user_name} ha deixat una nota privada a la proposta %{resource_name} dins l'espai %{space_name}"
         valuation_assignment:
           create: "%{user_name} ha assignat la proposta %{resource_name} a una avaluadora"
-          delete: "%{user_name} ha desfet l'assignació a una avaluadora de la proposta %{resource_name}"
+          delete: "%{user_name} ha desfet l'assignació a una avaluadora de la proposta %{proposal_title}"
       answers:
         accepted: Acceptades
         evaluating: En avaluació
@@ -574,7 +575,7 @@ ca:
           no_similars_found: Enhorabona! No s'han trobat esborranys col·laboratius similars
           title: Esborranys col·laboratius similars
         complete:
-          send: Enviar
+          send: Envia
           title: Completa el teu esborrany col·laboratiu
         count:
           drafts_count:
@@ -652,7 +653,7 @@ ca:
         update:
           error: S'ha produït un error en desar l'esborrany col·laboratiu.
           success: L'esborrany col·laboratiu s'ha actualitzat correctament.
-          title: Editar l'esborrany col·laboratiu
+          title: Edita l'esborrany col·laboratiu
         wizard_aside:
           back: Torna
           back_from_collaborative_draft: Tornar a l'esborrany col·laboratiu
@@ -662,12 +663,12 @@ ca:
           back_from_step_4: Tornar a editar l'esborrany
           info: Estàs creant un <strong>esborrany col·laboratiu</strong>.
         wizard_steps:
-          current_step: Fase actual
-          see_steps: veure els passos
+          current_step: Pas actual
+          see_steps: veure les fases
           step_1: Crea el teu esborrany col·laboratiu
           step_2: Compara amb esborranys col·laboratius
           step_3: Completa el teu esborrany col·laboratiu
-          step_of: Pas %{current_step_num} de %{total_steps}
+          step_of: Fase %{current_step_num} de %{total_steps}
           title: Passos per a la creació d'un esborrany col·laboratiu
       create:
         error: Hi ha hagut un error en desar la proposta.
@@ -677,6 +678,7 @@ ca:
         success: L'esborrany de proposta s'ha eliminat correctament.
       last_activity:
         new_proposal_at_html: "<span>Nova proposta a %{link}</span>"
+        proposal_updated_at_html: "<span>Proposta actualitzada el %{link}</span>"
       models:
         collaborative_draft:
           fields:

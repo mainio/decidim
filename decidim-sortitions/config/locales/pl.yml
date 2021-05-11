@@ -36,10 +36,10 @@ pl:
     pages:
       home:
         statistics:
-          sortitions_count: Wybór losowy
+          sortitions_count: Wybory losowe
     participatory_processes:
       statistics:
-        sortitions_count: Wybór losowy
+        sortitions_count: Wybory losowe
     sortitions:
       admin:
         actions:
@@ -114,7 +114,7 @@ pl:
           search: Szukaj
           state: Status
         filters_small_view:
-          close_modal: Zamknij modalne
+          close_modal: Zamknij okno
           filter: Filtr
           filter_by: Filtruj według
           unfold: Rozwiń

@@ -1,6 +1,8 @@
 nl:
   activemodel:
     attributes:
+      assemblies_setting:
+        enable_organization_chart: Organigram tonen
       assembly:
         area_id: Onderwerp
         assembly_type: Groepstype
@@ -60,6 +62,7 @@ nl:
         full_name: Volledige naam
         gender: Geslacht
         position: Positie
+        user_id: Gebruiker
       assembly_user_role:
         email: E-mail
         name: Naam
@@ -192,7 +195,7 @@ nl:
           info: Info
           moderations: Moderaties
           private_users: Particuliere gebruikers
-        assemblies_types: Soorten Buurderijen
+        assemblies_types: Soorten groepen
       models:
         assemblies_types:
           fields:
@@ -228,7 +231,7 @@ nl:
             admin: Beheerder
             collaborator: Medewerker
             moderator: Moderator
-            valuator: 'Waarde:'
+            valuator: Beoordelaar
       titles:
         assemblies: Groepen
         assemblies_types: Groepstype
@@ -305,6 +308,9 @@ nl:
         content_blocks:
           highlighted_assemblies:
             max_results: Maximum aantal elementen dat kan worden weergegeven
+        new_import:
+          accepted_types:
+            json: JSON
       assembly_members:
         index:
           members: Leden

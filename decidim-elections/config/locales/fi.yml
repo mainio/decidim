@@ -92,7 +92,7 @@ fi:
             title: Muokkaa vaalia
             update: Päivitä vaali
           index:
-            no_bulletin_board: Järjestelmässä ei ole <a href="https://github.com/decidim/decidim-bulletin-board">Bulletin Board -palvelinta</a> määritettynä, mitä tarvitaan käyttääksesi tätä moduulia. Tämä tehtävä tulisi toteuttaa yhteistyössä järjestelmänvalvojan kanssa.
+            no_bulletin_board: Järjestelmään ei ole määritetty <a href="https://github.com/decidim/decidim-bulletin-board">sähköisen ääniuurnan palvelinta</a>, joka tarvitaan käyttääksesi tätä moduulia. Tämä tehtävä tulisi toteuttaa yhteistyössä järjestelmänvalvojan kanssa.
             title: Vaalit
           new:
             create: Luo vaali
@@ -140,7 +140,7 @@ fi:
       admin_log:
         election:
           publish: "%{user_name} julkaisi vaalin %{resource_name}"
-          unpublish: "%{user_name} lopetti vaalin %{resource_name} julkaisemisen"
+          unpublish: "%{user_name} lopetti vaalin %{resource_name} julkaisun"
       election_m:
         badge_name:
           finished: Valmis
@@ -255,7 +255,7 @@ fi:
           elections_count: Vaalit
     participatory_processes:
       statistics:
-        elections_count: Vaalia
+        elections_count: Vaalit
   layouts:
     decidim:
       election_votes_header:

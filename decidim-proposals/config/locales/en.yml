@@ -424,6 +424,7 @@ en:
           form:
             attachment_legend: "(Optional) Add an attachment"
             created_in_meeting: This proposal comes from a meeting
+            delete_attachment: Delete attachment
             select_a_category: Select a category
             select_a_meeting: Select a meeting
           index:
@@ -678,6 +679,7 @@ en:
         success: Proposal draft was successfully deleted.
       last_activity:
         new_proposal_at_html: "<span>New proposal at %{link}</span>"
+        proposal_updated_at_html: "<span>Proposal updated at %{link}</span>"
       models:
         collaborative_draft:
           fields:

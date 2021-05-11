@@ -1,12 +1,136 @@
 # Change Log
 
-## [Unreleased](https://github.com/decidim/decidim/tree/HEAD)
+## [0.23.6](https://github.com/decidim/decidim/tree/v0.23.6)
+
+**Added**:
+
+Nothing.
+
+**Changed**:
+
+Nothing.
+
+**Fixed**:
+
+- **decidim-core**: Fix report mailers when author is a meeting [\#7874](https://github.com/decidim/decidim/pull/7874)
+- **decidim-comments**: Fix TypeError in newsletters  [\#7875](https://github.com/decidim/decidim/pull/7875)
+- **decidim-core**: Open attachments in new tab [\#7917](https://github.com/decidim/decidim/pull/7917)
+- **decidim-core**: Validate nickname using correct regexp [\#7920](https://github.com/decidim/decidim/pull/7920)
+- **decidim-proposals**: Cast proposal and collaborative drafts titles to text [\#7927](https://github.com/decidim/decidim/pull/7927)
+- **decidim-core**: Don't show deleted users on user group members page [\#7926](https://github.com/decidim/decidim/pull/7926)
+- **decidim-admin**: Disable select inputs with the subform toggler as well [\#7958](https://github.com/decidim/decidim/pull/7958)
+- **decidim-core**: Fix fragment caching with multiple locales [\#7959](https://github.com/decidim/decidim/pull/7959)
+
+**Removed**:
+
+Nothing.
+
+**Developer improvements**:
+
+- Update to Rails 5.2.6 [\#7950](https://github.com/decidim/decidim/pull/7950)
+
+## [0.23.5](https://github.com/decidim/decidim/tree/v0.23.5)
+
+**Added**:
+
+Nothing.
+
+**Changed**:
+
+Nothing.
+
+**Fixed**:
+
+- **decidim-participatory processes**: Fix process serializer to consider nil images [\#7615](https://github.com/decidim/decidim/pull/7615)
+- **decidim-proposals**: Backport proposal imports fix to 0.23 [\#7610](https://github.com/decidim/decidim/pull/7610)
+- **decidim-core**: Make category in the API non-mandatory [\#7625](https://github.com/decidim/decidim/pull/7625)
+- **decidim-proposals**: Don't copy counters when copying proposals [\#7640](https://github.com/decidim/decidim/pull/7640)
+- **decidim-proposals**: Fix rendering of proposals in map [\#7644](https://github.com/decidim/decidim/pull/7644)
+- **decidim-proposals**: Show all proposals in map (#7660) [\#7677](https://github.com/decidim/decidim/pull/7677)
+
+**Removed**:
+
+Nothing.
+
+**Developer improvements**:
+
+- Fix migration from #7640 [\#7650](https://github.com/decidim/decidim/pull/7650)
+- Lint file [\#7652](https://github.com/decidim/decidim/pull/7652)
+- Bump mimemagic to 0.3.6 [\#7718](https://github.com/decidim/decidim/pull/7718)
+- Update Rails to 5.2.5 and carrierwave to 1.3.2 [\#7807](https://github.com/decidim/decidim/pull/7807)
+
+## [0.23.4](https://github.com/decidim/decidim/tree/v0.23.4)
 
 **Added**
 
 **Changed**
 
 **Fixed**
+
+- **decidim-admin**: Fix and tests to avoid registered users being invited again [\#7455](https://github.com/decidim/decidim/pull/7455)
+- **decidim-proposals**: Fix the proposal body validation error messages [\#7495](https://github.com/decidim/decidim/pull/7495)
+- **decidim-admin**: Only share tokens if component exists [\#7503](https://github.com/decidim/decidim/pull/7503)
+- **decidim-core**: Invalidate all user sessions when destroying the account [\#7510](https://github.com/decidim/decidim/pull/7510)
+- **decidim-core**: Fix user profile timeline activity cards texts showing "New resource" on updates [\#7559](https://github.com/decidim/decidim/pull/7559)
+- **decidim-core**: Sanitize address inputs [\#7577](https://github.com/decidim/decidim/pull/7577)
+
+**Removed**
+
+## [0.23.3](https://github.com/decidim/decidim/tree/v0.23.3)
+
+**Added**
+
+- **decidim-initiatives**: Raise an alert when there's an error signing an initiative [\#7407](https://github.com/decidim/decidim/pull/7407)
+- **decidim-proposals**: Let admins delete proposal attachments [\#7435](https://github.com/decidim/decidim/pull/7435)
+
+**Changed**
+
+**Fixed**
+
+- **decidim-initiatives**: Fix initiatives type permissions page [\#7357](https://github.com/decidim/decidim/pull/7357)
+- **decidim-meetings**: Fix etherpad compatibility for old meetings [\#7387](https://github.com/decidim/decidim/pull/7387)
+- **decidim-core**: Fix subhero content block removing strip_tags from it [\#7414](https://github.com/decidim/decidim/pull/7414)
+
+**Removed**
+
+## [0.23.2](https://github.com/decidim/decidim/tree/v0.23.2)
+
+**Added**
+
+**Changed**
+
+**Fixed**
+
+- **decidim-admin**: Allow selecting multiple files on gallery forms [\#7064](https://github.com/decidim/decidim/pull/7064)
+- **decidim-proposals**: Fix proposals admin form when editing. Closes #7031 (#7042) [\#7051](https://github.com/decidim/decidim/pull/7051)
+- **decidim-admin**, **decidim-assemblies**, **decidim-core**: Add some missing i18n keys (#7039) [\#7043](https://github.com/decidim/decidim/pull/7043)
+- **decidim-participatory_processes**: Fix ParticipatoryProcess metrics ajax call in show (#6971) [\#6977](https://github.com/decidim/decidim/pull/6977)
+- **decidim-core**: Backport "Fix newsletter html containing style tag content" to 0.23-stable [\#6963](https://github.com/decidim/decidim/pull/6963)
+- **decidim-core**, **decidim-meetings**: Backport to 0.23-stable release of fix access to detail on a visible meeting [\#6934](https://github.com/decidim/decidim/pull/6934)
+- **decidim-meetings**: Backport to 0.23-stable release of fix visible_meetings_for scope [\#6932](https://github.com/decidim/decidim/pull/6932)
+- **decidim-all**: Fix broken dashboard action logs under certain conditions (#6857) [\#6930](https://github.com/decidim/decidim/pull/6930)
+- **decidim-assemblies**, **decidim-core**, **decidim-dev**: Fix traceability logs with invalid record (#6879) [\#6928](https://github.com/decidim/decidim/pull/6928)
+- **decidim-forms**: Backport "Fix mixing answers exports and admin management in questionnaires" to v0.23 [\#6906](https://github.com/decidim/decidim/pull/6906)
+- **decidim-templates**: Backport "Fix decidim-templates gem definition to include templates migrations" to v0.23 [\#6900](https://github.com/decidim/decidim/pull/6900)
+- **decidim-core**, **decidim-dev**, **decidim-system**: Backport 'Correct smtp_settings keys type #6908' on release/0.23-stable [\#6904](https://github.com/decidim/decidim/pull/6904)
+- **decidim-admin**, **decidim-core**: Fix newsletter delivery issue to all recipients with no scopes (#6875) [\#6909](https://github.com/decidim/decidim/pull/6909)
+- **decidim-core**: Backport 'backport smtp settings correction' to 0.23 [\#6877](https://github.com/decidim/decidim/pull/6877)
+- **decidim-all**: Backport "Add margin between back link and title" to v0.23 [\#6858](https://github.com/decidim/decidim/pull/6858)
+- **decidim-admin**: Backport "Fix color text on unpublish button" to v0.23 [\#6848](https://github.com/decidim/decidim/pull/6848)
+- **decidim-blogs**: Backport Add logic in view to prevent visual error in blog post [\#7278](https://github.com/decidim/decidim/pull/7278)
+- **decidim-consultations**: Backport 'Restore consultation's description rich text format' to v0.23 [\#7219](https://github.com/decidim/decidim/pull/7219)
+- **decidim-admin**, **decidim-budgets**, **decidim-comments**, **decidim-core**, **decidim-debates**, **decidim-dev**, **decidim-proposals**: Backport "Fix comments newsletter participant ids" to v0.23 [\#7184](https://github.com/decidim/decidim/pull/7184)
+- **decidim-core**: Quickfix bug in seeds for 0.23-stable [\#7061](https://github.com/decidim/decidim/pull/7061)
+- **decidim-participatory_processes**: Fix space private user in process admin [\#7073](https://github.com/decidim/decidim/pull/7073)
+- **decidim-core**: Backport "fix avoid removing tag style on custom sanitize" to v0.23-stable [\#7019](https://github.com/decidim/decidim/pull/7019)
+- **decidim-admin**, **decidim-core**: Fix editor image alt tag (#6920) [\#6990](https://github.com/decidim/decidim/pull/6990)
+- **decidim-meetings**: Backport "Fix visible_meeting_for scope if Decidim::Conference is not defined" to v0.23 [\#6980](https://github.com/decidim/decidim/pull/6980)
+- **decidim-admin**, **decidim-core**: Backport "Fix private participants pagination crash" [\#7000](https://github.com/decidim/decidim/pull/7000)
+- **decidim-core**: Remove sticky from tos agreement (#6716) [\#6954](https://github.com/decidim/decidim/pull/6954)
+- **decidim-admin**, **decidim-assemblies**, **decidim-participatory_processes**: Allow admin to be registered as a participatory space user [\#7316](https://github.com/decidim/decidim/pull/7316)
+- **decidim-core**: Fixing error caused by Missing Organization [\#7317](https://github.com/decidim/decidim/pull/7317)
+- **decidim-core**: Adding Organization scopes to uploaders [\#7318](https://github.com/decidim/decidim/pull/7318)
+- **decidim-core**, **decidim-forms**, **decidim-meetings**: Fix security token generation in anonymous surveys and pads [\#7327](https://github.com/decidim/decidim/pull/7327)
 
 **Removed**
 

@@ -263,8 +263,6 @@ hu:
         name: Példa feljogosításra
       dummy_authorization_workflow:
         name: Dummy feljogosítási folyamat
-      errors:
-        duplicate_authorization: Egy résztvevő ezekkel az adatokkal már engedélyezésre került.
       expired_at: 'Lejárat: %{timestamp}'
       expires_at: 'Lejárat: %{timestamp}'
       foo_authorization:
@@ -833,7 +831,6 @@ hu:
           title: Válasz
         show:
           chat_with: Beszélgetés vele
-          not_allowed: Ez a felhasználó nem fogad el több közvetlen üzenetet.
           title: 'Beszélgetés vele: %{usernames}'
         start:
           send: Küldés

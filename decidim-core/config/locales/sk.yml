@@ -275,8 +275,6 @@ sk:
         name: Príklad autorizácie
       dummy_authorization_workflow:
         name: Pracovný postup autorizácie
-      errors:
-        duplicate_authorization: Účastník je už autorizovaný s rovnakými dátami.
       expired_at: Platnosť vypršala v %{timestamp}
       expires_at: Platnosť vyprší v %{timestamp}
       foo_authorization:
@@ -838,7 +836,6 @@ sk:
           title: Odpověď
         show:
           chat_with: Konverzácia s
-          not_allowed: Tento používateľ neprijíma žiadne priame správy.
           title: Konverzace s číslem %{usernames}
         start:
           send: Poslat
@@ -966,7 +963,7 @@ sk:
           projects_count: Projekty
           proposals_accepted: Prijaté návrhy
           proposals_count: Návrhy
-          results_count: Výsledok
+          results_count: Výsledky
           surveys_count: Prieskumy
           users_count: Účastníci
           votes_count: Hlasy

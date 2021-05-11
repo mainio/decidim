@@ -33,6 +33,7 @@ gl:
           form:
             add_question: Engadir pregunta
             already_answered_warning: Algúns usuarios xa responderon o cuestionario para que non poida modificar as súas preguntas.
+            title: Editar formulario
           matrix_row:
             remove: Quitar
             statement: Declaración
@@ -50,6 +51,8 @@ gl:
       errors:
         answer:
           body: O corpo non pode estar en branco
+      files:
+        extension_whitelist: 'Formatos aceptados:'
       question_types:
         long_answer: Resposta longa
         multiple_option: Múltipla opción

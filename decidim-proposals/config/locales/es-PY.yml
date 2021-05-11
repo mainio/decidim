@@ -423,6 +423,7 @@ es-PY:
           form:
             attachment_legend: "(Opcional) Añadir un archivo adjunto"
             created_in_meeting: Esta propuesta viene de una reunión.
+            delete_attachment: Eliminar archivo adjunto
             select_a_category: Seleccione una categoría
             select_a_meeting: Seleccione una reunion
           index:
@@ -652,7 +653,7 @@ es-PY:
         update:
           error: Ha habido errores al guardar el borrador colaborativo.
           success: Borrador colaborativo actualizado con éxito.
-          title: Editar el borrador colaborativo
+          title: Editar borrador colaborativo
         wizard_aside:
           back: Volver
           back_from_collaborative_draft: Volver al borrador colaborativo
@@ -662,8 +663,8 @@ es-PY:
           back_from_step_4: Volver a editar borrador
           info: Estás creando un borrador colaborativo <strong></strong>.
         wizard_steps:
-          current_step: Fase actual
-          see_steps: ver las fases
+          current_step: Paso actual
+          see_steps: ver los pasos
           step_1: Crea tu borrador colaborativo
           step_2: Comparar con borradores colaborativos
           step_3: Completa tu borrador colaborativo
@@ -677,6 +678,7 @@ es-PY:
         success: El borrador de la propuesta fue eliminado con éxito.
       last_activity:
         new_proposal_at_html: "<span>Nueva propuesta en %{link}</span>"
+        proposal_updated_at_html: "<span>Propuesta actualizada a las %{link}</span>"
       models:
         collaborative_draft:
           fields:

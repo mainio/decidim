@@ -1,6 +1,8 @@
 sv:
   activemodel:
     attributes:
+      assemblies_setting:
+        enable_organization_chart: Aktivera organisationskarta
       assembly:
         area_id: Område
         assembly_type: Typ av grupp
@@ -60,6 +62,7 @@ sv:
         full_name: Fullständigt namn
         gender: Kön
         position: Befattning
+        user_id: Användare
       assembly_user_role:
         email: E-post
         name: Namn
@@ -448,7 +451,7 @@ sv:
           highlighted_processes:
             processes_button_title: Länk till sidan som visar alla dialoger
       show:
-        related_assemblies: Relaterade sammankomster
+        related_assemblies: Relaterade grupper
   errors:
     messages:
       cannot_be_blank: kan inte vara tomt
