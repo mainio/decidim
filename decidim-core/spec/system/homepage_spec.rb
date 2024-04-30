@@ -467,7 +467,7 @@ describe "Homepage" do
         let(:webpacker_helper) do
           Class.new do
             include ActionView::Helpers::AssetUrlHelper
-            include Shakapacker::Helper
+            include Decidim::AssetPackHelper
           end.new
         end
 

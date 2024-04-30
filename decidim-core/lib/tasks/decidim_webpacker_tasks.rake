@@ -18,28 +18,15 @@ namespace :decidim do
       copy_file_to_application "decidim-core/lib/decidim/webpacker/esbuild.config.js", "config/esbuild.config.js"
       copy_file_to_application "decidim-core/lib/decidim/webpacker/tsconfig.json", "tsconfig.json"
 
-      # Remove the Webpacker config and deploy shakapacker
-      migrate_shakapacker
+      # Remove the Webpacker/Shakapacker config and deploy asset packer
+      migrate_asset_packer
 
       # Install JS dependencies
       install_decidim_npm
 
-      # Remove the webpacker dependencies as they come through Decidim dependencies.
+      # Remove the extra JS dependencies as they come through Decidim dependencies.
       # This ensures we can control their versions from Decidim dependencies to avoid version conflicts.
       webpacker_packages = %w(
-        @babel/core
-        @babel/plugin-transform-runtime
-        @babel/preset-env
-        @babel/runtime
-        babel-loader
-        compression-webpack-plugin
-        shakapacker
-        terser-webpack-plugin
-        webpack
-        webpack-assets-manifest
-        webpack-cli
-        webpack-dev-server
-        webpack-merge
         @rails/actioncable
         @rails/activestorage
         @rails/ujs
@@ -68,31 +55,23 @@ namespace :decidim do
                                  "tsconfig.json"
       end
 
-      # Remove the Webpacker config and deploy shakapacker
-      migrate_shakapacker
+      # Remove the Webpacker/Shakapacker config and deploy asset packer
+      migrate_asset_packer
 
       # Update JS dependencies
       install_decidim_npm
     end
   end
 
-  def migrate_shakapacker
+  def migrate_asset_packer
     remove_file_from_application "config/webpacker.yml"
     remove_file_from_application "bin/webpack"
     remove_file_from_application "bin/webpack-dev-server"
+    remove_file_from_application "bin/shakapacker"
+    remove_file_from_application "bin/shakapacker-dev-server"
 
-    unless File.exist?(rails_app_path.join("config/shakapacker.yml"))
-      copy_file_to_application "decidim-core/lib/decidim/webpacker/shakapacker.yml", "config/shakapacker.yml"
-      remove_folder_from_application "config/webpack"
-    end
-
-    copy_folder_to_application "decidim-core/lib/decidim/webpacker/webpack", "config"
-
-    system!("bin/rails shakapacker:binstubs") unless File.exist?(rails_app_path.join("bin/shakapacker"))
-
-    # Modify the webpack binstubs
-    add_binstub_load_path "bin/shakapacker"
-    add_binstub_load_path "bin/shakapacker-dev-server"
+    remove_file_from_application "config/shakapacker.yml"
+    remove_folder_from_application "config/webpack"
   end
 
   def install_decidim_npm
@@ -193,43 +172,7 @@ namespace :decidim do
     FileUtils.rm_rf(path)
   end
 
-  def add_binstub_load_path(binstub_path)
-    file = rails_app_path.join(binstub_path)
-    lines = File.readlines(file)
-
-    # Skip if the load path is already added
-    return if lines.grep(
-      %r{^\$LOAD_PATH.unshift "#\{Gem.loaded_specs\["decidim-core"\].full_gem_path\}/lib/gem_overrides"$}
-    ).size.positive?
-
-    contents = ""
-    lines.each do |line|
-      contents += line
-      next unless line =~ %r{^require "bundler/setup"$}
-
-      contents += "\n"
-      contents += "# Add the Decidim override load path to override webpacker functionality\n"
-      contents += "$LOAD_PATH.unshift \"\#{Gem.loaded_specs[\"decidim-core\"].full_gem_path}/lib/gem_overrides\"\n"
-    end
-
-    File.write(file, contents)
-  end
-
   def system!(command)
     system("cd #{rails_app_path} && #{command}") || abort("\n== Command #{command} failed ==")
   end
 end
-
-# Override the Webpacker instance for the rake tasks to correctly assign the
-# configuration file path. This is needed e.g. when `rails assets:precompile` is
-# being run. Otherwise webpacker might not recognize if the assets need to be
-# compiled again (i.e. if the asset hash has been changed).
-if (config_path = Decidim::Webpacker.configuration.configuration_file)
-  Shakapacker.instance = Shakapacker::Instance.new(
-    config_path: Pathname.new(config_path)
-  )
-end
-
-# Add gem overrides path to the beginning in order to override rake tasks
-# Needed because of a bug in Rails 6.0 (see the overridden task for details)
-$LOAD_PATH.unshift "#{Gem.loaded_specs["decidim-core"].full_gem_path}/lib/gem_overrides"

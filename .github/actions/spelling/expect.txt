@@ -791,7 +791,6 @@ sereneinserenade
 serializeds
 setseed
 sgid
-shakapacker
 sharedapp
 shortanswer
 shs

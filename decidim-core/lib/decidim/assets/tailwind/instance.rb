@@ -46,6 +46,8 @@ module Decidim
           @app_path ||=
             if defined?(Rails)
               Rails.application.root
+            elsif defined?(Decidim::Assets::Packer)
+              Decidim::Assets::Packer.instance.root
             else
               # This is used when Rails is not available from the webpacker binstubs
               File.expand_path(".", Dir.pwd)

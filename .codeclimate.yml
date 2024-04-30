@@ -139,6 +139,5 @@ exclude_patterns:
   - "development_app/"
   - "spec/decidim_dummy_app/"
   - "coverage/"
-  - "webpack.report.html"
   - "decidim_app-design/public/sw.js"
   - "decidim_app-design/public/sw.js.map"

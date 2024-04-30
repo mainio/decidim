@@ -39,7 +39,7 @@ module Decidim
       end
     end
 
-    # Rails cells is delegating those methods to some internal view layer which messes up with shakapacker asset loading strategy
+    # Rails cells is delegating those methods to some internal view layer which messes up with asset packer asset loading strategy
     # generating 2 or more queues for the javascript to be loading, resulting in the fact that no js / style pack appended or
     # prepended is added to main view rendering queue.
     # This is inspired from : https://github.com/trailblazer/cells-rails/blob/master/lib/cell/helper/asset_helper.rb

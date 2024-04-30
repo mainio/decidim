@@ -57,7 +57,8 @@
     }
 
     select {
-      @apply inline-block w-auto h-8 mb-0 py-0;
+      @apply inline-block w-auto h-8 mb-0;
+      @apply py-0 #{!important};
     }
 
     button {

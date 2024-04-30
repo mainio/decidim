@@ -5,7 +5,6 @@ require "decidim/assets"
 module Decidim
   module Webpacker
     autoload :Configuration, "decidim/webpacker/configuration"
-    autoload :Runner, "decidim/webpacker/runner"
 
     def self.configuration
       @configuration ||= Configuration.new

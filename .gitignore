@@ -9,7 +9,6 @@ development_app*/
 npm-debug.log
 karma-*
 coverage
-webpack.report.html
 .bundle
 .cache
 .bash_history

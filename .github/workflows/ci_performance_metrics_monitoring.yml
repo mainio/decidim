@@ -23,7 +23,6 @@ env:
   NODE_ENV: "test"
   RAILS_ENV: development
   RAILS_BOOST_PERFORMANCE: "true"
-  SHAKAPACKER_RUNTIME_COMPILE: "false"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}

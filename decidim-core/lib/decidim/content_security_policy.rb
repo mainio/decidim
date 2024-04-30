@@ -67,11 +67,12 @@ module Decidim
     def append_development_directives
       return unless Rails.env.development?
 
-      host = ::Shakapacker.config.dev_server[:host]
-      port = ::Shakapacker.config.dev_server[:port]
+      host = "localhost"
+      port = 3035
 
-      append_csp_directive("connect-src", "wss://#{host}:#{port}")
-      append_csp_directive("connect-src", "ws://#{host}:#{port}")
+      # append_csp_directive("connect-src", "wss://#{host}:#{port}")
+      # append_csp_directive("connect-src", "ws://#{host}:#{port}")
+      append_csp_directive("connect-src", "http://#{host}:#{port}")
     end
 
     def format_policies

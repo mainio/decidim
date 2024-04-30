@@ -50,9 +50,9 @@ image::header-snippet.png[Header snippet]
 
 Notice that you can resize this textarea.
 
-== Shakapacker
+== Asset packer
 
-Decidim uses Shakapacker to compile assets. There are two ways to customize CSS:
+Decidim uses its own asset packer to compile assets. There are two ways to customize CSS:
 
 1. if you want to redefine a specific snippet of CSS (say a few classes but not a whole file) you can use decidim_application.scss. You can read more about this in the <<Overriding CSS and styles>> section.
 2. and of course you can overwrite whole files by copying them into the application i.e: to replace `decidim-core/app/packs/stylesheets/decidim/modules/_data-consent.scss` you should create in your Rails app a file in `app/packs/stylesheets/decidim/modules/_data-consent.scss` and it will have more priority over the Decidim file.

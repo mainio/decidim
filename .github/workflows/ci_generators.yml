@@ -21,7 +21,6 @@ env:
   NODE_ENV: "test"
   DECIDIM_MODULE: decidim-generators
   CODECOV_TOKEN: bc15b944-6b42-420a-b3f9-a5a8fb214326
-  SHAKAPACKER_RUNTIME_COMPILE: "false"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}

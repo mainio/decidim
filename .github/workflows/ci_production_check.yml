@@ -17,7 +17,6 @@ env:
   NODE_ENV: "production"
   RAILS_ENV: production
   BUNDLE_WITHOUT: "development:test"
-  SHAKAPACKER_RUNTIME_COMPILE: "false"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}

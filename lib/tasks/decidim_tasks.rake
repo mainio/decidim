@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-def ensure_log_goes_to_stdout
-  old_logger = Shakapacker.logger
-  Shakapacker.logger = ActiveSupport::Logger.new($stdout)
-  yield
-ensure
-  Shakapacker.logger = old_logger
-end
-
 namespace :decidim do
   namespace :webpacker do
     desc "Install deps with npm"

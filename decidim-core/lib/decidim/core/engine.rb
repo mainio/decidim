@@ -37,7 +37,6 @@ require "mime-types"
 require "diffy"
 require "ransack"
 require "wisper"
-require "shakapacker"
 
 require "decidim/api"
 require "decidim/core/content_blocks/registry_manager"
@@ -216,10 +215,6 @@ module Decidim
         Decidim.icons.register(name: "youtube-line", icon: "youtube-line", category: "social icon", description: "", engine: :core)
         Decidim.icons.register(name: "github-fill", icon: "github-fill", category: "social icon", description: "", engine: :core)
         Decidim.icons.register(name: "facebook-circle-line", icon: "facebook-circle-line", category: "social icon", description: "", engine: :core)
-      end
-
-      initializer "decidim_core.patch_webpacker", before: "shakapacker.version_checker" do
-        ENV["SHAKAPACKER_CONFIG"] = Decidim::Webpacker.configuration.configuration_file
       end
 
       initializer "decidim_core.active_storage_variant_processor" do |app|
@@ -665,6 +660,20 @@ module Decidim
 
       initializer "decidim_core.premailer" do
         Premailer::Adapter.use = :decidim
+      end
+
+      initializer "decidim_core.asset_packer" do
+        config.to_prepare do
+          ActiveSupport.on_load :action_controller do
+            include Decidim::ReloadAssetPacks if Rails.env.start_with?("development")
+
+            helper Decidim::AssetPackHelper if respond_to?(:helper)
+          end
+
+          ActiveSupport.on_load :action_view do
+            include Decidim::AssetPackHelper
+          end
+        end
       end
 
       initializer "decidim_core.webpacker.assets_path" do

@@ -14,7 +14,6 @@ env:
   SIMPLECOV: "true"
   RUBY_VERSION: 3.2.2
   NODE_VERSION: 18.17.1
-  SHAKAPACKER_RUNTIME_COMPILE: "false"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}

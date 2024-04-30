@@ -5,6 +5,7 @@ module Decidim
   module LayoutHelper
     include Decidim::ModalHelper
     include Decidim::TooltipHelper
+    include Decidim::AssetPackHelper
 
     # Public: Generates a set of meta tags that generate the different favicon
     # versions for an organization.
@@ -94,12 +95,12 @@ module Decidim
       # non-nil because otherwise it will be set to the asset host at
       # ActionView::Helpers::AssetUrlHelper#compute_asset_host.
       img_path = asset_pack_path(path, host: "", protocol: :relative)
+      return unless img_path
+
       path = Rails.public_path.join(img_path.sub(%r{^/}, ""))
       return unless File.exist?(path)
 
       path
-    rescue ::Shakapacker::Manifest::MissingEntryError
-      nil
     end
 
     # Allows to create role attribute according to accessibility rules

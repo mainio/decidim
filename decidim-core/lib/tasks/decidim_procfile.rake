@@ -8,7 +8,7 @@ namespace :decidim do
     task :install do
       actions :create_file, "Procfile.dev", <<~RUBY
         web: bin/rails server -b 0.0.0.0 -p 3000
-        shakapacker: bin/shakapacker-dev-server
+        decidimpack: bundle exec decidimpack -w
       RUBY
 
       actions :create_file, "bin/dev", %(#!/usr/bin/env sh

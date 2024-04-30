@@ -32,8 +32,7 @@ module Decidim
           config[environment] = env_config.merge(
             "additional_paths" => all_additional_paths,
             "entrypoints" => all_entrypoints,
-            "stylesheet_imports" => all_stylesheet_imports,
-            "compile" => (ENV.fetch("SHAKAPACKER_RUNTIME_COMPILE", "false") == "true")
+            "stylesheet_imports" => all_stylesheet_imports
           )
         end
 
@@ -68,7 +67,7 @@ module Decidim
       end
 
       def original_configuration_file_path
-        @original_configuration_file_path = File.join(app_path, "config/shakapacker.yml")
+        nil
       end
 
       def load_asset_configurations

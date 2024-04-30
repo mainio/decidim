@@ -1,0 +1,684 @@
+#!/usr/bin/env node
+/* eslint-disable max-lines */
+
+const fs = require("node:fs/promises");
+const path = require("node:path");
+const { gzip, brotliCompress } = require("node:zlib");
+const { createServer } = require("http");
+const esbuild = require("esbuild");
+const { sassPlugin } = require("esbuild-sass-plugin");
+const postcss = require("postcss");
+const postcssrc = require("postcss-load-config");
+const fastGlob = require("fast-glob");
+const hash = require("object-hash");
+
+class  InterruptError extends Error {}
+
+const env = process.env; // eslint-disable-line no-process-env, no-undef
+const stdin = process.stdin; // eslint-disable-line no-undef
+
+// Default root path, may be overridden by the STDIN configuration
+let rootPath = process.cwd(); // eslint-disable-line no-process-env, no-undef
+
+const readBuffer = async (buffer) => {
+  let data = "";
+  for await (const chunk of buffer) {
+    data += chunk;
+  }
+  return data;
+};
+
+/**
+ * Cleans up the build folder at the beginning of the build if it already
+ * exists.
+ *
+ * @returns {Object} An eslint plugin
+ */
+const cleanPlugin = () => {
+  return {
+    name: "clean",
+    setup(build) {
+      const buildDir = build.initialOptions.outdir;
+
+      const excludedFiles = ["manifest.json"].map((file) => `${buildDir}/${file}`);
+      let initialFiles = null;
+
+      build.onStart(async () => {
+        initialFiles = null;
+
+        try {
+          await fs.access(buildDir, fs.constants.F_OK);
+
+          const oldFiles = await fastGlob(`${buildDir}/**/*`);
+          initialFiles = oldFiles.map((file) => {
+            if (excludedFiles.includes(file)) {
+              return null;
+            }
+            return path.relative(rootPath, file);
+          }).filter((file) => file !== null);
+        } catch (ex) {
+          // Do nothing if the buildDir does not exist
+        }
+      });
+
+      build.onEnd(async (result) => {
+        if (initialFiles === null || initialFiles.length < 1) {
+          return;
+        }
+
+        const keep = Object.keys(result.metafile.outputs);
+        initialFiles.forEach(async (file) => {
+          if (keep.includes(file)) {
+            return;
+          }
+
+          await fs.unlink(path.join(rootPath, file));
+        });
+      })
+    }
+  };
+};
+
+/**
+ * Creates an assets manifest file for the build.
+ *
+ * @returns {Object} An eslint plugin
+ */
+const manifestPlugin = () => {
+  return {
+    name: "manifest",
+    setup(build) {
+      build.onEnd(async (result) => {
+        if (result.errors.length > 0) {
+          return;
+        }
+
+        const outdir = build.initialOptions.outdir;
+        const entryPoints = build.initialOptions.entryPoints;
+        const entryPointNames = Object.keys(entryPoints);
+
+        const relativeOutDir = path.relative(rootPath, outdir);
+        const outdirReplacement = new RegExp(`^${relativeOutDir}/`);
+        const manifest = {};
+        const entrypoints = {};
+        const assetManifest = {};
+
+        Object.keys(result.metafile.outputs).forEach((key) => {
+          const output = result.metafile.outputs[key];
+          if (!output.entryPoint) {
+            return;
+          }
+
+          let entrypointType = null;
+          let entryPointPath = null;
+          const entryPointParts = output.entryPoint.split(":");
+          if (entryPointParts.length > 1) {
+            entrypointType = entryPointParts[0];
+            entryPointPath = path.resolve(entryPointParts[1]);
+          } else {
+            entryPointPath = path.resolve(entryPointParts[0]);
+          }
+
+          const importedAssets = output.imports.filter((asset) => {
+            return asset.kind === "url-token" && !asset.external;
+          }).map((asset) => {
+            const assetOutput = result.metafile.outputs[asset.path];
+            if (!assetOutput) {
+              return null;
+            }
+            return { outfile: asset.path, inputs: assetOutput.inputs };
+          }).filter((asset) => asset !== null);
+
+          // Resolve the imported assets at the end of the manifest file
+          if (importedAssets.length > 0) {
+            const entryPointBasePath = path.dirname(entryPointPath);
+            importedAssets.forEach((asset) => {
+              const assetPath = path.resolve(Object.keys(asset.inputs)[0]);
+
+              const relativePath = path.relative(entryPointBasePath, assetPath)
+              const assetMatch = relativePath.match(/^\.\.\/(images|documents)\//);
+              if (assetMatch) {
+                const assetType = assetMatch[1];
+                const assetBasename = path.basename(assetPath);
+                assetManifest[`media/${assetType}/${assetBasename}`] = asset.outfile.replace(outdirReplacement, "");
+              }
+            })
+          }
+
+          // Skip the entry point definitions for the asset CSS files
+          if (entrypointType === "assets-css") {
+            return;
+          }
+
+          const entryPointName = entryPointNames.find((name) => {
+            return entryPoints[name] === entryPointPath;
+          });
+          if (!entryPointName) {
+            return;
+          }
+
+          const entry = { assets: {} };
+          manifest[`${entryPointName}.js`] = key.replace(outdirReplacement, "");
+          entry.assets.js = manifest[`${entryPointName}.js`];
+          if (output.cssBundle) {
+            manifest[`${entryPointName}.css`] = output.cssBundle.replace(outdirReplacement, "");
+            entry.assets.css = manifest[`${entryPointName}.css`];
+          }
+          entrypoints[entryPointName] = entry;
+        });
+        manifest.entrypoints = entrypoints;
+
+        // Add the asset manifest at the bottom of the manifest.json
+        Object.keys(assetManifest).forEach((key) => (manifest[key] = assetManifest[key]));
+
+        await fs.writeFile(`${outdir}/manifest.json`, JSON.stringify(manifest, false, 2));
+      });
+    }
+  };
+};
+
+/**
+ * Changes the `require.context(...)` calls in the JS files to spcial asset
+ * imports in order to interpret them correctly.
+ *
+ * Does the following:
+ * 1. Parses all JS imports and moves the `require.context(...)` to another
+ *    assets entrypoint that imports each asset separately.
+ * 2. Resolves the asset import paths to a namespace specific to this plugin.
+ * 3. Creates the CSS contents for the imports in a separate entrypoint from the
+ *    main entrypoint.
+ * 4. Once the build is completed, removes the added extra asset files as they
+ *    are only used to include the files to the bundle added using
+ *    `require.context(...)`.
+ *
+ * @returns {Object} An eslint plugin
+ */
+const requireContextPlugin = () => {
+  return {
+    name: "require-context",
+    setup(build) {
+      const matcher = /require\.context\(([^)]+)\)/g;
+
+      // The assets require a separate entrypoint so that the assets won't be
+      // injected to the main JS files.
+      const entryPointsWithAssets = {};
+      Object.keys(build.initialOptions.entryPoints).forEach((key) => {
+        const file = build.initialOptions.entryPoints[key];
+        entryPointsWithAssets[key] = file;
+
+        const entryPointMatch = file.match(/(.*)\.js$/);
+        if (entryPointMatch) {
+          entryPointsWithAssets[`${key}_esbuild_assets`] = `${entryPointMatch[1]}_assets.esbuild`;
+        }
+      });
+      build.initialOptions.entryPoints = entryPointsWithAssets;
+
+      let assetImports = {};
+
+      /**
+       * Waits for the entry point processing to complete for the given key and
+       * returns the information about the assets once they become available.
+       *
+       * @param {String} epKey The entry point key to look for.
+       * @returns {Object} The information about entry point assets.
+       */
+      const processedEntryPoint = async (epKey) => {
+        while (!assetImports[epKey]) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        return assetImports[epKey];
+      };
+
+      build.onStart(() => {
+        assetImports = {};
+      });
+
+      build.onResolve({ filter: /\.js$/ }, (args) => {
+        if (args.kind !== "entry-point") {
+          return null;
+        }
+
+        return {
+          path: args.path,
+          namespace: "js-entrypoint",
+          pluginData: { resolveDir: args.resolveDir }
+        }
+      });
+
+      build.onLoad({ filter: /\.js$/, namespace: "js-entrypoint" }, async (args) => {
+        const epKey = args.path.match(/(.*)\.js$/)[1];
+        let source = await fs.readFile(args.path, "utf8");
+        const matches = source.match(matcher);
+        if (!matches) {
+          assetImports[epKey] = {};
+          return { contents: source, loader: "js", resolveDir: args.pluginData.resolveDir };
+        }
+
+        const currentImports = {};
+        const importedFrom = args.path;
+        const sourceDir = path.dirname(args.path);
+        for (const ma of matches) {
+          const match = ma.match(/require\.context\(([^)]+)\)/);
+          const params = match[1].split(/,[\s]+/);
+          const assetPath = params[0].replace(/['"]/g, "");
+          let assetGlob = "*";
+          if (params[1] === "true") {
+            assetGlob = "**/*";
+          }
+
+          const key = hash(path.resolve(sourceDir, assetPath));
+          currentImports[key] = {
+            assetGlob: path.join(importedFrom, `${assetPath}/${assetGlob}`),
+            files: []
+          };
+
+          const files = await fastGlob(`${assetPath}/${assetGlob}`, { cwd: sourceDir })
+          for (const file of files) {
+            currentImports[key].files.push(file);
+          }
+        }
+        source = source.replace(matcher, "");
+
+        assetImports[epKey] = {
+          importedFrom,
+          assetPath: path.dirname(importedFrom),
+          imports: currentImports
+        };
+
+        return { contents: source, loader: "js", resolveDir: args.pluginData.resolveDir };
+      });
+
+      build.onResolve({ filter: /_assets\.esbuild$/ }, (args) => {
+        if (args.kind !== "entry-point") {
+          return null;
+        }
+
+        const epKey = args.path.match(/(.*)_assets\.esbuild$/)[1];
+
+        return {
+          path: args.path,
+          namespace: "assets-css",
+          pluginData: { resolveDir: args.resolveDir, key: epKey }
+        };
+      });
+
+      build.onLoad({ filter: /.*/, namespace: "assets-css" }, async (args) => {
+        const epData = await processedEntryPoint(args.pluginData.key);
+        if (!epData.imports) {
+          return { contents: "" };
+        }
+
+        const importKeys = Object.keys(epData.imports);
+        if (importKeys.length < 1) {
+          return { contents: "" };
+        }
+
+        const source = importKeys.map((key) => {
+          const assetData = epData.imports[key];
+          // return assetData.files.map((relativePath) => `@import url("${relativePath}");`).join("\n");
+          return assetData.files.map((relativePath, idx) => `.asset-${key}-${idx} { background-image: url("${relativePath}"); }`).join("\n");
+        }).join("\n");
+
+        return { contents: source, loader: "css", resolveDir: epData.assetPath };
+      });
+
+      build.onEnd((result) => {
+        Object.keys(result.metafile.outputs).forEach(async (key) => {
+          const output = result.metafile.outputs[key];
+          if (!output.entryPoint) {
+            return;
+          }
+
+          const entryPointParts = output.entryPoint.split(":");
+          if (entryPointParts[0] !== "assets-css") {
+            return;
+          }
+
+          const files = await fastGlob(`${key}*`, { cwd: rootPath })
+          for (const file of files) {
+            await fs.unlink(path.join(rootPath, file));
+          }
+        });
+      });
+    }
+  };
+};
+
+/**
+ * Pre-compresses some output files with gzip and brotli where it makes sense,
+ * i.e. the file is of an uncompressed type.
+ *
+ * @returns {Object} An eslint plugin
+ */
+const compressPlugin = () => {
+  return {
+    name: "compress",
+    setup(build) {
+      const outdir = build.initialOptions.outdir;
+      const compressExtensions = ["js", "css", "svg", "json", "txt", "map"];
+
+      const getFilesToCompress = (outputs) => {
+        return new Promise((resolve) => {
+          // The timeout is to distinguish the compression process from the
+          // build process in the process output.
+          setTimeout(() => {
+            const assetCssFiles = Object.keys(outputs).filter((filePath) => {
+              const output = outputs[filePath];
+              return output.entryPoint && output.entryPoint.match(/^assets-css:/);
+            });
+
+            const files = Object.keys(outputs).filter((filePath) => {
+              // Exclude the asset-css files from the compression because they
+              // are already removed at this point.
+              const metaMatch = filePath.match(/(.*)\.(map|LEGAL\.txt)$/);
+              if (metaMatch && assetCssFiles.includes(metaMatch[1])) {
+                return false;
+              } else if (assetCssFiles.includes(filePath)) {
+                return false;
+              }
+
+              const ext = filePath.substring(filePath.lastIndexOf(".") + 1);
+              return compressExtensions.includes(ext);
+            });
+            resolve(files);
+          }, 100);
+        })
+      }
+
+      build.onEnd(async (result) => {
+        const outputs = result.metafile.outputs;
+
+        getFilesToCompress(outputs).then((files) => {
+          if (files.length < 1) {
+            return;
+          }
+
+          console.log(`Compressing the output files (${files.length} files to compress)...`);
+
+          files.forEach(async (filePath) => {
+            const fileName = filePath.split("/").at(-1);
+            const content = await fs.readFile(filePath, "utf8");
+
+            gzip(content, async (error, compressedContent) => {
+              if (error) {
+                throw error;
+              }
+              const compressedFilePath = path.join(outdir, `${fileName}.gz`);
+              await fs.writeFile(compressedFilePath, compressedContent);
+            });
+            brotliCompress(content, async (error, compressedContent) => {
+              if (error) {
+                throw error;
+              }
+              const compressedFilePath = path.join(outdir, `${fileName}.br`);
+              await fs.writeFile(compressedFilePath, compressedContent);
+            });
+          });
+        });
+      });
+    }
+  };
+};
+
+/**
+ * Adds extra files to watch paths specific to Decidim CSS configurations.
+ * Mainly to enable recompilation of the SCSS when the template or cell files
+ * are changed.
+ *
+ * Note that the `cache` option needs to be set to `false` for the `sassPlugin`
+ * for this to work properly.
+ *
+ * Note that this plugin needs to be registered early so that the onLoad hook
+ * will run before the actual import.
+ *
+ * @returns {Object} An eslint plugin
+ */
+const decidimWatchPlugin = ({ watchPaths }) => {
+  return {
+    name: "decidim-watch",
+    setup(build) {
+      const importPaths = build.initialOptions.nodePaths;
+
+      const watchFiles = async (basePath) => {
+        const promises = watchPaths.map((watchGlob) => fastGlob(watchGlob, { cwd: basePath }));
+        const values = await Promise.all(promises);
+        return values.flat();
+      };
+
+      let watchModified = null;
+
+      build.onStart(() => {
+        watchModified = false;
+      });
+
+      build.onResolve({ filter: /decidim_core\.scss/, namespace: "file" }, async (args) => {
+        if (watchModified) {
+          return null;
+        }
+
+        const filePath = importPaths.find(async (imp) => await fs.access(path.join(imp, args.path), fs.constants.F_OK));
+        if (!filePath) {
+          return null;
+        }
+
+        const files = await watchFiles(rootPath);
+        const fullPath = path.join(filePath, args.path);
+
+        return {
+          path: fullPath,
+          namespace: "file",
+          watchFiles: files
+        };
+      });
+    }
+  };
+};
+
+/**
+ * Logs details about the build to stdout.
+ *
+ * @returns {Object} An eslint plugin
+ */
+const logPlugin = () => {
+  return {
+    name: "compress",
+    setup(build) {
+      let startTime = null;
+
+      build.onStart(() => {
+        console.log("Building...");
+        startTime = Date.now();
+      });
+      build.onEnd(() => {
+        console.log("Done");
+        console.log(`Time elapsed: ${(Date.now() - startTime) / 1000}s`);
+      });
+    }
+  };
+};
+
+/**
+ * Handles notifying the client when assets have been rebuilt.
+ *
+ * @returns {Object} An eslint plugin
+ */
+const devServerPlugin = ({ port }) => {
+  return {
+    name: "dev-server",
+    setup(build) {
+      let firstBuild = true;
+      const clients = [];
+
+      build.onEnd(() => {
+        if (firstBuild) {
+          firstBuild = false;
+          return;
+        }
+
+        clients.forEach((res) => res.write("data: update\n\n"));
+      });
+
+      createServer((req, res) => {
+        return clients.push(
+          res.writeHead(200, {
+            "Content-Type": "text/event-stream",
+            "Cache-Control": "no-cache",
+            "Access-Control-Allow-Origin": "*",
+            Connection: "keep-alive"
+          })
+        );
+      }).listen(port);
+    }
+  };
+};
+
+const build = async (config) => {
+  // The `postcssConfigContext` is passed to postcss.config.js when loading the
+  // configuration. It does not seem to be used currently in Decidim.
+  const postcssConfigContext = {};
+  const postCssConfigPath = path.resolve(rootPath, "postcss.config.js");
+  const { plugins, options } = await postcssrc(postcssConfigContext, postCssConfigPath);
+  const postcssProcessor = postcss(plugins);
+  const { default: tailwindConfig } = await import(`${rootPath}/tailwind.config.js`);
+
+  let envSpecificOptions = {};
+  let extraPlugins = [];
+  if (env.NODE_ENV === "production") {
+    envSpecificOptions = {
+      drop: ["debugger"],
+      dropLabels: ["DEV", "TEST"],
+      minify: true,
+      treeShaking: true,
+      entryNames: "[name]-[hash]"
+    };
+    extraPlugins.push(compressPlugin());
+  } else {
+    envSpecificOptions = {
+      sourcemap: true
+    };
+  }
+
+  if (config.watch && config.devServer) {
+    const devServerPort = 3035;
+    envSpecificOptions.banner = {
+      js: `(() => new EventSource('http://localhost:${devServerPort}').onmessage = () => location.reload())();`
+    };
+    extraPlugins.push(devServerPlugin({ port: devServerPort }));
+  }
+
+  const importPaths = [...config.additionalPaths, env.NODE_PATH];
+  const stylesheetImports = config.stylesheetImports;
+  const context = await esbuild.context({
+    logLevel: "info",
+    entryPoints: config.entryPoints,
+    nodePaths: importPaths,
+    define: {
+      "process": JSON.stringify({ env: { NODE_ENV: env.NODE_ENV } })
+    },
+    platform: "browser",
+    format: "iife",
+    target: ["es2015"],
+    external: ["crypto"],
+    legalComments: "linked",
+    bundle: true,
+    mainFields: ["module", "main"],
+    metafile: true,
+    publicPath: config.publicPath,
+    outdir: config.outdir,
+    loader: {
+      ".bmp": "file",
+      ".gif": "file",
+      ".jpg": "file",
+      ".jpeg": "file",
+      ".png": "file",
+      ".tiff": "file",
+      ".ico": "file",
+      ".avif": "file",
+      ".webp": "file",
+      ".eot": "file",
+      ".otf": "file",
+      ".ttf": "file",
+      ".woff": "file",
+      ".woff2": "file",
+      ".svg": "file",
+      ".md": "file",
+      ".odt": "file"
+    },
+    ...envSpecificOptions,
+    plugins: [
+      cleanPlugin(),
+      decidimWatchPlugin({ watchPaths: tailwindConfig.content }),
+      requireContextPlugin(),
+      manifestPlugin(),
+      sassPlugin({
+        embedded: true,
+        // Disable cache in order to rebuild the SCSS when templates or cells
+        // are changed.
+        cache: false,
+        loadPaths: importPaths,
+        precompile(source) {
+          // Decidim custom style imports
+          return source.replace(/@import\s+["']!decidim-style-imports\[([^\]]+)\]["'];/, (...match) => {
+            const group = match[1];
+            if (Array.isArray(stylesheetImports[group])) {
+              return stylesheetImports[group].map((stylePath) => `@import "${stylePath}";`).join("\n");
+            }
+            return "";
+          });
+        },
+        async transform(source, sourceDir, sourceFile) {
+          try {
+            const { css } = await postcssProcessor.process(source, {
+              from: sourceFile,
+              map: { inline: false },
+              ...options
+            });
+            // Allows getting results from the source map (if needed).
+            // Note that the `map` option needs to be set above with `inline`
+            // option set to `false.
+            // const sourceMap = map.toJSON();
+            // console.log(sourceMap.sources);
+            return css;
+          } catch (ex) {
+            console.log(ex);
+            throw new Error("PostCSS Error");
+          }
+        }
+      }),
+      logPlugin(),
+      ...extraPlugins
+    ]
+  });
+
+  if (config.watch) {
+    process.on("SIGINT", async () => { // eslint-disable-line no-undef
+      await context.dispose();
+
+      throw new InterruptError();
+    });
+
+    await context.watch();
+  } else {
+    await context.rebuild();
+    await context.dispose();
+  }
+}
+
+(async () => {
+  const config = JSON.parse(await readBuffer(stdin));
+  if (config.root) {
+    rootPath = config.root;
+  }
+
+  try {
+    await build(config);
+  } catch (ex) {
+    if (ex instanceof InterruptError) {
+      return;
+    }
+
+    console.log(ex);
+    throw new Error("Build failed");
+  }
+})();
