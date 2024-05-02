@@ -652,11 +652,14 @@ const build = async (config) => {
   });
 
   if (config.watch) {
-    process.on("SIGINT", async () => { // eslint-disable-line no-undef
+    const finalize = async () => {
       await context.dispose();
 
       throw new InterruptError();
-    });
+    };
+
+    process.on("SIGINT", finalize); // eslint-disable-line no-undef
+    process.on("SIGTERM", finalize); // eslint-disable-line no-undef
 
     await context.watch();
   } else {
