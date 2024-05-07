@@ -1,13 +1,15 @@
-[data-component="accordion"] [id*="panel"][aria-hidden="true"] {
-  display: none;
-}
+@layer components {
+  [data-component="accordion"] [id*="panel"][aria-hidden="true"] {
+    display: none;
+  }
 
-[data-component="accordion"]
-  [id*="comment"][class="comment-reply"][aria-hidden="true"] {
-  display: none;
-}
+  [data-component="accordion"]
+    [id*="comment"][class="comment-reply"][aria-hidden="true"] {
+    display: none;
+  }
 
-[data-component="accordion"]
-  [id*="comment"][class="comment-reply"][aria-hidden="false"] {
-  display: block;
+  [data-component="accordion"]
+    [id*="comment"][class="comment-reply"][aria-hidden="false"] {
+    display: block;
+  }
 }

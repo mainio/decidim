@@ -1,7 +1,9 @@
-.actions__secondary {
-  @apply flex flex-row md:flex-col justify-center md:gap-y-4 gap-x-10 md:gap-x-0;
+@layer components {
+  .actions__secondary {
+    @apply flex flex-row md:flex-col justify-center md:gap-y-4 gap-x-10 md:gap-x-0;
 
-  .button {
-    @apply justify-start;
+    .button {
+      @apply justify-start;
+    }
   }
 }
