@@ -20,7 +20,12 @@ module Decidim
         load_asset_configurations
 
         # Read the original configuration and append the paths
-        config = YAML.load_file(original_configuration_file_path)
+        config =
+          if Gem::Version.new(Psych::VERSION) >= Gem::Version.new("4.0.0")
+            YAML.load_file(original_configuration_file_path, aliases: true)
+          else
+            YAML.load_file(original_configuration_file_path)
+          end
         default = config["default"] || {}
         all_additional_paths = default["additional_paths"] || []
         all_additional_paths += additional_paths
