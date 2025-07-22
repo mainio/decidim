@@ -20,15 +20,15 @@ group :development, :test do
 
   gem "decidim-dev", path: "."
 
-  gem "brakeman", "~> 5.2"
+  gem "brakeman", "~> 6.1"
   gem "parallel_tests", "~> 3.7"
 end
 
 group :development do
-  gem "letter_opener_web", "~> 2.0"
+  gem "letter_opener_web", "~> 3.0"
   gem "listen", "~> 3.1"
   gem "rubocop-faker"
-  gem "spring", "~> 2.0"
-  gem "spring-watcher-listen", "~> 2.0"
+  gem "spring", "~> 4.2.1"
+  gem "spring-watcher-listen", "~> 2.1"
   gem "web-console", "~> 4.2"
 end
