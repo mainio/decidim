@@ -50,6 +50,7 @@ shared_examples "manage impersonations examples" do
 
   shared_examples_for "impersonating a user" do
     it "can impersonate the user filling in the correct authorization" do
+      expect(page).to have_content("You are managing the participant")
       expect(page).to have_content("You are managing the participant #{impersonated_user.name}")
       expect(page).to have_content("Your session will expire in #{Decidim::ImpersonationLog::SESSION_TIME_IN_MINUTES} minutes")
     end
@@ -122,6 +123,7 @@ shared_examples "manage impersonations examples" do
     end
 
     it "redirects normally when session expires while reload" do
+      expect(page).to have_content("You are managing the participant")
       expect(Decidim::Admin::ExpireImpersonationJob).to have_been_enqueued.with(impersonated_user, user)
       travel Decidim::ImpersonationLog::SESSION_TIME_IN_MINUTES.minutes / 2
       visit current_path
@@ -329,9 +331,17 @@ shared_examples "manage impersonations examples" do
     end
 
     fill_in_the_impersonation_form("123456789X", reason: reason)
+
+    # You need to provide a reason when managing a non-managed participant
+    if reason || user.managed?
+      expect(page).to have_content("You are managing the participant")
+    else
+      expect(page).to have_content("You need to provide a reason when managing a non-managed participant")
+    end
   end
 
   def simulate_session_expiration
+    expect(page).to have_content("You are managing the participant")
     expect(Decidim::Admin::ExpireImpersonationJob).to have_been_enqueued.with(impersonated_user, user)
     session_time = Decidim::ImpersonationLog::SESSION_TIME_IN_MINUTES.minutes
     first_travel_time = session_time.even? ? session_time / 2 : (session_time / 2) + 1

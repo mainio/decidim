@@ -225,7 +225,7 @@ describe "Admin manages organization", type: :system do
           expect(page).to have_content("Organization updated successfully")
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("<p>bar baz</p><p><br></p>")
+          )["innerHTML"]).to eq("<p>bar baz</p>")
         end
       end
 
@@ -506,6 +506,7 @@ describe "Admin manages organization", type: :system do
                 element.innerHTML = "testing <img src='http://example.org/x' onerror=alert(1) >";
               JS
             )
+            sleep 1
           end
 
           click_button "Update"
