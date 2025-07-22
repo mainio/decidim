@@ -2,6 +2,8 @@ image::https://cdn.rawgit.com/decidim/decidim/develop/logo.svg[Decidim Logo,400]
 
 The participatory democracy framework.
 
+This is a support version of Decidim v0.27 to provide support for newer Ruby versions in order to continue the maintenance of Decidim instances still running on that version due to a difficult upgrade path.
+
 ____
 Free Open-Source participatory democracy, citizen participation and open government for cities and organizations
 ____
