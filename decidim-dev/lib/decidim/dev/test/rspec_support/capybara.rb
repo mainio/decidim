@@ -43,7 +43,7 @@ Capybara.register_driver :headless_chrome do |app|
   Capybara::Selenium::Driver.new(
     app,
     browser: :chrome,
-    capabilities: [options]
+    options: options
   )
 end
 
@@ -82,7 +82,7 @@ Capybara.register_driver :pwa_chrome do |app|
   Capybara::Selenium::Driver.new(
     app,
     browser: :chrome,
-    capabilities: [options]
+    options: options
   )
 end
 
@@ -97,7 +97,7 @@ Capybara.register_driver :iphone do |app|
   Capybara::Selenium::Driver.new(
     app,
     browser: :chrome,
-    capabilities: [options]
+    options: options
   )
 end
 
