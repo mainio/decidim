@@ -482,6 +482,7 @@ describe "Authentication", type: :system do
             end
 
             expect(page).to have_content("Invalid")
+            sleep 0.5
             expect(emails.count).to eq(1)
           end
         end
