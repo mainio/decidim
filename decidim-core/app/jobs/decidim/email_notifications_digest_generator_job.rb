@@ -11,7 +11,7 @@ module Decidim
       should_notify = force || NotificationsDigestSendingDecider.must_notify?(user, time)
       return unless should_notify
 
-      notification_ids = user.notifications.try(frequency, time: time).pluck(:id)
+      notification_ids = user.notifications.try(frequency, time).pluck(:id)
       return if notification_ids.blank?
 
       NotificationsDigestMailer.digest_mail(user, notification_ids).deliver_later
