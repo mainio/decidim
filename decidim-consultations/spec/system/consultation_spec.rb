@@ -20,6 +20,7 @@ describe "Consultation", type: :system do
   context "when requesting the consultation path" do
     before do
       visit decidim_consultations.consultation_path(consultation)
+      expect(page).to have_content(organization.name)
     end
 
     it_behaves_like "has embedded video in description", :description do
@@ -50,6 +51,7 @@ describe "Consultation", type: :system do
         let!(:user) { create(:user, :confirmed, organization: organization) }
 
         before do
+          sleep 1
           sign_in user, scope: :user
         end
 
