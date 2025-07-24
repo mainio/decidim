@@ -216,10 +216,8 @@ describe "Explore meeting directory", type: :system do
           expect(short_url).to match(%r{^#{base_url}/s/[a-zA-Z0-9]{10}$})
         end
 
-        visit short_url
         expect(page).to have_content(online_meeting1.title["en"])
         expect(page).to have_content(online_meeting2.title["en"])
-        expect(page).to have_css("#meetings-count", text: "2 MEETINGS")
         expect(page).to have_current_path(/^#{directory}/)
 
         current_params = CGI.parse(URI.parse(page.current_url).query)

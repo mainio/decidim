@@ -5,10 +5,11 @@ shared_examples "export meetings" do
 
   it "exports a CSV" do
     find(".exports.dropdown").click
-    perform_enqueued_jobs { click_link "Meetings as CSV" }
-
-    within ".callout.success" do
-      expect(page).to have_content("in progress")
+    perform_enqueued_jobs do
+      click_link "Meetings as CSV"
+      within ".callout.success" do
+        expect(page).to have_content("in progress")
+      end
     end
 
     expect(last_email.subject).to include("meetings", "csv")
@@ -18,10 +19,11 @@ shared_examples "export meetings" do
 
   it "exports a JSON" do
     find(".exports.dropdown").click
-    perform_enqueued_jobs { click_link "Meetings as JSON" }
-
-    within ".callout.success" do
-      expect(page).to have_content("in progress")
+    perform_enqueued_jobs do
+      click_link "Meetings as JSON"
+      within ".callout.success" do
+        expect(page).to have_content("in progress")
+      end
     end
 
     expect(last_email.subject).to include("meetings", "json")

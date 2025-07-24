@@ -63,8 +63,12 @@ describe "Meeting live event", type: :system do
       allow(Decidim.config).to receive(:expire_session_after).and_return(2.minutes)
       allow(Decidim.config).to receive(:session_timeout_interval).and_return(1.second)
       switch_to_host(organization.host)
+      # Wait for the previous request to finish before logging in the user
+      expect(page).to have_content(organization.name)
+      sleep 2
       login_as user, scope: :user
       visit meeting_live_event_path
+      expect(page).to have_content(user.name)
     end
 
     context "when meeting is live" do

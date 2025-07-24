@@ -11,17 +11,17 @@ end
 def invite_unregistered_user(name:, email:)
   visit_meeting_invites_page
 
-  within "form.new_meeting_registration_invite" do
-    choose "Non existing participant", name: "meeting_registration_invite[existing_user]"
-    fill_in :meeting_registration_invite_name, with: name
-    fill_in :meeting_registration_invite_email, with: email
+  perform_enqueued_jobs do
+    within "form.new_meeting_registration_invite" do
+      choose "Non existing participant", name: "meeting_registration_invite[existing_user]"
+      fill_in :meeting_registration_invite_name, with: name
+      fill_in :meeting_registration_invite_email, with: email
 
-    perform_enqueued_jobs do
       click_button "Invite"
     end
-  end
 
-  expect(page).to have_content("successfully")
+    expect(page).to have_content("successfully")
+  end
 
   within "#meeting-invites table" do
     expect(page).to have_content(name)
@@ -32,16 +32,16 @@ end
 def invite_existing_user(user)
   visit_meeting_invites_page
 
-  within "form.new_meeting_registration_invite" do
-    choose "Existing participant", name: "meeting_registration_invite[existing_user]"
-    autocomplete_select "#{user.name} (@#{user.nickname})", from: :user_id
+  perform_enqueued_jobs do
+    within "form.new_meeting_registration_invite" do
+      choose "Existing participant", name: "meeting_registration_invite[existing_user]"
+      autocomplete_select "#{user.name} (@#{user.nickname})", from: :user_id
 
-    perform_enqueued_jobs do
       click_button "Invite"
     end
-  end
 
-  expect(page).to have_content("successfully")
+    expect(page).to have_content("successfully")
+  end
 
   within "#meeting-invites table" do
     expect(page).to have_content(registered_user.name)
