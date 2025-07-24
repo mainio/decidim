@@ -39,6 +39,8 @@ describe "Private Participatory Processes", type: :system do
         switch_to_host(organization.host)
         login_as user, scope: :user
         visit decidim_participatory_processes.participatory_processes_path
+        expect(page).to have_content(organization.name)
+        sleep 1
       end
 
       it "lists only the not private participatory process" do
@@ -59,6 +61,7 @@ describe "Private Participatory Processes", type: :system do
           switch_to_host(organization.host)
           login_as admin, scope: :user
           visit decidim_participatory_processes.participatory_processes_path
+          expect(page).to have_content(organization.name)
         end
 
         it "lists private participatory processes" do
@@ -87,6 +90,7 @@ describe "Private Participatory Processes", type: :system do
         switch_to_host(organization.host)
         login_as other_user, scope: :user
         visit decidim_participatory_processes.participatory_processes_path
+        expect(page).to have_content(organization.name)
       end
 
       it "lists private participatory processes" do

@@ -20,5 +20,8 @@ shared_context "when inviting process users" do
     select role, from: "Role"
     click_button "Create"
     logout :user
+    visit decidim.root_path
+    expect(page).to have_content("Sign In")
+    sleep 1
   end
 end
