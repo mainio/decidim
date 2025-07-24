@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "uri"
+
 shared_examples_for "a new production application" do
   it "includes optional plugins commented out in Gemfile" do
     expect(result[1]).to be_success, result[0]
