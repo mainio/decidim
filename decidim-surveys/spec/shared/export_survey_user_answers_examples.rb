@@ -13,10 +13,11 @@ shared_examples "export survey user answers" do
     visit_component_admin
 
     find(".exports.dropdown").click
-    perform_enqueued_jobs { click_link "CSV" }
-
-    within ".callout.success" do
-      expect(page).to have_content("in progress")
+    perform_enqueued_jobs do
+      click_link "CSV"
+      within ".callout.success" do
+        expect(page).to have_content("in progress")
+      end
     end
 
     expect(last_email.subject).to include("survey_user_answers", "csv")
@@ -28,10 +29,11 @@ shared_examples "export survey user answers" do
     visit_component_admin
 
     find(".exports.dropdown").click
-    perform_enqueued_jobs { click_link "JSON" }
-
-    within ".callout.success" do
-      expect(page).to have_content("in progress")
+    perform_enqueued_jobs do
+      click_link "JSON"
+      within ".callout.success" do
+        expect(page).to have_content("in progress")
+      end
     end
 
     expect(last_email.subject).to include("survey_user_answers", "json")
@@ -43,10 +45,11 @@ shared_examples "export survey user answers" do
     visit_component_admin
 
     find(".exports.dropdown").click
-    perform_enqueued_jobs { click_link "PDF" }
-
-    within ".callout.success" do
-      expect(page).to have_content("in progress")
+    perform_enqueued_jobs do
+      click_link "PDF"
+      within ".callout.success" do
+        expect(page).to have_content("in progress")
+      end
     end
 
     expect(last_email.subject).to include("survey_user_answers", "pdf")
