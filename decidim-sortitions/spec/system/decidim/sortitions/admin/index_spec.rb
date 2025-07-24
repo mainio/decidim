@@ -21,7 +21,7 @@ describe "index", type: :system do
   end
 
   it "Contains the sortitions data" do
-    expect(page).to have_content(sortition.title[:en])
+    expect(page).to have_content(CGI.escapeHTML(translated(sortition.title)))
     expect(page).to have_content(sortition.reference)
   end
 end
