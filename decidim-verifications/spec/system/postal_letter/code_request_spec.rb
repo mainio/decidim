@@ -18,9 +18,6 @@ describe "Postal letter code request", type: :system do
     switch_to_host(organization.host)
     login_as user, scope: :user
     visit decidim_postal_letter.root_path
-  end
-
-  it "redirects to verification after login" do
     expect(page).to have_content("Request your verification code")
   end
 
@@ -36,8 +33,11 @@ describe "Postal letter code request", type: :system do
 
     context "and getting it sent" do
       before do
+        sleep 1
         relogin_as admin
         visit decidim_admin_postal_letter.root_path
+        expect(page).to have_current_path(decidim_admin_postal_letter.root_path)
+        expect(page).to have_content("Ongoing verifications")
       end
 
       it "shows the address as pending" do
