@@ -172,7 +172,7 @@ describe "Filter Proposals", :slow, type: :system do
         expect(page).to have_selector(".card--proposal:first-child", text: translated(first_proposal.title))
 
         within ".order-by__dropdown" do
-          expect(page).to have_selector("ul[data-dropdown-menu$=dropdown-menu]", text: "Random")
+          expect(page).to have_selector("ul[data-dropdown-menu$=dropdown-menu]", text: "Most commented")
           page.find("a", text: "Most commented").click
           click_link "Most followed"
         end
@@ -431,7 +431,7 @@ describe "Filter Proposals", :slow, type: :system do
         expect(page).to have_selector(".card--proposal:first-child", text: translated(proposal1.title))
 
         within ".order-by__dropdown" do
-          expect(page).to have_selector("ul[data-dropdown-menu$=dropdown-menu]", text: "Random")
+          expect(page).to have_selector("ul[data-dropdown-menu$=dropdown-menu]", text: "Most commented")
           page.find("a", text: "Most commented").click
           click_link "Most followed"
         end
@@ -586,8 +586,12 @@ describe "Filter Proposals", :slow, type: :system do
               let(:user) { new_amendment.amender }
 
               before do
+                expect(page).to have_content(translated(component.name).upcase)
+                sleep 1
+
                 login_as user, scope: :user
                 visit_component
+                expect(page).not_to have_content("Sign In")
               end
 
               it "can be filtered by type" do

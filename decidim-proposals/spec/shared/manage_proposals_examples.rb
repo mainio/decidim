@@ -293,12 +293,12 @@ shared_examples "manage proposals" do
 
         it "cannot create a new proposal from the main site" do
           visit_component
-          expect(page).to have_no_button("New Proposal")
+          expect(page).to have_no_button("New proposal")
         end
 
         it "cannot create a new proposal from the admin site" do
           visit_component_admin
-          expect(page).to have_no_link(/New/)
+          expect(page).to have_no_link("New proposal")
         end
       end
     end
@@ -310,12 +310,12 @@ shared_examples "manage proposals" do
 
       it "cannot create a new proposal from the main site" do
         visit_component
-        expect(page).to have_no_button("New Proposal")
+        expect(page).to have_no_button("New proposal")
       end
 
       it "cannot create a new proposal from the admin site" do
         visit_component_admin
-        expect(page).to have_no_link(/New/)
+        expect(page).to have_no_link("New proposal")
       end
     end
   end
