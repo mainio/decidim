@@ -9,9 +9,9 @@ module Decidim
       module InPersonFields
         extend ActiveSupport::Concern
 
-        included do
-          DOCUMENT_TYPES = %w(DNI NIE PASSPORT).freeze
+        DOCUMENT_TYPES = %w(DNI NIE PASSPORT).freeze
 
+        included do
           attribute :document_number, String
           attribute :document_type, String
           attribute :birthdate, String
