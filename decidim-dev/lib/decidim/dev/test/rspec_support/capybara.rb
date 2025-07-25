@@ -47,21 +47,27 @@ Capybara.register_driver :headless_chrome do |app|
   )
 end
 
-1.step do
-  port = rand(5000..6999)
+# Expected values: "", "2", "3", etc. (see parallel_tests documentation)
+parallel_run_idx = ENV.fetch("TEST_ENV_NUMBER", "").to_i
+parallel_run_idx -= 1 if parallel_run_idx.positive?
+Capybara.server_port = 1.step do |num|
+  port = 4999 + num + (100 * parallel_run_idx)
+  next if port == 5432 # Reserved for PostgreSQL
+  next if port == 6379 # Reserved for Redis
+
+  # Make sure the port is not reserved by any other application.
   begin
     Socket.tcp("127.0.0.1", port, connect_timeout: 5).close
     warn "Port #{port} is already in use, trying another one."
   rescue Errno::ECONNREFUSED
-    # When connection is refused, the port is available for use.
-    Capybara.server_port = port
-    break
+    break port
   end
 end
 
 # setting up special prefs and flags
 Capybara.register_driver :pwa_chrome do |app|
   options = ::Selenium::WebDriver::Chrome::Options.new
+  options.args << "--explicitly-allowed-ports=#{Capybara.server_port}"
   options.args << "--no-sandbox"
   # Don't limit browser resources
   options.args << "--disable-dev-shm-usage"
