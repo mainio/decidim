@@ -247,10 +247,11 @@ shared_examples "manage impersonations examples" do
         fill_in :managed_user_promotion_email, with: "foo@example.org"
       end
 
-      perform_enqueued_jobs { click_button "Promote" }
-
-      expect(page).to have_content("successfully")
-      expect(page).to have_content(managed_user.name)
+      perform_enqueued_jobs do
+        click_button "Promote"
+        expect(page).to have_content("successfully")
+        expect(page).to have_content(managed_user.name)
+      end
 
       logout :user
 

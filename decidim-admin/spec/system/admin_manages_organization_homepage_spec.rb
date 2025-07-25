@@ -39,6 +39,8 @@ describe "Admin manages organization homepage", type: :system do
       )
 
       click_button "Update"
+      expect(page).to have_content("Active content blocks")
+
       visit decidim.root_path
       expect(page).to have_content("Custom welcome text!")
     end
@@ -49,6 +51,8 @@ describe "Admin manages organization homepage", type: :system do
       dynamically_attach_file(:content_block_images_background_image, Decidim::Dev.asset("city2.jpeg"))
 
       click_button "Update"
+      expect(page).to have_content("Active content blocks")
+
       visit decidim.root_path
       expect(page.html).to include("city2.jpeg")
     end
