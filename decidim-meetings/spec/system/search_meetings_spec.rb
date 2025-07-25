@@ -28,8 +28,10 @@ describe "Search meetings", type: :system do
         fill_in "term", with: term
         find("input#term").native.send_keys :enter
 
+        regexterm = ["(", ")"].inject(term) { |t, chr| t.gsub(chr, "\\#{chr}") }
+
         expect(page).to have_current_path decidim.search_path, ignore_query: true
-        expect(page).to have_content(/results for the search: "#{term}"/i)
+        expect(page).to have_content(/results for the search: "#{regexterm}"/i)
         expect(page).to have_selector(".filters__section")
         expect(page.find("#search-count .section-heading").text.to_i).to eq(0)
       end
