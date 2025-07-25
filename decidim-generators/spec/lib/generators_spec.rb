@@ -25,7 +25,7 @@ module Decidim
         let(:test_version) { "0.27.0.pre1" }
 
         it "returns the release branch" do
-          expect(subject.edge_git_branch).to eq("release/0.27-stable")
+          expect(subject.edge_git_branch).to eq("release/0.27-stable-ruby3.3")
         end
       end
 
@@ -33,7 +33,7 @@ module Decidim
         let(:test_version) { "0.27.0.alpha9" }
 
         it "returns the release branch" do
-          expect(subject.edge_git_branch).to eq("release/0.27-stable")
+          expect(subject.edge_git_branch).to eq("release/0.27-stable-ruby3.3")
         end
       end
 
@@ -41,7 +41,7 @@ module Decidim
         let(:test_version) { "0.27.0.beta2" }
 
         it "returns the release branch" do
-          expect(subject.edge_git_branch).to eq("release/0.27-stable")
+          expect(subject.edge_git_branch).to eq("release/0.27-stable-ruby3.3")
         end
       end
 
@@ -49,7 +49,7 @@ module Decidim
         let(:test_version) { "0.27.0.rc4" }
 
         it "returns the release branch" do
-          expect(subject.edge_git_branch).to eq("release/0.27-stable")
+          expect(subject.edge_git_branch).to eq("release/0.27-stable-ruby3.3")
         end
       end
 
@@ -57,7 +57,7 @@ module Decidim
         let(:test_version) { "0.27.99" }
 
         it "returns the release branch" do
-          expect(subject.edge_git_branch).to eq("release/0.27-stable")
+          expect(subject.edge_git_branch).to eq("release/0.27-stable-ruby3.3")
         end
       end
     end
