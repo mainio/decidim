@@ -112,6 +112,8 @@ describe "Admin manages participatory process group landing page", type: :system
       )
 
       click_button "Update"
+      expect(page).to have_content("Active content blocks")
+
       visit decidim_admin_participatory_processes.edit_participatory_process_group_landing_page_content_block_path(participatory_process_group, :hero)
       expect(page).to have_selector("input[value='Custom welcome text!']")
 
