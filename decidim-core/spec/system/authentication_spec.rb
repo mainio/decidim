@@ -475,14 +475,16 @@ describe "Authentication", type: :system do
           end
 
           it "when reached maximum failed attempts" do
-            within ".new_user" do
-              fill_in :session_user_email, with: user.email
-              fill_in :session_user_password, with: "not-the-pasword"
-              perform_enqueued_jobs { find("*[type=submit]").click }
+            perform_enqueued_jobs do
+              within ".new_user" do
+                fill_in :session_user_email, with: user.email
+                fill_in :session_user_password, with: "not-the-pasword"
+                find("*[type=submit]").click
+              end
+              expect(page).to have_content("Invalid")
+              sleep 0.5
             end
 
-            expect(page).to have_content("Invalid")
-            sleep 0.5
             expect(emails.count).to eq(1)
           end
         end
