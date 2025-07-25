@@ -13,6 +13,7 @@ shared_examples "manage announcements" do
     )
 
     click_button "Update"
+    expect(page).to have_content("updated successfully")
 
     visit main_component_path(current_component)
 
@@ -47,6 +48,7 @@ shared_examples "manage announcements" do
       )
 
       click_button "Update"
+      expect(page).to have_content("updated successfully")
 
       visit main_component_path(current_component)
 
