@@ -42,7 +42,7 @@ module Decidim
                             desc: "Use a specific branch from GitHub's version"
 
       class_option :repository, type: :string,
-                                default: "https://github.com/decidim/decidim.git",
+                                default: "https://github.com/mainio/decidim.git",
                                 desc: "Use a specific GIT repository (valid in conjunction with --edge or --branch)"
 
       class_option :recreate_db, type: :boolean,
@@ -331,7 +331,10 @@ module Decidim
                           elsif branch.present?
                             %(git: "#{repository}", branch: "#{branch}")
                           else
-                            %("#{Decidim::Generators.version}")
+                            repo = "https://github.com/mainio/decidim.git"
+                            version = Decidim::Generators.version.match(/^[0-9]+\.[0-9]+/)[0]
+                            gem_branch = "release/#{version}-stable-ruby3.3"
+                            %(git: "#{repo}", branch: "#{gem_branch}")
                           end
       end
 
@@ -342,7 +345,7 @@ module Decidim
       end
 
       def repository
-        @repository ||= options[:repository] || "https://github.com/decidim/decidim.git"
+        @repository ||= options[:repository] || "https://github.com/mainio/decidim.git"
       end
 
       def app_name
@@ -367,7 +370,7 @@ module Decidim
         root = if options[:path]
                  expanded_path
                elsif branch.present?
-                 "https://raw.githubusercontent.com/decidim/decidim/#{branch}/decidim-generators"
+                 "https://raw.githubusercontent.com/mainio/decidim/#{branch}/decidim-generators"
                else
                  root_path
                end

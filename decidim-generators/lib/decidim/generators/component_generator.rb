@@ -17,7 +17,9 @@ module Decidim
                   :component_folder,
                   :component_description,
                   :core_version,
-                  :required_ruby_version
+                  :required_ruby_version,
+                  :decidim_repository,
+                  :decidim_branch
 
       source_root File.expand_path("component_templates", __dir__)
 
@@ -32,6 +34,10 @@ module Decidim
         @core_version = Decidim::Core.version
         @component_description = ask "Write a description for the new component:"
         @required_ruby_version = RUBY_VERSION.length == 5 ? RUBY_VERSION[0..2] : RUBY_VERSION
+
+        branch_version = core_version.match(/^[0-9]+\.[0-9]+/)[0]
+        @decidim_repository = "https://github.com/mainio/decidim.git"
+        @decidim_branch = "release/#{branch_version}-stable-ruby3.3"
 
         template "decidim-component.gemspec.erb", "#{component_folder}/decidim-#{component_name}.gemspec"
         template "Gemfile.erb", "#{component_folder}/Gemfile" if options[:external]
