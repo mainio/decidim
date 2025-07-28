@@ -25,8 +25,10 @@ describe "Show a Proposal", type: :system do
 
       describe "extra admin link" do
         before do
+          expect(page).to have_content("Sign In")
           login_as user, scope: :user
           visit current_path
+          expect(page).not_to have_content("Sign In")
         end
 
         context "when I'm an admin user" do
@@ -54,8 +56,10 @@ describe "Show a Proposal", type: :system do
         let(:user) { create(:user, :confirmed, organization: organization) }
 
         before do
+          expect(page).to have_content("Sign In")
           login_as user, scope: :user
           visit current_path
+          expect(page).not_to have_content("Sign In")
         end
 
         context "when author doesn't restrict messaging" do
