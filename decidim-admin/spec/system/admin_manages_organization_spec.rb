@@ -221,6 +221,7 @@ describe "Admin manages organization", type: :system do
 
         it "is still editable" do
           find('div[contenteditable="true"].ql-editor').native.send_keys(Array.new(15) { :backspace }, "bar baz")
+          expect(find('div[contenteditable="true"].ql-editor')["innerHTML"]).to eq("<p>bar baz</p>")
           click_button "Update"
           expect(page).to have_content("Organization updated successfully")
           expect(find(
