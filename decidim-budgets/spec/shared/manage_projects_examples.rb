@@ -6,6 +6,9 @@ shared_examples "manage projects" do
       within ".process-content" do
         page.find(".button--title.new").click
       end
+      within ".card-title" do
+        expect(page).to have_content("New project")
+      end
     end
 
     it_behaves_like "having a rich text editor", "new_project", "full"
@@ -23,6 +26,7 @@ shared_examples "manage projects" do
         stub_geocoding(address, [latitude, longitude])
         current_component.update!(settings: { geocoding_enabled: true })
         visit current_path
+        expect(page).to have_content("Address")
       end
 
       it "creates a new project" do
