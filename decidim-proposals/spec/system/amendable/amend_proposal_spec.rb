@@ -194,9 +194,11 @@ describe "Amend Proposal", versioning: true, type: :system do
           let!(:user) { create :user, :confirmed, organization: component.organization }
 
           before do
+            expect(page).to have_content("Sign In")
             participatory_space.update(users: [user])
             login_as user, scope: :user
             visit proposal_path
+            expect(page).not_to have_content("Sign In")
           end
 
           it "is shown a link to Amend it" do
