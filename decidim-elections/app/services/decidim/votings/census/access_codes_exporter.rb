@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "seven_zip_ruby"
+require "libarchive"
 require "zip"
 
 module Decidim
@@ -32,9 +32,8 @@ module Decidim
           dirname = File.dirname(@path)
           FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
           File.open(@path, "wb") do |file|
-            SevenZipRuby::Writer.open(file, password: password) do |szw|
-              szw.header_encryption = true
-              szw.add_data(csv_data.read, format(FILE_NAME_PATTERN, voting_name: translated_attribute(dataset.voting.title).parameterize))
+            Libarchive::Writer.open(file, passphrase: password) do |writer|
+              writer.add_data(csv_data.read, format(FILE_NAME_PATTERN, voting_name: translated_attribute(dataset.voting.title).parameterize))
             end
           end
         end

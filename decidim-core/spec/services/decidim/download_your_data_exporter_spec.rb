@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+require "libarchive"
 
 module Decidim
   describe DownloadYourDataExporter do
     subject { DownloadYourDataExporter.new(user, tmp_file_in.path, password) }
 
-    let(:tmp_file_in) { Tempfile.new(["download-your-data", ".7z"]) }
+    let(:tmp_file_in) { Tempfile.new(["download-your-data", ".zip"]) }
     let(:tmp_dir_out) { Dir.mktmpdir("download_your_data_exporter_spec") }
-    let(:password) { "download-your-data.7z>passwd" }
+    let(:password) { "download-your-data.zip>passwd" }
     let(:user) { create :user }
     let(:expected_files) do
       # this are the prefixes for the files archived in the zip
@@ -36,10 +37,10 @@ module Decidim
 
     describe "#export" do
       it "compresses a password protected file" do
-        # generate 7z
+        # generate zip
         subject.export
 
-        open_7z_and_extract_zip(tmp_file_in.path)
+        open_and_extract_zip(tmp_file_in.path)
 
         file_prefixes = expected_files.dup
         Zip::File.open(File.join(tmp_dir_out, DownloadYourDataExporter::ZIP_FILE_NAME)) do |zip_file|
@@ -58,10 +59,12 @@ module Decidim
 
     #----------------------------------------------------
 
-    def open_7z_and_extract_zip(file_path)
+    def open_and_extract_zip(file_path)
       File.open(file_path, "rb") do |file|
-        SevenZipRuby::Reader.open_file(file, password: password) do |szr|
-          szr.extract(:all, tmp_dir_out)
+        Libarchive::Reader.open_file(file, passphrase: password) do |reader|
+          reader.entries do |entry|
+            reader.extract(entry, tmp_dir_out)
+          end
         end
       end
     end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+require "libarchive"
 
 module Decidim
   module Votings
@@ -8,7 +9,7 @@ module Decidim
       describe AccessCodesExporter do
         subject { AccessCodesExporter.new(dataset, tmp_file_in.path, password) }
 
-        let(:tmp_file_in) { Tempfile.new(["access_codes", ".7z"]) }
+        let(:tmp_file_in) { Tempfile.new(["access_codes", ".zip"]) }
         let(:tmp_dir_out) { Dir.mktmpdir("access_codes_exporter_spec") }
         let(:dataset) { create(:dataset, :with_access_code_data) }
         let(:password) { "secret" }
@@ -19,7 +20,7 @@ module Decidim
           it "compresses a password protected file" do
             subject.export
 
-            files, data = open_7z_and_extract_zip(tmp_file_in.path)
+            files, data = open_and_extract_zip(tmp_file_in.path)
 
             expect(files).to contain_exactly(expected_file)
             dataset.data.each do |datum|
@@ -33,13 +34,15 @@ module Decidim
 
         private
 
-        def open_7z_and_extract_zip(file_path)
+        def open_and_extract_zip(file_path)
           files = []
-          data = nil
+          data = "".dup
           File.open(file_path, "rb") do |file|
-            SevenZipRuby::Reader.open_file(file, password: password) do |szr|
-              files = szr.entries.map(&:path)
-              data = szr.extract_data(:all).join
+            Libarchive::Reader.open_file(file, passphrase: password) do |reader|
+              reader.entries do |entry|
+                files.push(entry.path)
+                data.concat(reader.extract_data(entry))
+              end
             end
           end
 
