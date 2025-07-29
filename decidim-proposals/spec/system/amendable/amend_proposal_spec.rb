@@ -195,6 +195,7 @@ describe "Amend Proposal", versioning: true, type: :system do
 
           before do
             expect(page).to have_content("Sign In")
+            sleep 1
             participatory_space.update(users: [user])
             login_as user, scope: :user
             visit proposal_path
