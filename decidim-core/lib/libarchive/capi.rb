@@ -22,7 +22,6 @@ module Libarchive
     attach_function :archive_write_set_options, [:pointer, :string], :int
     attach_function :archive_write_set_passphrase, [:pointer, :string], :int
     attach_function :archive_write_open, [:pointer, :pointer, :pointer, :archive_write_callback, :pointer], :int
-    # attach_function :archive_write_open_filename, [:pointer, :string], :int
 
     attach_function :archive_entry_new, [], :pointer
     attach_function :archive_entry_free, [:pointer], :void
