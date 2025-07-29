@@ -18,7 +18,7 @@ on:
 env:
   CI: "true"
   SIMPLECOV: "true"
-  RUBY_VERSION: 3.3.8
+  RUBY_VERSION: 3.4.5
   RAILS_ENV: development
 
 jobs:
