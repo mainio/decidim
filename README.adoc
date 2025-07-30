@@ -2,8 +2,42 @@ image::https://cdn.rawgit.com/decidim/decidim/develop/logo.svg[Decidim Logo,400]
 
 The participatory democracy framework.
 
-This is a support version of Decidim v0.27 to provide support for newer Ruby versions in order to continue the maintenance of Decidim instances still running on that version due to a difficult upgrade path.
+[NOTE]
+.Support release of Decidim v0.27
+====
+This is a support version of Decidim v0.27 to provide continued support for newer Ruby versions in order to continue the maintenance of Decidim instances still running on that version due to a difficult upgrade path. We do not guarantee any further support for this version of Decidim, so use it with caution and your own consideration. We maintain this branch only in order to continue supporting some of our customers who have more difficult upgrade paths to newer Decidim versions and to fix some problems in this Decidim version.
 
+Currently all tests are passing up to Ruby 3.4. When considering using this support version, please test your instance and all relevant functionality thoroughly.
+
+This version maintains backwards compatibility with v0.27 where it is possible with newer Ruby versions. However, there are some differences to the original v0.27 that you should be aware of.
+
+Most significant changes compared to the original v0.27:
+
+* The following new dependencies are added in `decidim-core` due to them being removed from the standard Ruby library:
+ ** `benchmark` (to be removed in Ruby 3.5)
+ ** `drb` (removed in Ruby 3.4)
+ ** `irb` (to be removed in Ruby 3.5)
+ ** `mutex_m` (removed in Ruby 3.4)
+ ** `observer` (removed in Ruby 3.4)
+ ** `rdoc` (to be removed in Ruby 3.5)
+* The `pg` and `pg_search` gems have been updated to versions compatible with newer Ruby versions.
+* The `webpush` gem has been replaced with `web-push` to support OpenSSLv3 and newer Ruby versions.
+* `seven_zip_ruby` has been replaced with a C library `libarchive` with FFI bindings to the Ruby code.
+ ** This changes the password protected ZIP files to be normal AES-256 encrypted and password protected ZIP files that have wider support for different ZIP archive software. Therefore, 7-Zip is no longer necessary to open these files but they should work fine with 7-Zip as well.
+ ** You may need to run `apt install libarchive`, `apt install libarchive13`, or `apt install libarchive13t64` in case your operating system or container does not come with a pre-installed version of the shared library `libarchive`. Please adjust the commands to your operating system and the package manager in use.
+ ** This change also adds dependency to the `ffi` gem in `decidim-core`. However, the `ffi` gem has been already a Decidim dependency through some other gems.
+* The following method signatures have been changed (and also all calls to these methods) to make them compatible with newer Ruby versions:
+ ** `Decidim::NewsletterMailer#newsletter`
+ ** `Decidim::NotificationsDigestSendingDecider#must_notify?`
+ ** `Decidim::Notification#daily` (an ActiveRecord scope)
+ ** `Decidim::Notification#weekly` (an ActiveRecord scope)
+* Ruby 3.4 compatibility fixes for the following gems:
+ ** The `cells` gem's method `Cell::ViewModel#state_for_implicit_render` has been replaced with a version compatible with Ruby 3.4 in `Decidim::ViewModel`.
+ ** The `graphql` gem has been updated to `1.13.x` in order to make it work with Ruby 3.4.
+  *** However, the query complexity check works similarly as in older versions (see https://github.com/rmosolgo/graphql-ruby/pull/3609)
+ ** The `origami` gem's class `Origami::PDF::Instruction` has been replaced with a version compatible with Ruby 3.4 within `decidim-initiatives`.
+* The `decidim-bulletin_board`, `voting_schemes-dummy` and `voting_schemes-electionguard` gems have been updated to 0.24.1 to make them compatible with OpenSSLv3 and newer Ruby versions within `decidim-elections`.
+====
 ____
 Free Open-Source participatory democracy, citizen participation and open government for cities and organizations
 ____
