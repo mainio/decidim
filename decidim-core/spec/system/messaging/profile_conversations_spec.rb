@@ -20,6 +20,7 @@ describe "ProfileConversations", type: :system do
     before do
       login_as another_user, scope: :user
       visit decidim.profile_path(nickname: profile.nickname)
+      expect(page).to have_content("@#{profile.nickname}")
     end
 
     it "has a contact link" do
@@ -34,6 +35,7 @@ describe "ProfileConversations", type: :system do
     before do
       login_as admin, scope: :user
       visit decidim.profile_path(nickname: profile.nickname)
+      expect(page).to have_content("Blocked user group")
     end
 
     it "doesn't have a contact link" do
@@ -338,6 +340,7 @@ describe "ProfileConversations", type: :system do
         before do
           visit_profile_inbox
           click_button "New conversation"
+          expect(page).to have_content("Add users to conversation")
         end
 
         it "has disabled submit button" do
@@ -358,14 +361,17 @@ describe "ProfileConversations", type: :system do
   def start_conversation(message)
     fill_in "conversation_body", with: message
     click_button "Send"
+    expect(page).to have_content("started successfully")
   end
 
   def visit_profile_inbox
     visit decidim.profile_path(nickname: profile.nickname)
+    expect(page).to have_content("@#{profile.nickname}")
 
     within "#profile-tabs" do
       click_link "Conversations"
     end
+    expect(page).to have_content("Conversations are private.")
   end
 
   def visit_inbox
@@ -373,6 +379,10 @@ describe "ProfileConversations", type: :system do
 
     within ".topbar__user__logged" do
       find(".icon--envelope-closed").click
+    end
+
+    within "h1.title-action__title" do
+      expect(page).to have_content("Conversations")
     end
   end
 end
