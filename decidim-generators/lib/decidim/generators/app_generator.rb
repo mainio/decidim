@@ -333,7 +333,7 @@ module Decidim
                           else
                             repo = "https://github.com/mainio/decidim.git"
                             version = Decidim::Generators.version.match(/^[0-9]+\.[0-9]+/)[0]
-                            gem_branch = "release/#{version}-stable-ruby3.3"
+                            gem_branch = "release/#{version}-stable-ruby3.4"
                             %(git: "#{repo}", branch: "#{gem_branch}")
                           end
       end

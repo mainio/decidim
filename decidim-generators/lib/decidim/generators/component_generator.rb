@@ -37,7 +37,7 @@ module Decidim
 
         branch_version = core_version.match(/^[0-9]+\.[0-9]+/)[0]
         @decidim_repository = "https://github.com/mainio/decidim.git"
-        @decidim_branch = "release/#{branch_version}-stable-ruby3.3"
+        @decidim_branch = "release/#{branch_version}-stable-ruby3.4"
 
         template "decidim-component.gemspec.erb", "#{component_folder}/decidim-#{component_name}.gemspec"
         template "Gemfile.erb", "#{component_folder}/Gemfile" if options[:external]

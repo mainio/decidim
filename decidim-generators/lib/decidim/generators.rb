@@ -8,7 +8,7 @@ module Decidim
       if Decidim::Generators.version.match?(/\.dev$/)
         "develop"
       else
-        "release/#{Decidim::Generators.version.match(/^[0-9]+\.[0-9]+/)[0]}-stable-ruby3.3"
+        "release/#{Decidim::Generators.version.match(/^[0-9]+\.[0-9]+/)[0]}-stable-ruby3.4"
       end
     end
   end
