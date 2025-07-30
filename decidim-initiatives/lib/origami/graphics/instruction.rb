@@ -20,71 +20,71 @@ module Origami
   class InvalidPDFInstructionError < Error; end
 
   class PDF::Instruction
-      using TypeConversion
+    using TypeConversion
 
-      attr_reader :operator
-      attr_accessor :operands
+    attr_reader :operator
+    attr_accessor :operands
 
-      @insns = { operands: [], render: -> {} }
+    @insns = { operands: [], render: -> {} }
 
-      def initialize(operator, *operands)
-        @operator = operator
-        @operands = operands.map! { |arg| arg.is_a?(Origami::Object) ? arg.value : arg }
+    def initialize(operator, *operands)
+      @operator = operator
+      @operands = operands.map! { |arg| arg.is_a?(Origami::Object) ? arg.value : arg }
 
-        return unless self.class.has_op?(operator)
+      return unless self.class.has_op?(operator)
 
-        opdef = self.class.get_operands(operator)
+      opdef = self.class.get_operands(operator)
 
-        if opdef.exclude?("*") && opdef.size != operands.size
-          raise InvalidPDFInstructionError,
-                "Numbers of operands mismatch for #{operator}: #{operands.inspect}"
-        end
+      if opdef.exclude?("*") && opdef.size != operands.size
+        raise InvalidPDFInstructionError,
+              "Numbers of operands mismatch for #{operator}: #{operands.inspect}"
+      end
+    end
+
+    def render(canvas)
+      self.class.get_render_proc(@operator)[canvas, *@operands]
+
+      self
+    end
+
+    def to_s
+      "#{operands.map { |op| op.to_o.to_s }.join(" ")}#{" " unless operands.empty?}#{operator}\n"
+    end
+
+    class << self
+      def insn(operator, *operands, &render_proc)
+        @insns[operator] = {}
+        @insns[operator][:operands] = operands
+        @insns[operator][:render] = render_proc || -> {}
       end
 
-      def render(canvas)
-        self.class.get_render_proc(@operator)[canvas, *@operands]
-
-        self
+      def has_op?(operator)
+        @insns.has_key? operator
       end
 
-      def to_s
-        "#{operands.map { |op| op.to_o.to_s }.join(" ")}#{" " unless operands.empty?}#{operator}\n"
+      def get_render_proc(operator)
+        @insns[operator][:render]
       end
 
-      class << self
-        def insn(operator, *operands, &render_proc)
-          @insns[operator] = {}
-          @insns[operator][:operands] = operands
-          @insns[operator][:render] = render_proc || -> {}
+      def get_operands(operator)
+        @insns[operator][:operands]
+      end
+
+      def parse(stream)
+        operands = []
+        while (type = Object.typeof(stream, true))
+          operands.push type.parse(stream)
         end
 
-        def has_op?(operator)
-          @insns.has_key? operator
-        end
+        if stream.eos?
+          raise InvalidPDFInstructionError, "No operator given for operands: #{operands.map(&:to_s).join(" ")}" unless operands.empty?
+        else
+          raise InvalidPDFInstructionError, "Operator: #{"#{stream.peek(10)}...".inspect}" if stream.scan(%r{(?<operator>[[:graph:]&&[^\[\]<>()%/]]+)}).nil?
 
-        def get_render_proc(operator)
-          @insns[operator][:render]
-        end
-
-        def get_operands(operator)
-          @insns[operator][:operands]
-        end
-
-        def parse(stream)
-          operands = []
-          while (type = Object.typeof(stream, true))
-            operands.push type.parse(stream)
-          end
-
-          if stream.eos?
-            raise InvalidPDFInstructionError, "No operator given for operands: #{operands.map(&:to_s).join(" ")}" unless operands.empty?
-          else
-            raise InvalidPDFInstructionError, "Operator: #{"#{stream.peek(10)}...".inspect}" if stream.scan(%r{(?<operator>[[:graph:]&&[^\[\]<>()%/]]+)}).nil?
-
-            operator = stream["operator"]
-            PDF::Instruction.new(operator, *operands)
-          end
+          operator = stream["operator"]
+          PDF::Instruction.new(operator, *operands)
         end
       end
+    end
   end
 end
