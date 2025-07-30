@@ -32,7 +32,7 @@ PATH
       devise_invitable (~> 2.0, >= 2.0.9)
     decidim-api (0.27.10)
       decidim-core (= 0.27.10)
-      graphql (~> 1.12, < 1.13)
+      graphql (~> 1.13.25)
       graphql-docs (~> 2.1.0)
       rack-cors (~> 1.0)
     decidim-assemblies (0.27.10)
@@ -476,10 +476,11 @@ GEM
       faraday (>= 1.0)
       faraday_middleware
       graphql-client
-    graphql (1.12.25)
-    graphql-client (0.19.0)
+    graphql (1.13.25)
+      base64
+    graphql-client (0.26.0)
       activesupport (>= 3.0)
-      graphql
+      graphql (>= 1.13.0)
     graphql-docs (2.1.0)
       commonmarker (~> 0.16)
       escape_utils (~> 1.2)
