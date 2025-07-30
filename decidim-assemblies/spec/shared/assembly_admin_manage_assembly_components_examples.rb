@@ -178,6 +178,7 @@ shared_examples "assembly admin manage assembly components" do
         within ".component-#{component.id}" do
           click_link "Publish"
         end
+        expect(page).to have_content("successfully published")
 
         within ".component-#{component.id}" do
           expect(page).to have_css(".action-icon--unpublish")
@@ -191,6 +192,7 @@ shared_examples "assembly admin manage assembly components" do
         within ".component-#{component.id}" do
           click_link "Publish"
         end
+        expect(page).to have_content("successfully published")
 
         expect(Decidim::EventPublisherJob).to(have_been_enqueued.with(
                                                 "decidim.events.components.component_published", {
@@ -212,6 +214,7 @@ shared_examples "assembly admin manage assembly components" do
         within ".component-#{component.id}" do
           click_link "Unpublish"
         end
+        expect(page).to have_content("successfully unpublished")
 
         within ".component-#{component.id}" do
           expect(page).to have_css(".action-icon--publish")
