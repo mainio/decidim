@@ -191,6 +191,7 @@ describe "Admin manages moderated users", type: :system do
         fill_in :block_user_justification, with: "This user is a spammer" * 2 # to have at least 15 chars
 
         click_on I18n.t("decidim.admin.block_user.new.action")
+        expect(page).to have_content("successfully blocked")
 
         expect(first_user.reload).to be_blocked
 

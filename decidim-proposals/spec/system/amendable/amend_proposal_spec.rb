@@ -235,6 +235,7 @@ describe "Amend Proposal", versioning: true, type: :system do
             login_as user, scope: :user
             visit proposal_path
             click_link "Amend Proposal"
+            expect(page).to have_content("CREATE AMENDMENT")
           end
 
           it "is shown the amendment create form" do
