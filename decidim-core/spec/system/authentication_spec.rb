@@ -303,9 +303,13 @@ describe "Authentication", type: :system do
     it "sends an email with the instructions" do
       visit decidim.new_user_confirmation_path
 
-      within ".new_user" do
-        fill_in :confirmation_user_email, with: user.email
-        perform_enqueued_jobs { find("*[type=submit]").click }
+      perform_enqueued_jobs do
+        within ".new_user" do
+          fill_in :confirmation_user_email, with: user.email
+          find("*[type=submit]").click
+        end
+        expect(page).to have_content("If your email address exists in our database")
+        sleep 0.5
       end
 
       expect(emails.count).to eq(2)
@@ -346,12 +350,15 @@ describe "Authentication", type: :system do
       it "sends a password recovery email" do
         visit decidim.new_user_password_path
 
-        within ".new_user" do
-          fill_in :password_user_email, with: user.email
-          perform_enqueued_jobs { find("*[type=submit]").click }
+        perform_enqueued_jobs do
+          within ".new_user" do
+            fill_in :password_user_email, with: user.email
+            find("*[type=submit]").click
+          end
+          expect(page).to have_content("If your email address exists in our database")
+          sleep 0.5
         end
 
-        expect(page).to have_content("If your email address exists in our database")
         expect(emails.count).to eq(1)
       end
 
@@ -498,12 +505,16 @@ describe "Authentication", type: :system do
         end
 
         it "resends the unlock instructions" do
-          within ".new_user" do
-            fill_in :unlock_user_email, with: user.email
-            perform_enqueued_jobs { find("*[type=submit]").click }
+          perform_enqueued_jobs do
+            within ".new_user" do
+              fill_in :unlock_user_email, with: user.email
+              find("*[type=submit]").click
+            end
+
+            expect(page).to have_content("If your account exists")
+            sleep 0.5
           end
 
-          expect(page).to have_content("If your account exists")
           expect(emails.count).to eq(1)
         end
 
