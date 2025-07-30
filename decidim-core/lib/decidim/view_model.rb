@@ -68,5 +68,16 @@ module Decidim
     def decidim
       Decidim::Core::Engine.routes.url_helpers
     end
+
+    def state_for_implicit_render(_options)
+      matchdata =
+        if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.4.0")
+          caller(3, 1)[0].match(/'(\w+)\s|#(\w+)'/)
+        else
+          caller(3, 1)[0].match(/`(\w+)|#(\w+)'/)
+        end
+
+      matchdata.captures.compact.first
+    end
   end
 end
