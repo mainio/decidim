@@ -953,9 +953,7 @@ module Decidim
       # disable the iframe elements from the editable areas that are shown to
       # admins causing all videos to be removed in case the admin has not given
       # full consent to cookies.
-      sanitized_value = decidim_sanitize_editor(value, { scrubber: Decidim::AdminInputScrubber.new })
-
-      sanitized_value == %(<div class="ql-editor-display"></div>) ? "" : sanitized_value
+      decidim_sanitize(value, { scrubber: Decidim::AdminInputScrubber.new })
     end
   end
 end
