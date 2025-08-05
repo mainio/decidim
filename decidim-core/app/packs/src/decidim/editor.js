@@ -73,7 +73,7 @@ export default function createQuillEditor(container) {
     quillFormats.push("image");
 
     const uploadUrl = container.dataset.uploadImagesPath;
-    const token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    const token = document.querySelector("meta[name='csrf-token']")?.getAttribute("content");
     const imageUploader = createServerUploader(uploadUrl, {
       headers: { "X-CSRF-Token": token }
     });
