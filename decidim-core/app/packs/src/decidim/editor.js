@@ -115,8 +115,8 @@ export default function createQuillEditor(container) {
     } else {
       // Remove the empty paragraph either from the beginning or the end of the
       // semantic HTML.
-      const matcher = new RegExp('^<p>(<br>)?</p>|<p>(<br>)?</p>$');
-      const cleanHTML = quill.getSemanticHTML().replace(matcher, '');
+      const matcher = new RegExp("^<p>(<br>)?</p>|<p>(<br>)?</p>$");
+      const cleanHTML = quill.getSemanticHTML().replace(matcher, "");
       $input.val(cleanHTML);
     }
   });
