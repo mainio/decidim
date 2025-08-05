@@ -94,7 +94,7 @@ describe "Admin manages organization", type: :system do
         end
 
         it "creates and deletes linebreaks with enter, shift+enter and backspace" do
-          find('div[contenteditable="true"].ql-editor').native.send_keys "acd", [:left], [:left], [:enter], [:shift, :enter], [:shift, :enter], "b", [:left], [:backspace], [:backspace]
+          find('div[contenteditable="true"].ql-editor').native.send_keys "acd", [:left], [:left], [:enter], [:shift, :enter], [:shift, :enter], "b", [:left], [:backspace], [:backspace], [:backspace]
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
           )["innerHTML"]).to eq("<p>abcd</p>".gsub("\n", ""))
@@ -112,6 +112,9 @@ describe "Admin manages organization", type: :system do
             <li>List item 3</li></ul><p>Another paragraph</p>
           HTML
         end
+        let(:terms_content_editor) do
+          terms_content.gsub("<ul>", "<ol>").gsub("</ul>", "</ol>").gsub("<li>", %(<li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>))
+        end
         let(:organization) do
           create(
             :organization,
@@ -122,7 +125,7 @@ describe "Admin manages organization", type: :system do
         it "renders the correct content inside the editor" do
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq(terms_content.gsub("\n", ""))
+          )["innerHTML"]).to eq(terms_content_editor.gsub("\n", ""))
         end
       end
 
@@ -193,11 +196,11 @@ describe "Admin manages organization", type: :system do
           )["innerHTML"]).to eq('<p>foo<br><br><a href="https://www.decidim.org" rel="noopener noreferrer" target="_blank">link</a></p>')
         end
 
-        it "doesnt create br tag inside a tag" do
-          find('div[contenteditable="true"].ql-editor').native.send_keys([:left, :left, :left, :left], [:shift, :enter])
+        it "creates a br tag inside a tag" do
+          find('div[contenteditable="true"].ql-editor').native.send_keys([:left, :left], [:shift, :enter])
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq('<p>foo<br><br><a href="https://www.decidim.org" rel="noopener noreferrer" target="_blank">link</a></p>')
+          )["innerHTML"]).to eq('<p>foo<br><a href="https://www.decidim.org" rel="noopener noreferrer" target="_blank">li<br>nk</a></p>')
         end
       end
 
@@ -226,7 +229,7 @@ describe "Admin manages organization", type: :system do
           expect(page).to have_content("Organization updated successfully")
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("<p>bar baz</p><p><br></p>")
+          )["innerHTML"]).to eq("<p>bar baz</p>")
         end
       end
 
@@ -308,68 +311,71 @@ describe "Admin manages organization", type: :system do
             <li>List item 3</li></ul>
           HTML
         end
+        let(:terms_content_editor) do
+          terms_content.gsub("<ul>", "<ol>").gsub("</ul>", "</ol>").gsub("<li>", %(<li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>))
+        end
 
         it "renders new list item" do
           find('div[contenteditable="true"].ql-editor').native.send_keys [:enter], "List item 4"
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("<p>Paragraph</p><ul><li>List item 1</li><li>List item 2</li><li>List item 3</li><li>List item 4</li></ul>".gsub("\n", ""))
+          )["innerHTML"]).to eq(%(<p>Paragraph</p><ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 1</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 2</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 3</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 4</li></ol>).gsub("\n", ""))
         end
 
         it "ends the list when pressing enter twice and starts new paragraph" do
           find('div[contenteditable="true"].ql-editor').native.send_keys [:enter, :enter], "Another paragraph"
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("#{terms_content}<p>Another paragraph</p>".gsub("\n", ""))
+          )["innerHTML"]).to eq("#{terms_content_editor}<p>Another paragraph</p>".gsub("\n", ""))
         end
 
         it "deletes empty list item when pressing backspace and starts new paragraph" do
           find('div[contenteditable="true"].ql-editor').native.send_keys [:enter, :backspace], "Another paragraph"
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("#{terms_content}<p>Another paragraph</p>".gsub("\n", ""))
+          )["innerHTML"]).to eq("#{terms_content_editor}<p>Another paragraph</p>".gsub("\n", ""))
         end
 
         it "deletes linebreaks (and smartbreaks) using the backspace" do
           find('div[contenteditable="true"].ql-editor').native.send_keys [:enter, :enter, :enter, :backspace, :backspace]
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq(terms_content.to_s.gsub("\n", ""))
+          )["innerHTML"]).to eq(terms_content_editor.to_s.gsub("\n", ""))
         end
 
         it "keeps right curson position when using the backspace" do
           find('div[contenteditable="true"].ql-editor').native.send_keys [:enter, "bc", :left, :left, :enter, :backspace, :backspace, "a"]
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("<p>Paragraph</p><ul><li>List item 1</li><li>List item 2</li><li>List item 3</li><li>abc</li></ul>".to_s.gsub("\n", ""))
+          )["innerHTML"]).to eq(%(<p>Paragraph</p><ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 1</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 2</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 3</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>abc</li></ol>).to_s.gsub("\n", ""))
         end
 
         it "keeps right format when using the backspace" do
           find('div[contenteditable="true"].ql-editor').native.send_keys [:enter, :backspace, "abc", :left, :left, :left, :backspace]
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("<p>Paragraph</p><ul><li>List item 1</li><li>List item 2</li><li>List item 3abc</li></ul>".to_s.gsub("\n", ""))
+          )["innerHTML"]).to eq(%(<p>Paragraph</p><ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 1</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 2</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 3abc</li></ol>).to_s.gsub("\n", ""))
         end
 
         it "keeps right cursor position when using backspace after empty list item" do
           find('div[contenteditable="true"].ql-editor').native.send_keys [:enter, "bcd", :left, :left, :left, :enter, :backspace, :enter, :enter, :backspace, :backspace, :backspace, "a"]
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("<p>Paragraph</p><ul><li>List item 1</li><li>List item 2</li><li>List item 3</li><li>abcd</li></ul>".to_s.gsub("\n", ""))
+          )["innerHTML"]).to eq(%(<p>Paragraph</p><ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 1</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 2</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 3</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>abcd</li></ol>).to_s.gsub("\n", ""))
         end
 
         it "keeps right cursor position when using backspace after list item with text" do
           find('div[contenteditable="true"].ql-editor').native.send_keys [:enter, "acd", :left, :left, :enter, :backspace, :enter, :enter, :backspace, :backspace, :backspace, "b"]
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("<p>Paragraph</p><ul><li>List item 1</li><li>List item 2</li><li>List item 3</li><li>abcd</li></ul>".to_s.gsub("\n", ""))
+          )["innerHTML"]).to eq(%(<p>Paragraph</p><ol><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 1</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 2</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>List item 3</li><li data-list="bullet"><span class="ql-ui" contenteditable="false"></span>abcd</li></ol>).to_s.gsub("\n", ""))
         end
 
         it "doesnt delete characters below when pressing backspace" do
           find('div[contenteditable="true"].ql-editor').native.send_keys [:up, :up, :up, :home, :enter, :enter, :enter, :backspace, :backspace, :backspace]
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq(terms_content.to_s.gsub("\n", ""))
+          )["innerHTML"]).to eq(terms_content_editor.to_s.gsub("\n", ""))
         end
       end
 
@@ -424,7 +430,6 @@ describe "Admin manages organization", type: :system do
           cnt = <<~HTML
             <p>testing</p>
             <p><strong>foo</strong><br><a href="https://www.decidim.org/" rel="noopener noreferrer" target="_blank">link</a></p>
-            <p><br></p>
           HTML
 
           cnt.gsub("\n", "")
@@ -469,6 +474,9 @@ describe "Admin manages organization", type: :system do
         it "saves the content correctly with the video" do
           click_button "Update"
 
+          expect(page).to have_content("successfully")
+          page.scroll_to(find("#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor"))
+
           organization.reload
           expect(translated(organization.admin_terms_of_use_body)).to eq(
             %(<iframe class="ql-video" frameborder="0" allowfullscreen="true" src="https://www.youtube.com/embed/f6JMgJAQ2tc?showinfo=0"></iframe>)
@@ -500,23 +508,47 @@ describe "Admin manages organization", type: :system do
         it "does not saves it" do
           WebMock.stub_request(:get, "http://example.org/x").to_return(status: 404)
 
-          accept_alert do
-            page.execute_script(
-              <<~JS
-                var element = document.querySelector("#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 div[contenteditable='true'].ql-editor");
-                element.innerHTML = "testing <img src='http://example.org/x' onerror=alert(1) >";
-              JS
-            )
-            sleep 1
-          end
+          page.execute_script(
+            <<~JS
+              var input = document.querySelector("input[type='hidden'][id='organization_admin_terms_of_use_body_en']");
+              input.value = "testing <img src='http://example.org/x' onerror=alert(1) >";
+            JS
+          )
+          sleep 1
 
           click_button "Update"
 
-          sleep 1
+          expect(page).to have_content("successfully")
 
           expect(find(
             "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
-          )["innerHTML"]).to eq("<p>testing</p><p><img src=\"http://example.org/x\"></p>")
+          )["innerHTML"]).to eq("<p>testing <img src=\"http://example.org/x\"></p>")
+        end
+      end
+
+      context "when adding malformed content through the editor" do
+        let(:organization) { create(:organization, admin_terms_of_use_body: {}) }
+
+        it "does not saves it" do
+          WebMock.stub_request(:get, "http://example.org/x").to_return(status: 404)
+
+          page.execute_script(
+            <<~JS
+              var element = document.querySelector("#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor-container");
+              var quill = element.quill;
+              var value = quill.clipboard.convertHTML("testing <img src='http://example.org/x' onerror=alert(1) >");
+              quill.setContents(value);
+            JS
+          )
+          sleep 1
+
+          click_button "Update"
+
+          expect(page).to have_content("successfully")
+
+          expect(find(
+            "#organization-admin_terms_of_use_body-tabs-admin_terms_of_use_body-panel-0 .editor .ql-editor"
+          )["innerHTML"]).to eq("<p>testing <img src=\"http://example.org/x\"></p>")
         end
       end
     end
