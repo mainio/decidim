@@ -93,7 +93,7 @@ shared_examples "manage proposals" do
               proposal = Decidim::Proposals::Proposal.last
 
               expect(page).to have_content(translated(attributes[:title]))
-              expect(translated(proposal.body)).to eq("<p>#{strip_tags(translated(attributes[:body]))}</p>")
+              expect(translated(proposal.body)).to eq("<p>#{CGI.escapeHTML(strip_inject_tags(translated(attributes[:body])))}</p>")
               expect(proposal.category).to eq(category)
               expect(proposal.scope).to eq(scope)
             end

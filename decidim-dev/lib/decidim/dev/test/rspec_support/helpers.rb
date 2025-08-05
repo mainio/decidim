@@ -53,6 +53,17 @@ module Decidim::ComponentTestHelpers
   end
 end
 
+module Decidim::TextTestHelpers
+  def strip_inject_tags(text)
+    fragment = Loofah.fragment(text)
+    fragment.xpath(".//script").each do |node|
+      node.replace(node.text)
+    end
+    strip_tags(fragment.to_s)
+  end
+end
+
 RSpec.configure do |config|
   config.include Decidim::ComponentTestHelpers, type: :system
+  config.include Decidim::TextTestHelpers, type: :system
 end
