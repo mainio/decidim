@@ -41,6 +41,7 @@ Most significant changes compared to the original v0.27:
   *** However, the query complexity check works similarly as in older versions (see https://github.com/rmosolgo/graphql-ruby/pull/3609)
  ** The `origami` gem's class `Origami::PDF::Instruction` has been replaced with a version compatible with Ruby 3.4 within `decidim-initiatives`.
 * The `decidim-bulletin_board`, `voting_schemes-dummy` and `voting_schemes-electionguard` gems have been updated to 0.24.1 to make them compatible with OpenSSLv3 and newer Ruby versions within `decidim-elections`.
+* The Quill editor has been replaced with Dippen, a fork of Quill that bundles the Decidim customizations and some extra features to the editor. This editor is based on the updated version of Quill (version 2).
 ====
 ____
 Free Open-Source participatory democracy, citizen participation and open government for cities and organizations
