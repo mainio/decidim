@@ -7,6 +7,10 @@ The participatory democracy framework.
 ====
 This is a support version of Decidim v0.27 to provide continued support for newer Ruby versions in order to continue the maintenance of Decidim instances still running on that version due to a difficult upgrade path. We do not guarantee any further support for this version of Decidim, so use it with caution and your own consideration. We maintain this branch only in order to continue supporting some of our customers who have more difficult upgrade paths to newer Decidim versions and to fix some problems in this Decidim version.
 
+To install, change the `decidim-*` gems from your Gemfile to point to this branch within this repository and run the following NPM command to install the customized NPM packages:
+
+`npm i https://github.com/mainio/decidim/raw/refs/heads/release/0.27-stable-ruby3.4/packages-pack/decidim-core-0.27.10.tgz`
+
 Currently all tests are passing up to Ruby 3.4. When considering using this support version, please test your instance and all relevant functionality thoroughly.
 
 This version maintains backwards compatibility with v0.27 where it is possible with newer Ruby versions. However, there are some differences to the original v0.27 that you should be aware of.

@@ -79,7 +79,17 @@ namespace :decidim do
         package_spec = "@decidim/%s@~#{Decidim::GemManager.semver_friendly_version(decidim_gemspec.version.to_s)}"
       end
 
-      local_npm_dependencies.transform_values { |names| names.map { |name| format(package_spec, name) } }
+      local_npm_dependencies.transform_values do |names|
+        names.map do |name|
+          if gem_path.blank? && name == "core"
+            # Customized version of the @decidim/core package that has some
+            # changes to the version found from NPM.
+            "https://github.com/mainio/decidim/raw/refs/heads/release/0.27-stable-ruby3.4/packages-pack/decidim-core-0.27.10.tgz"
+          else
+            format(package_spec, name)
+          end
+        end
+      end
     end
 
     def unreleased_gem_path

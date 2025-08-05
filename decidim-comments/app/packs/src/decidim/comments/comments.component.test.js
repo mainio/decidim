@@ -10,7 +10,7 @@ window.$ = jest.fn().mockImplementation((...args) => $(...args));
 window.$.ajax = jest.fn().mockImplementation((...args) => $.ajax(...args));
 
 // Quill is expected by the input character counter
-import Quill from "quill"
+import Quill from "quill/dist/quill"
 window.Quill = Quill
 
 // Rails.ajax is used by the fetching/polling of the comments
