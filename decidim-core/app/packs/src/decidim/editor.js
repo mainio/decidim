@@ -113,18 +113,15 @@ export default function createQuillEditor(container) {
     ) {
       $input.val("");
     } else {
-      const emptyParagraph = "<p><br></p>";
-      const cleanHTML = quill.root.innerHTML.replace(
-        new RegExp(`^${emptyParagraph}|${emptyParagraph}$`, "g"),
-        ""
-      );
+      // Remove the empty paragraph either from the beginning or the end of the
+      // semantic HTML.
+      const matcher = new RegExp('^<p>(<br>)?</p>|<p>(<br>)?</p>$');
+      const cleanHTML = quill.getSemanticHTML().replace(matcher, '');
       $input.val(cleanHTML);
     }
   });
 
-  // Keep this event for backwards compatibility. No longer internally needed
-  // as this was previously used by the linebreak module.
-  quill.emitter.emit("editor-ready");
+  container.quill = quill;
 
   return quill;
 }
