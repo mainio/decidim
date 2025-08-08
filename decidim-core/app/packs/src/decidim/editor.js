@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 
-import Quill, { createServerUploader } from "dippen";
+import Quill, { dynamicToolbarItems, createServerUploader } from "dippen";
 
 const quillFormats = [
   "bold",
@@ -33,6 +33,7 @@ export default function createQuillEditor(container) {
 
   let addImage = false;
   let addVideo = false;
+  let addDynamicToolbar = false;
 
   /**
    * - basic = only basic controls without titles
@@ -44,6 +45,7 @@ export default function createQuillEditor(container) {
   } else if (toolbar === "full") {
     addImage = true;
     addVideo = true;
+    addDynamicToolbar = true;
     quillToolbar = [
       [{ header: [2, 3, 4, 5, 6, false] }],
       ...quillToolbar,
@@ -90,6 +92,34 @@ export default function createQuillEditor(container) {
     help.innerText = container.dataset.dragAndDropHelpText;
     container.after(help);
   }
+
+  if (addDynamicToolbar) {
+    modules.dynamicToolbar = {
+      items: dynamicToolbarItems({
+        target: {
+          blot: "link",
+          options: {
+            "Link": "",
+            "New tab": "_blank"
+          }
+        },
+        style: {
+          blot: "link",
+          attribute: "class",
+          options: {
+            "Default": "",
+            "Small button": "button primary small",
+            "Small button (hollow)": "button primary hollow small",
+            "Standard button": "button primary",
+            "Standard button (hollow)": "button primary hollow",
+            "Large button": "button primary large",
+            "Large button (hollow)": "button primary hollow large"
+          }
+        }
+      })
+    };
+  }
+
   const quill = new Quill(container, {
     readOnly: disabled,
     modules: modules,
