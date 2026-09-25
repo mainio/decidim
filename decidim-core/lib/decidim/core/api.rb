@@ -87,5 +87,6 @@ module Decidim
 
     autoload :DateTimeType, "decidim/api/scalars/date_time_type"
     autoload :DateType, "decidim/api/scalars/date_type"
+    autoload :SortDirectionType, "decidim/api/scalars/sort_direction_type"
   end
 end

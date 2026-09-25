@@ -8,7 +8,7 @@ module Decidim
       graphql_name "CollaborativeTextSort"
       description "A type used for sorting blog collaborative texts"
 
-      argument :id, GraphQL::Types::String, "Sort by ID, valid values are ASC or DESC", required: false
+      argument :id, Decidim::Core::SortDirectionType, "Sort by ID, valid values are ASC or DESC", required: false
     end
   end
 end

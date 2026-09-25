@@ -5,7 +5,7 @@ module Decidim
     module HasLikeableInputSort
       def self.included(child_class)
         child_class.argument :like_count,
-                             type: GraphQL::Types::String,
+                             type: Decidim::Core::SortDirectionType,
                              description: "Sort by number of likes, valid values are ASC or DESC",
                              required: false,
                              as: :likes_count
